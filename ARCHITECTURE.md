@@ -148,7 +148,7 @@ with two people. Hour figures are guesses.
 - [x] 0.3 `app/main.py`: `GET /api/health`, and `POST /api/analyze` returning the contract above with every section `null`. Validate input: exactly one of `url` or `text`, text at most 5000 characters.
 - [x] 0.4 `web/index.html`: text box, Analyze button, raw JSON printed below. Served by FastAPI.
 - [x] 0.5 `tests/test_api.py`: health returns ok; analyze rejects empty and oversized input.
-- [ ] 0.6 `Dockerfile`, `compose.yml` (app + Caddy), `Caddyfile` with the team domain, `.env.example`.
+- [x] 0.6 `Dockerfile`, `compose.yml` (app + Caddy), `Caddyfile` with the team domain, `.env.example`.
 - [ ] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
 - [ ] Done when: `https://<domain>/api/health` returns ok from a phone on mobile data.
 
