@@ -11,8 +11,7 @@ services:
       AI_ROUTER_BASE_URL: ${AI_ROUTER_BASE_URL:-}
       AI_ROUTER_MODEL: ${AI_ROUTER_MODEL:-}
       OXYLABS_WEB_API_KEY: ${OXYLABS_WEB_API_KEY:-}
-      BSKY_HANDLE: ${BSKY_HANDLE:-}
-      BSKY_APP_PASSWORD: ${BSKY_APP_PASSWORD:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     restart: unless-stopped
     labels:
       - traefik.enable=true
