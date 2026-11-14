@@ -16,7 +16,7 @@ import os
 
 from app import anthropic_detect, cache, llm
 
-PROMPT_VERSION = 2  # bump on any prompt or list change, so cached answers are not reused
+PROMPT_VERSION = 3  # bump on any prompt or list change, so cached answers are not reused
 
 TECHNIQUES = {
     "Appeal to authority": "Claiming something is true because an authority or expert said so, without other evidence.",
@@ -113,20 +113,18 @@ def find(post_text):
     if hit is not None:
         return hit
     fenced = re.sub(r"</?\s*post\s*>", " ", post_text, flags=re.I)  # the post cannot close its own block
-    result, anthropic_error = None, None
-    if os.environ.get("ANTHROPIC_API_KEY"):
-        # Preferred path: our measured six-technique detector. On failure fall through to the router
-        # path below; if that is also unavailable the caller reports an error, never "nothing found".
+    # Main path: the 20-technique prompt above, through the Hostinger AI Router. The six-technique
+    # Anthropic detector is the backup, used only when the router is not set up or does not answer.
+    # If neither works the caller reports an error, never "nothing found".
+    try:
+        result = validate(llm.ask_json(SYSTEM, f"<post>\n{fenced}\n</post>"), post_text)
+    except Exception as router_error:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            raise
         try:
             result = anthropic_detect.find(post_text)
         except anthropic_detect.LLMError as e:
-            anthropic_error = e
-    if result is None:
-        try:
-            result = validate(llm.ask_json(SYSTEM, f"<post>\n{fenced}\n</post>"), post_text)
-        except llm.NotConfigured:
-            if anthropic_error:
-                raise anthropic_error  # the router is not set up either: report the real failure
-            raise
+            # report the more telling failure: a router that broke, else the backup that broke
+            raise (e if isinstance(router_error, llm.NotConfigured) else router_error) from e
     cache.set(k, result)
     return result

@@ -1,4 +1,5 @@
-"""Anthropic technique detector (our six measured techniques), used by techniques.find when ANTHROPIC_API_KEY is set.
+"""Anthropic technique detector (our six measured techniques). Backup for techniques.find: used only when
+ANTHROPIC_API_KEY is set and the Hostinger AI Router is not configured or does not answer.
 
 One API call per text. Structured output through a forced tool call (no temperature: this model family rejects it).
 Code (not the model) validates every flag: known technique, quote must appear in the
