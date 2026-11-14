@@ -16,7 +16,7 @@ above front-end polish.
 | Fallback input | Pasted text, any platform | Techniques still work; bot and similar sections show "not enough data". |
 | Backend | Python, FastAPI, one process | `bot_score.py` is already Python. |
 | LLM | Hostinger AI Router through the OpenAI SDK | Free credits, required-ish by the sponsor. Model set by env var. |
-| Technique list | The 14 SemEval-2020 Task 11 propaganda techniques | Fixed, published list with a labelled corpus, so precision can be measured. |
+| Technique list | The 20 text techniques of SemEval-2021 Task 6 | Fixed, published list with a labelled corpus of short meme texts, closer to posts than the 2020 news-article corpus. Public on GitHub without registration, labelled test set of 200. |
 | Similar posts | Bluesky search + word-shingle overlap (`bot_score.similarity`) | No embeddings, no vector database. |
 | Storage | One SQLite file as a cache | Saves LLM credits on repeat views. Nothing else needs persisting. |
 | Front end | One static page + one shared `panel.js`, no framework, no build step | The same panel renders on the web page and inside the extension. |
@@ -26,7 +26,7 @@ above front-end polish.
 Not verified yet, check in the step that needs it:
 - The AI Router base URL and model names (step 1.1).
 - Whether Bluesky `app.bsky.feed.searchPosts` works without login from the VPS (step 4.1). It works on `api.bsky.app` from a home connection (checked 2026-11-14); `public.api.bsky.app` returns 403 for search. Recheck from the VPS; if refused, log in with an app password.
-- Whether the SemEval corpus can be downloaded without registration (step 5.1).
+- ~~Whether the SemEval corpus can be downloaded without registration (step 5.1).~~ Yes: the 2021 Task 6 corpus is public at github.com/di-dimitrov/SEMEVAL-2021-task6-corpus.
 
 ## Components
 
@@ -154,15 +154,15 @@ with two people. Hour figures are guesses.
 
 ### Feature 1: name the technique (about 2 h)
 
-- [ ] 1.1 `app/llm.py`: one function `ask_json(system, user) -> dict` using the OpenAI SDK against `AI_ROUTER_BASE_URL`. Confirm the base URL and a working model name with a one-line call. 30 s timeout, one retry.
-- [ ] 1.2 `app/techniques.py`: the 14 technique names with a one-sentence definition each, as a constant.
-- [ ] 1.3 Prompt: definitions, then the post inside a delimited block marked as data. Ask for JSON `[{name, quote, why}]`, where `quote` is copied exactly from the post and `why` is one plain sentence. Allow an empty list and say so explicitly.
-- [ ] 1.4 Validation: drop any item whose `name` is not in the list or whose `quote` is not a substring of the post. This is the false-positive guard and the prompt-injection guard.
-- [ ] 1.5 `app/cache.py`: SQLite table `(key, json, created)`. Key is a hash of the text plus the prompt version.
-- [ ] 1.6 Rate limit `POST /api/analyze` per IP (10 per minute, in memory). The endpoint is public and spends credits.
-- [ ] 1.7 Wire into `/api/analyze` so `techniques` is filled for both `text` and `url` input.
+- [ ] 1.1 `app/llm.py`: one function `ask_json(system, user) -> dict` using the OpenAI SDK against `AI_ROUTER_BASE_URL`. 30 s timeout, one retry. Code done and checked against a local fake server; **still to do: confirm the base URL and a working model name with a one-line call using the team key.**
+- [x] 1.2 `app/techniques.py`: the 20 SemEval-2021 Task 6 text technique names, verbatim from the corpus, with a one-sentence definition each.
+- [x] 1.3 Prompt: definitions, then the post inside a delimited block marked as data. Ask for JSON `[{name, quote, why}]`, where `quote` is copied exactly from the post and `why` is one plain sentence. Allow an empty list and say so explicitly. Few-shot: three labelled training memes plus two ordinary posts with no technique.
+- [x] 1.4 Validation: drop any item whose `name` is not in the list or whose `quote` is not a substring of the post. This is the false-positive guard and the prompt-injection guard. The substring check ignores case, curly quotes and spacing.
+- [x] 1.5 `app/cache.py`: SQLite table `(key, json, created)`. Key is a hash of the text plus the prompt version.
+- [x] 1.6 Rate limit `POST /api/analyze` per IP (10 per minute, in memory). The endpoint is public and spends credits. IP is the last `X-Forwarded-For` entry, which Caddy sets.
+- [ ] 1.7 Wire into `/api/analyze` so `techniques` is filled for both `text` and `url` input. Text input done; `url` input waits for feature 2.
 - [ ] 1.8 `web/panel.js`: `renderPanel(node, analysis)`. Techniques section: name, the quote highlighted, the reason. Empty list shows "No manipulation techniques found".
-- [ ] 1.9 Tests with the LLM stubbed: invalid name dropped, invented quote dropped, empty list passes through, cache hit skips the LLM.
+- [x] 1.9 Tests with the LLM stubbed: invalid name dropped, invented quote dropped, empty list passes through, cache hit skips the LLM.
 - [ ] Done when: a loaded post on the live site shows techniques with quotes, and a weather report shows none.
 
 ### Feature 2: read a Bluesky post from its URL (about 1 h)
@@ -198,7 +198,7 @@ with two people. Hour figures are guesses.
 
 ### Feature 5: measured precision and false positives (about 2 h)
 
-- [ ] 5.1 Techniques data: 100 labelled sentences from the SemEval corpus plus 50 neutral posts collected by hand (news headlines, weather, sports scores). Stored in `eval/`.
+- [ ] 5.1 Techniques data: the SemEval-2021 Task 6 test set (200 labelled meme texts; dev set of 63 for prompt tuning, training set only for few-shot examples) plus about 30 neutral Bluesky posts collected by hand, since memes are not posts. Report per-technique numbers only where there are at least 10 examples. Stored in `eval/`.
 - [ ] 5.2 `eval/run_techniques.py`: per-technique precision and recall, and the share of neutral posts that got any technique at all (the false-positive rate).
 - [ ] 5.3 Bot data: 30 accounts that are openly bots and 30 accounts known to be people, handles and labels in `eval/bots.csv`.
 - [ ] 5.4 `eval/run_bots.py`: precision, recall and false-positive rate at the 0.3 and 0.6 thresholds. State on the page that openly declared bots are the easy case, the sample is 60, and the profile weights are hand-set.
