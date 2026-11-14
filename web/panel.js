@@ -274,6 +274,68 @@
     if (a.similar.length) node.appendChild(note("dim", "Matching text shows coordination, not automation. People share copypasta too."));
   }
 
+  var STANCE = { supports: "Supports", challenges: "Challenges", "adds context": "Adds context" };
+
+  // What live web pages say about the post's main claim. Reports sources, never a true/false verdict.
+  function renderCoverage(node, a) {
+    node.textContent = "";
+    node.appendChild(el("h2", "card-title", "What live sources say"));
+    var c = a.coverage;
+    if (!c) {
+      node.appendChild(note("warn", ((a.errors || {}).coverage || (a.errors || {}).post || "Not checked").replace(/^not enough data: /, "Not enough data: ")));
+      return;
+    }
+    node.appendChild(el("p", "cov-claim", "Claim checked: " + c.claim.statement));
+    var byId = {};
+    c.sources.forEach(function (s) { byId[s.id] = s; });
+    if (!c.points.length) node.appendChild(note("warn", "Not enough data: the pages that were read say nothing quotable about this claim."));
+    c.points.forEach(function (p) {
+      var row = el("div", "cov"), s = byId[p.source] || {};
+      row.appendChild(el("span", "cov-stance " + p.stance.replace(" ", "-"), STANCE[p.stance] || p.stance));
+      row.appendChild(el("p", "cov-text", p.text));
+      row.appendChild(el("blockquote", "cov-quote", p.quote));
+      row.appendChild(sourceLink(s, "cov-src"));
+      node.appendChild(row);
+    });
+    var list = el("ul", "cov-sources");
+    c.sources.forEach(function (s) {
+      var li = el("li");
+      li.appendChild(sourceLink(s));
+      li.appendChild(document.createTextNode(s.read ? " · read in full" : " · found, could not be read"));
+      list.appendChild(li);
+    });
+    node.appendChild(list);
+    if (c.by_country) renderCountries(node, c.by_country);
+    node.appendChild(note("dim", "Searched and read live at " + fmtTime(c.checked_at) + " through the Oxylabs Web API. A sample of the web, not a verdict on the post."));
+  }
+
+  // The same search run from each country. A site only one country sees is marked.
+  function renderCountries(node, countries) {
+    var seenIn = {};
+    countries.forEach(function (c) { (c.sources || []).forEach(function (s) { seenIn[s.domain] = (seenIn[s.domain] || 0) + 1; }); });
+    node.appendChild(el("h3", "cov-sub", "Same search, three countries"));
+    countries.forEach(function (c) {
+      var row = el("div", "cov-country");
+      row.appendChild(el("b", null, c.name));
+      if (!c.sources) row.appendChild(el("span", "warn", "Not enough data: this search failed."));
+      else if (!c.sources.length) row.appendChild(el("span", null, "No results."));
+      else c.sources.forEach(function (s) {
+        var only = seenIn[s.domain] === 1;
+        var a = sourceLink(s, only ? "only" : "");
+        if (only) a.title = "Only in the results from " + c.name + (s.title ? ": " + s.title : "");
+        row.appendChild(a);
+      });
+      node.appendChild(row);
+    });
+    node.appendChild(note("dim", "Underlined sites appear in one country's results only. The points above use the pages from the first country with results."));
+  }
+
+  function sourceLink(s, cls) {
+    var url = safeUrl(s.url), n = el(url ? "a" : "span", cls, s.domain || s.id);
+    if (url) { n.href = url; n.target = "_blank"; n.rel = "noopener noreferrer"; n.title = s.title || ""; }
+    return n;
+  }
+
   // Hovering a technique lights up its quote in the post, and the other way round.
   function linkHighlights(postNode, techNode) {
     function set(ids, on) {
@@ -365,8 +427,8 @@
   // Everything in one column, for the extension panel.
   function renderPanel(node, analysis, inputText) {
     node.textContent = "";
-    var parts = ["post", "tech", "bot", "sim"].map(function (c) {
-      var s = el("section", "panel-sec " + (c === "bot" || c === "sim" ? "card" : c));
+    var parts = ["post", "tech", "bot", "sim", "cov"].map(function (c) {
+      var s = el("section", "panel-sec " + (c === "post" || c === "tech" ? c : "card"));
       node.appendChild(s);
       return s;
     });
@@ -374,11 +436,12 @@
     renderTechniques(parts[1], analysis);
     renderBot(parts[2], analysis);
     renderSimilar(parts[3], analysis);
+    renderCoverage(parts[4], analysis);
     linkHighlights(parts[0], parts[1]);
   }
 
   window.DecodePanel = {
     renderPanel: renderPanel, renderPost: renderPost, renderTechniques: renderTechniques,
-    renderBot: renderBot, renderSimilar: renderSimilar, renderReply: renderReply, linkHighlights: linkHighlights
+    renderBot: renderBot, renderSimilar: renderSimilar, renderCoverage: renderCoverage, renderReply: renderReply, linkHighlights: linkHighlights
   };
 })();

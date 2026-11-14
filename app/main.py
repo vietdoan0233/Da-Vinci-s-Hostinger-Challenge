@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import bluesky, bot_score, llm, similar, techniques
+from app import bluesky, bot_score, coverage, llm, similar, techniques
 
 app = FastAPI()
 log = logging.getLogger("app")
@@ -66,6 +66,22 @@ def find_techniques(text, errors):
     return None
 
 
+def find_coverage(text):
+    """-> (coverage, error). Runs beside the other checks: it waits on live web pages."""
+    try:
+        return coverage.find(text), None
+    except coverage.NotEnoughData as e:
+        return None, f"not enough data: {e}"
+    except (coverage.NotConfigured, llm.NotConfigured):
+        return None, "the live source check is not configured on this server"
+    except Exception:
+        log.exception("coverage failed")
+        return None, "live sources could not be reached, try again shortly"
+
+
+_coverage_pool = ThreadPoolExecutor(max_workers=4)
+
+
 @app.post("/api/analyze")
 def analyze(body: AnalyzeIn, request: Request):
     check_rate(client_ip(request))
@@ -78,6 +94,7 @@ def analyze(body: AnalyzeIn, request: Request):
         except bluesky.BlueskyError as e:
             out["errors"]["post"] = str(e)
             return out
+    live = _coverage_pool.submit(find_coverage, post["text"])
     out["techniques"] = find_techniques(post["text"], out["errors"])
     try:
         out["similar"] = similar.find(post)
@@ -96,6 +113,9 @@ def analyze(body: AnalyzeIn, request: Request):
         except Exception:  # odd author data must not turn the whole analysis into a 500
             log.exception("bot score failed")
             out["errors"]["bot"] = "author history unavailable"
+    out["coverage"], err = live.result()
+    if err:
+        out["errors"]["coverage"] = err
     return out
 
 

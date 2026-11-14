@@ -21,6 +21,7 @@
   .nav { display: flex; align-items: center; gap: 18px; padding: 12px; border-radius: 999px; font-size: 20px; color: var(--text); text-decoration: none; background: none; border: 0; width: fit-content; }
   .nav:hover { background: rgba(231, 233, 234, .1); }
   .nav.active { font-weight: 700; }
+  #how:target { outline: 2px solid var(--blue); }  /* the card is often already on screen, so the link must show something */
   .nav .ic { width: 26px; height: 26px; }
   .cta { margin-top: 14px; width: 90%; padding: 15px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 700; font-size: 17px; }
   .cta:hover { background: var(--blue-hover); }
@@ -129,12 +130,14 @@
   <aside>
     <section class="card" id="bot" hidden></section>
     <section class="card" id="sim" hidden></section>
+    <section class="card" id="cov" hidden></section>
     <section class="card how" id="how">
       <h2 class="card-title">How it works</h2>
       <ol>
         <li><b>Techniques.</b> <span>An AI model checks the post against 20 published persuasion techniques. A result is kept only if it quotes words that are really in the post.</span></li>
         <li><b>Bot-likeness.</b> <span>Posting rhythm, profile and text reuse give a suspicion score with reasons. It is not a probability.</span></li>
         <li><b>Copies.</b> <span>We search Bluesky for other accounts posting the same words. Matching text shows coordination, not automation.</span></li>
+        <li><b>Live sources.</b> <span>We search the web for the post's main claim and read the pages in full. Each point quotes its source. It is a sample of the web, not a verdict.</span></li>
         <li><b>Thread.</b> <span>Every reply gets its own bot-likeness score. Replies scoring above 0.4 are also checked for techniques. Click a reply to analyse it in full.</span></li>
       </ol>
     </section>
@@ -235,7 +238,7 @@
     var url = isUrl(v);
     go.disabled = true;
     startThread(null);
-    $("result").hidden = $("bot").hidden = $("sim").hidden = true;
+    $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = true;
     say(url ? "Reading the post and checking it…" : "Checking the text…", "", true);
     try {
       var r = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" },
@@ -248,9 +251,10 @@
       DecodePanel.renderTechniques($("tech"), data);
       DecodePanel.renderBot($("bot"), data);
       DecodePanel.renderSimilar($("sim"), data);
+      DecodePanel.renderCoverage($("cov"), data);
       DecodePanel.linkHighlights($("post"), $("tech"));
       status.hidden = true;
-      $("result").hidden = $("bot").hidden = $("sim").hidden = false;
+      $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = false;
       // a link is shareable; pasted text stays out of the address bar
       var target = url ? "?q=" + encodeURIComponent(v) : location.pathname;
       if (push && target !== location.search) history.pushState(null, "", target);
@@ -272,7 +276,11 @@
     input.value = q || ""; refresh();
     if (q) run(false); else location.reload();
   });
-  $("new").addEventListener("click", function () { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); });
+  // Back to the empty start page; when already there, put the cursor in the box.
+  $("new").addEventListener("click", function () {
+    if (location.search || !$("result").hidden) location.href = location.pathname;
+    else { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); }
+  });
   document.querySelectorAll(".chip").forEach(function (c) {
     c.addEventListener("click", function () { input.value = c.dataset.ex; refresh(); run(true); });
   });

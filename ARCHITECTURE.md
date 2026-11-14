@@ -53,6 +53,7 @@ app/techniques.py   prompt, technique list, output validation
 app/bluesky.py      URL -> post, author, author's recent posts, search
 app/bot_score.py    moved from the repo root in step 0.1
 app/similar.py      candidate search + overlap ranking
+app/coverage.py     claim -> Oxylabs search + scrape -> quoted points from live pages
 app/cache.py        SQLite get/set
 web/index.html      paste box + panel
 web/panel.js        renders an analysis into a DOM node (shared with extension)
@@ -77,7 +78,11 @@ front end never changes shape and unfinished sections are simply `null`.
   "techniques": [{"name": "", "quote": "", "why": ""}],
   "bot":        {"score": 0.0, "verdict": "", "checked": [], "reasons": []},
   "similar":    [{"author": "", "text": "", "url": "", "ts": 0, "overlap": 0.0}],
-  "coverage":   null,
+  "coverage":   {"claim": {"quote": "", "statement": "", "query": ""},
+                 "points": [{"source": "S1", "stance": "supports | challenges | adds context", "quote": "", "text": ""}],
+                 "sources": [{"id": "S1", "title": "", "url": "", "domain": "", "read": true}],
+                 "by_country": [{"country": "FI", "name": "Finland", "sources": [{"title": "", "url": "", "domain": ""}]}],
+                 "checked_at": 0},
   "sides":      null,
   "errors":     {"bot": "author history unavailable"}
 }
@@ -245,17 +250,24 @@ A post link also loads the post's replies, so a reader can see who is in the thr
 - [x] 9.6 Tests: field mapping and order, paging, the 0.4 threshold, author failure, thread failure, rate limit.
 - [ ] Done when: a long thread on the live site loads ten replies, loads more on scroll, and a clicked reply opens with its own replies.
 
-### Feature 7, later: coverage tab
+### Feature 7: what live sources say (Oxylabs Web API)
 
-- [ ] 7.1 LLM extracts the post's central factual claim as a search query.
-- [ ] 7.2 Fetch news results for it. Pick the source in this step (GDELT is free and keyless).
-- [ ] 7.3 Group outlets by leaning from a published bias-rating list checked into `eval/`, with its source named.
-- [ ] 7.4 Fill `coverage`; panel tab shows how many outlets on each side reported it, with links.
-- [ ] Done when: a post about a current news story shows coverage from at least two leanings.
+Changed from the first plan (GDELT plus outlet leanings): the Oxylabs challenge needs live search and full-page reads, and a count of outlets per leaning says nothing about what the pages report.
+
+- [x] 7.1 LLM picks the post's one checkable factual claim, with an exact quote from the post and a neutral search query. No claim is "not enough data".
+- [x] 7.2 `POST /v1/search` on the Oxylabs Web API for the query; keep up to four https results, one per site.
+- [x] 7.3 `POST /v1/scrape` reads each page as Markdown, in parallel. A page that cannot be read is listed as found but unread.
+- [x] 7.4 LLM reports at most one point per read page: supports, challenges or adds context. A point is dropped unless it names a read page and its quote is found in that page. No true/false verdict.
+- [x] 7.5 Fill `coverage`; runs beside the other checks so it does not add to the wait. Cached for one hour. Key in `OXYLABS_WEB_API_KEY`, server side only.
+- [x] 7.6 Panel card "What live sources say": the claim, each point with its quote and link, every source with read or unread, and the time it was checked.
+- [x] 7.7 Tests with Oxylabs and the LLM stubbed (`tests/test_coverage.py`). `OXYLABS.md` is the note for the challenge submission.
+- [x] 7.9 Same claim, three countries: the search runs with `location` US, FI and DE in parallel and fills `coverage.by_country`. The panel lists each country's results and marks sites only one country sees. A failed country search shows as "not enough data" (`sources: null`), not as no results. Pages are read from the first country with results.
+- [ ] 7.8 One real call with the team key to confirm the response fields (`results[].url`, `results[0].markdown`), then set the key on the VPS.
+- [ ] Done when: a post about a current news story on the live site shows quoted points with working source links.
 
 ### Feature 8, later: sides of the argument
 
-- [ ] 8.1 LLM lists the strongest two to three positions on the post's topic, each grounded in a coverage link from feature 7. Positions without a link are dropped.
+- [ ] 8.1 LLM lists the strongest two to three positions on the post's topic, each grounded in a coverage source from feature 7. Positions without a link are dropped.
 - [ ] 8.2 Fill `sides`; panel tab shows them side by side, same length, neutral wording.
 - [ ] Done when: the tab shows linked positions and never one that has no source.
 
