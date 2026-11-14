@@ -3460,5 +3460,520 @@
    "The weights in bot_score.py are hand-set. The posting-schedule rule was adjusted on the tune set; quote the hold-out numbers."
   ],
   "run_at": "2026-11-14 20:31 UTC"
+ },
+ "techniques": {
+  "what": "Technique detection compared with human labels, one text at a time.",
+  "detector": {
+   "where": "https://davincicommit.tech",
+   "server_version": "186ba5f",
+   "prompt_version": 3,
+   "model": "set on the server (AI_ROUTER_MODEL); not visible to this script"
+  },
+  "n_memes": 200,
+  "n_neutral": 32,
+  "not_answered": 0,
+  "micro": {
+   "precision": {
+    "value": 0.567,
+    "k": 153,
+    "n": 270,
+    "ci95": [
+     0.507,
+     0.624
+    ]
+   },
+   "recall": {
+    "value": 0.457,
+    "k": 153,
+    "n": 335,
+    "ci95": [
+     0.404,
+     0.51
+    ]
+   },
+   "f1": 0.506
+  },
+  "false_alarms": {
+   "memes_with_no_technique": {
+    "value": 0.415,
+    "k": 17,
+    "n": 41,
+    "ci95": [
+     0.278,
+     0.566
+    ]
+   },
+   "neutral_posts": {
+    "value": 0.031,
+    "k": 1,
+    "n": 32,
+    "ci95": [
+     0.006,
+     0.157
+    ]
+   }
+  },
+  "per_technique": [
+   {
+    "technique": "Loaded Language",
+    "labelled": 100,
+    "precision": {
+     "value": 0.817,
+     "k": 58,
+     "n": 71,
+     "ci95": [
+      0.712,
+      0.89
+     ]
+    },
+    "recall": {
+     "value": 0.58,
+     "k": 58,
+     "n": 100,
+     "ci95": [
+      0.482,
+      0.672
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Name calling/Labeling",
+    "labelled": 53,
+    "precision": {
+     "value": 0.765,
+     "k": 26,
+     "n": 34,
+     "ci95": [
+      0.6,
+      0.876
+     ]
+    },
+    "recall": {
+     "value": 0.491,
+     "k": 26,
+     "n": 53,
+     "ci95": [
+      0.361,
+      0.621
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Smears",
+    "labelled": 45,
+    "precision": {
+     "value": 0.727,
+     "k": 8,
+     "n": 11,
+     "ci95": [
+      0.434,
+      0.903
+     ]
+    },
+    "recall": {
+     "value": 0.178,
+     "k": 8,
+     "n": 45,
+     "ci95": [
+      0.093,
+      0.313
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Doubt",
+    "labelled": 28,
+    "precision": {
+     "value": 0.647,
+     "k": 11,
+     "n": 17,
+     "ci95": [
+      0.413,
+      0.827
+     ]
+    },
+    "recall": {
+     "value": 0.393,
+     "k": 11,
+     "n": 28,
+     "ci95": [
+      0.236,
+      0.576
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Slogans",
+    "labelled": 19,
+    "precision": {
+     "value": 0.4,
+     "k": 8,
+     "n": 20,
+     "ci95": [
+      0.219,
+      0.613
+     ]
+    },
+    "recall": {
+     "value": 0.421,
+     "k": 8,
+     "n": 19,
+     "ci95": [
+      0.231,
+      0.637
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Exaggeration/Minimisation",
+    "labelled": 19,
+    "precision": {
+     "value": 0.324,
+     "k": 11,
+     "n": 34,
+     "ci95": [
+      0.191,
+      0.492
+     ]
+    },
+    "recall": {
+     "value": 0.579,
+     "k": 11,
+     "n": 19,
+     "ci95": [
+      0.363,
+      0.769
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Glittering generalities (Virtue)",
+    "labelled": 11,
+    "precision": {
+     "value": 1.0,
+     "k": 1,
+     "n": 1,
+     "ci95": [
+      0.207,
+      1.0
+     ]
+    },
+    "recall": {
+     "value": 0.091,
+     "k": 1,
+     "n": 11,
+     "ci95": [
+      0.016,
+      0.377
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Appeal to fear/prejudice",
+    "labelled": 10,
+    "precision": {
+     "value": 0.346,
+     "k": 9,
+     "n": 26,
+     "ci95": [
+      0.194,
+      0.538
+     ]
+    },
+    "recall": {
+     "value": 0.9,
+     "k": 9,
+     "n": 10,
+     "ci95": [
+      0.596,
+      0.982
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Whataboutism",
+    "labelled": 10,
+    "precision": {
+     "value": 1.0,
+     "k": 2,
+     "n": 2,
+     "ci95": [
+      0.342,
+      1.0
+     ]
+    },
+    "recall": {
+     "value": 0.2,
+     "k": 2,
+     "n": 10,
+     "ci95": [
+      0.057,
+      0.51
+     ]
+    },
+    "reportable": true
+   },
+   {
+    "technique": "Black-and-white Fallacy/Dictatorship",
+    "labelled": 7,
+    "precision": {
+     "value": 0.5,
+     "k": 5,
+     "n": 10,
+     "ci95": [
+      0.237,
+      0.763
+     ]
+    },
+    "recall": {
+     "value": 0.714,
+     "k": 5,
+     "n": 7,
+     "ci95": [
+      0.359,
+      0.918
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Appeal to authority",
+    "labelled": 7,
+    "precision": {
+     "value": 0.444,
+     "k": 4,
+     "n": 9,
+     "ci95": [
+      0.189,
+      0.733
+     ]
+    },
+    "recall": {
+     "value": 0.571,
+     "k": 4,
+     "n": 7,
+     "ci95": [
+      0.25,
+      0.842
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Flag-waving",
+    "labelled": 6,
+    "precision": {
+     "value": 0.6,
+     "k": 3,
+     "n": 5,
+     "ci95": [
+      0.231,
+      0.882
+     ]
+    },
+    "recall": {
+     "value": 0.5,
+     "k": 3,
+     "n": 6,
+     "ci95": [
+      0.188,
+      0.812
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Thought-terminating cliché",
+    "labelled": 6,
+    "precision": {
+     "value": 0.75,
+     "k": 3,
+     "n": 4,
+     "ci95": [
+      0.301,
+      0.954
+     ]
+    },
+    "recall": {
+     "value": 0.5,
+     "k": 3,
+     "n": 6,
+     "ci95": [
+      0.188,
+      0.812
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Presenting Irrelevant Data (Red Herring)",
+    "labelled": 4,
+    "precision": {
+     "value": 0.0,
+     "k": 0,
+     "n": 2,
+     "ci95": [
+      0.0,
+      0.658
+     ]
+    },
+    "recall": {
+     "value": 0.0,
+     "k": 0,
+     "n": 4,
+     "ci95": [
+      0.0,
+      0.49
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Reductio ad hitlerum",
+    "labelled": 3,
+    "precision": {
+     "value": 1.0,
+     "k": 1,
+     "n": 1,
+     "ci95": [
+      0.207,
+      1.0
+     ]
+    },
+    "recall": {
+     "value": 0.333,
+     "k": 1,
+     "n": 3,
+     "ci95": [
+      0.061,
+      0.792
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Causal Oversimplification",
+    "labelled": 3,
+    "precision": {
+     "value": 0.167,
+     "k": 1,
+     "n": 6,
+     "ci95": [
+      0.03,
+      0.564
+     ]
+    },
+    "recall": {
+     "value": 0.333,
+     "k": 1,
+     "n": 3,
+     "ci95": [
+      0.061,
+      0.792
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Obfuscation, Intentional vagueness, Confusion",
+    "labelled": 1,
+    "precision": {
+     "value": 0.0,
+     "k": 0,
+     "n": 1,
+     "ci95": [
+      0.0,
+      0.793
+     ]
+    },
+    "recall": {
+     "value": 0.0,
+     "k": 0,
+     "n": 1,
+     "ci95": [
+      0.0,
+      0.793
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Repetition",
+    "labelled": 1,
+    "precision": {
+     "value": 0.083,
+     "k": 1,
+     "n": 12,
+     "ci95": [
+      0.015,
+      0.354
+     ]
+    },
+    "recall": {
+     "value": 1.0,
+     "k": 1,
+     "n": 1,
+     "ci95": [
+      0.207,
+      1.0
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Misrepresentation of Someone's Position (Straw Man)",
+    "labelled": 1,
+    "precision": {
+     "value": 0.25,
+     "k": 1,
+     "n": 4,
+     "ci95": [
+      0.046,
+      0.699
+     ]
+    },
+    "recall": {
+     "value": 1.0,
+     "k": 1,
+     "n": 1,
+     "ci95": [
+      0.207,
+      1.0
+     ]
+    },
+    "reportable": false
+   },
+   {
+    "technique": "Bandwagon",
+    "labelled": 1,
+    "precision": null,
+    "recall": {
+     "value": 0.0,
+     "k": 0,
+     "n": 1,
+     "ci95": [
+      0.0,
+      0.793
+     ]
+    },
+    "reportable": false
+   }
+  ],
+  "caveats": [
+   "The labelled texts are political memes from 2020-2021, not Bluesky posts or video transcripts.",
+   "The labels are for the meme's text alone (Subtask 1 of the task). This tool does not read images, so the task's image-and-text labels are not used.",
+   "Annotators disagree with each other on technique labels too; a miss or an extra flag is not always the detector being wrong.",
+   "Techniques with fewer than 10 labelled examples are listed but their numbers are too uncertain to rely on.",
+   "The neutral set is 32 factual posts from 8 automated feeds; ordinary personal posts are not in it."
+  ],
+  "run_at": "2026-11-14 20:59 UTC"
  }
 }

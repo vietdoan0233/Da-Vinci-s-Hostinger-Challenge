@@ -4,66 +4,187 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Accuracy · Decode the Noise</title>
+<meta name="description" content="Measured error rates of Decode the Noise, each with its sample size and 95% range.">
 <link rel="stylesheet" href="panel.css">
 <style>
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
   a { color: var(--blue); }
   :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-  main { max-width: 860px; margin: 0 auto; padding: 0 16px 60px; border-left: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 100vh; }
-  .top { position: sticky; top: 0; z-index: 2; margin: 0 -16px; padding: 14px 16px; display: flex; gap: 14px; align-items: baseline; background: rgba(0, 0, 0, .7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-  .top b { font-size: 20px; font-weight: 800; }
-  .top a { font-size: 15px; text-decoration: none; }
-  h1 { font-size: 30px; line-height: 36px; font-weight: 800; margin: 18px 0 8px; }
-  h2 { font-size: 22px; font-weight: 800; margin: 40px 0 4px; padding-top: 22px; border-top: 1px solid var(--line); }
-  h3 { font-size: 15px; font-weight: 700; margin: 22px 0 8px; }
-  p { font-size: 15px; line-height: 21px; margin: 8px 0; }
+
+  .shell { display: flex; justify-content: center; min-height: 100vh; }
+
+  /* left rail, same as the analyser page */
+  .rail { width: 260px; padding: 4px 12px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; flex: none; }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 12px; font-weight: 800; font-size: 19px; }
+  .brand svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  .nav { display: flex; align-items: center; gap: 18px; padding: 12px; border-radius: 999px; font-size: 20px; color: var(--text); text-decoration: none; width: fit-content; transition: background .15s; }
+  .nav:hover { background: rgba(231, 233, 234, .1); }
+  .nav.active { font-weight: 700; }
+  .nav .ic { width: 26px; height: 26px; }
+  .cta { margin-top: 14px; width: 90%; padding: 15px; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 700; font-size: 17px; text-align: center; text-decoration: none; transition: background .15s, transform .1s; }
+  .cta:hover { background: var(--blue-hover); }
+  .cta:active { transform: scale(.98); }
+
+  /* the column: as wide as the analyser's centre column and side cards together */
+  main { width: 950px; max-width: 100%; min-width: 0; border-left: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 100vh; padding-bottom: 72px; }
+  .top { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 16px; padding: 10px 24px; background: rgba(0, 0, 0, .7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .top b { font-size: 20px; font-weight: 800; flex: none; }
+  .back { display: none; font-size: 15px; text-decoration: none; flex: none; }
+  .jump { display: flex; gap: 8px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .jump::-webkit-scrollbar { display: none; }
+  .jump a { flex: none; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line); color: var(--text); font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background .15s, border-color .15s; }
+  .jump a:hover { background: rgba(29, 155, 240, .1); border-color: var(--blue); }
+
+  .intro, .sec { padding: 0 24px; }
+  .sec { scroll-margin-top: 58px; margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--line); }
+  h1 { font-size: 34px; line-height: 40px; font-weight: 800; letter-spacing: -.01em; margin: 28px 0 10px; }
+  h2 { font-size: 24px; line-height: 30px; font-weight: 800; margin: 0; }
+  h3 { font-size: 15px; line-height: 20px; font-weight: 700; margin: 28px 0 10px; }
+  p { font-size: 15px; line-height: 22px; margin: 8px 0; max-width: 70ch; }
+  .lead { font-size: 17px; line-height: 25px; }
   .dim, .meta { color: var(--dim); }
-  .meta { font-size: 13px; line-height: 18px; }
-  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 14px 0; }
-  .tile { background: var(--card); border-radius: 16px; padding: 14px 16px; }
-  .tile .label { color: var(--dim); font-size: 13px; line-height: 17px; }
-  .tile .num { font-size: 32px; font-weight: 800; line-height: 40px; font-variant-numeric: tabular-nums; }
-  .tile .of { color: var(--dim); font-size: 13px; line-height: 17px; }
-  .scroll { overflow-x: auto; }
+  .meta { font-size: 13px; line-height: 19px; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  .run { margin-left: auto; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--dim); font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .run.warn { color: var(--amber); border-color: rgba(255, 173, 31, .5); }
+
+  /* a rate drawn on a 0 to 100% track: the tick is the measured rate, the band its 95% range */
+  .meter { position: relative; height: 6px; border-radius: 3px; background: var(--line); }
+  .meter .band { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: rgba(29, 155, 240, .55); }
+  .meter .tick { position: absolute; top: -4px; width: 3px; height: 14px; margin-left: -1.5px; border-radius: 2px; background: var(--text); }
+  .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0 0; color: var(--dim); font-size: 13px; line-height: 19px; }
+  .legend .meter { width: 96px; flex: none; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 18px 0 14px; }
+  .tile { display: flex; flex-direction: column; background: var(--card); border-radius: 16px; padding: 16px; }
+  .tile .label { color: var(--dim); font-size: 14px; line-height: 19px; padding-bottom: 14px; }
+  .tile .num { margin-top: auto; font-size: 44px; font-weight: 800; line-height: 48px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .tile .meter { margin: 12px 0 4px; }
+  .tile[title], td[title] { cursor: help; }
+  .tile .of { color: var(--dim); font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; }
+
+  .scroll { overflow-x: auto; background: var(--card); border-radius: 16px; }
   table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 19px; }
-  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: rgba(255, 255, 255, .03); }
   th { color: var(--dim); font-weight: 400; font-size: 13px; white-space: nowrap; }
   td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  td .of { color: var(--dim); font-size: 12px; }
+  td:first-child { font-weight: 700; }
+  td .of { color: var(--dim); font-size: 12px; font-weight: 400; }
+  td:first-child .of { white-space: normal; }
+  .rate { display: flex; align-items: center; justify-content: flex-end; gap: 10px; font-weight: 700; }
+  .rate .meter { width: 88px; flex: none; }
   tr.weak td { color: var(--dim); }
-  ul { margin: 6px 0; padding-left: 20px; font-size: 14px; line-height: 20px; color: var(--dim); }
-  li { margin: 4px 0; }
-  details { margin: 12px 0; }
-  summary { cursor: pointer; color: var(--blue); font-size: 14px; }
-  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
-  pre { background: var(--card); border-radius: 12px; padding: 12px 14px; overflow-x: auto; line-height: 19px; }
-  .none { background: var(--card); border-radius: 16px; padding: 14px 16px; color: var(--amber); font-size: 15px; }
-  .up { color: var(--green); } .down { color: var(--red); }
+  .tag { display: inline-block; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--dim); }
+  .tag.bot { color: var(--blue); border-color: rgba(29, 155, 240, .5); }
+  td.high { color: var(--red); font-weight: 700; } td.mid { color: var(--amber); font-weight: 700; }
+
+  .caveats { margin: 22px 0 0; padding: 14px 16px; border-left: 3px solid var(--amber); border-radius: 0 16px 16px 0; background: var(--card); }
+  .caveats h3 { margin: 0 0 6px; }
+  ul { margin: 0; padding-left: 20px; font-size: 14px; line-height: 21px; color: var(--dim); max-width: 78ch; }
+  li { margin: 5px 0; }
+  .plain { margin-top: 12px; }
+
+  details { margin: 16px 0 0; }
+  summary { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); cursor: pointer; color: var(--blue); font-size: 14px; font-weight: 700; list-style: none; transition: background .15s; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "+"; margin-right: 8px; font-weight: 400; }
+  details[open] summary::before { content: "−"; }
+  summary:hover { background: rgba(29, 155, 240, .1); }
+  details .scroll { margin-top: 12px; }
+
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+  pre { background: var(--card); border-radius: 16px; padding: 14px 16px; overflow-x: auto; line-height: 21px; margin: 14px 0; }
+  .none { margin-top: 14px; background: var(--card); border-radius: 16px; padding: 14px 16px; color: var(--amber); font-size: 15px; line-height: 21px; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  @media (max-width: 1280px) { .rail { width: 76px; } .brand span, .nav span { display: none; } .cta { display: none; } }
+  @media (max-width: 690px) {
+    .rail { display: none; }
+    main { border: 0; }
+    .top { padding: 8px 16px; gap: 12px; }
+    .top b { display: none; }
+    .back { display: block; }
+    .jump a { padding: 12px 13px; }
+    .intro, .sec { padding-left: 16px; padding-right: 16px; }
+    h1 { font-size: 28px; line-height: 34px; }
+    .tile .num { font-size: 38px; line-height: 44px; }
+    summary { min-height: 44px; }
+    table { min-width: 600px; }  /* scroll sideways, never squeeze the numbers */
+  }
 </style>
 </head>
 <body>
-<main>
-  <div class="top"><b>Accuracy</b><a href="./">← Back to the analyser</a></div>
-  <h1>How often is this tool wrong?</h1>
-  <p>Every number on this page is written by a script in the project's <code>eval/</code> folder and read from <code>eval/results.json</code>. Nothing is typed in by hand. Each one comes with its sample size and a 95% range, because the samples are small and the true rate could sit anywhere in that range.</p>
-  <p class="meta" id="stamp">Loading results…</p>
-  <div id="out"></div>
+<div class="shell">
+  <nav class="rail" aria-label="Main">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h3M10 9v14M16 4v24M22 11v10M28 16h-3"/></svg>
+      <span>Decode the Noise</span>
+    </div>
+    <a class="nav" href="./">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6 2 11h2.500v9.500h6V15h3v5.500h6V11H22L12 2.600z"/></svg>
+      <span>Analyze</span>
+    </a>
+    <a class="nav" href="./#how">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm-1 6h2v7h-2v-7zm0-3h2v2h-2V7z"/></svg>
+      <span>How it works</span>
+    </a>
+    <a class="nav active" href="metrics.html" aria-current="page">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.500 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+      <span>Accuracy</span>
+    </a>
+    <a class="cta" href="./">New analysis</a>
+  </nav>
 
-  <h2>Not measured</h2>
-  <ul>
-    <li>Whether Bluesky search finds the copies of a post in the first place. Only the comparison of two texts is tested.</li>
-    <li>Technique detection on video transcripts and on thread replies. Speech is looser than writing, so expect more false alarms there.</li>
-    <li>Accounts built to look human. Every bot in the sample says openly that it is one.</li>
-    <li>A real coordinated campaign. The copy test uses copies made by a script.</li>
-  </ul>
+  <main>
+    <div class="top">
+      <b>Accuracy</b>
+      <a class="back" href="./" aria-label="Back to the analyser">←</a>
+      <nav class="jump" aria-label="On this page">
+        <a href="#techniques">Techniques</a>
+        <a href="#bots">Bot-likeness</a>
+        <a href="#copies">Copies</a>
+        <a href="#gaps">Not measured</a>
+        <a href="#run">Run it</a>
+      </nav>
+    </div>
 
-  <h2>Run it yourself</h2>
-  <pre>python -m eval.run_similar                               # copy detection, no network
+    <header class="intro">
+      <h1>How often is this tool wrong?</h1>
+      <p class="lead">Every number on this page is written by a script in the project's <code>eval/</code> folder and read from <code>eval/results.json</code>. Nothing is typed in by hand.</p>
+      <p class="dim">The samples are small, so the true rate could sit anywhere in a figure's 95% range. Each section states its sample size; hover a figure for its exact count and range.</p>
+      <div class="legend">
+        <div class="meter" aria-hidden="true"><span class="band" style="left:46%;width:32%"></span><span class="tick" style="left:63%"></span></div>
+        <span>On every bar the white tick is the measured rate and the blue band is its 95% range, on a scale from 0 to 100%.</span>
+      </div>
+      <p class="meta" id="stamp" role="status">Loading results…</p>
+    </header>
+
+    <div id="out"></div>
+
+    <section class="sec" id="gaps">
+      <h2>Not measured</h2>
+      <ul class="plain">
+        <li>Whether Bluesky search finds the copies of a post in the first place. Only the comparison of two texts is tested.</li>
+        <li>Technique detection on video transcripts and on thread replies. Speech is looser than writing, so expect more false alarms there.</li>
+        <li>Accounts built to look human. Every bot in the sample says openly that it is one.</li>
+        <li>A real coordinated campaign. The copy test uses copies made by a script.</li>
+      </ul>
+    </section>
+
+    <section class="sec" id="run">
+      <h2>Run it yourself</h2>
+      <pre>python -m eval.run_similar                               # copy detection, no network
 python -m eval.run_bots --refresh                        # bot-likeness, reads 120 public accounts
 python -m eval.run_techniques --api https://davincicommit.tech   # techniques, spends AI credits</pre>
-  <p class="meta">The scripts, the labelled accounts, the test texts and every single answer the detector gave (<code>eval/predictions.json</code>) are in the repository.</p>
-</main>
+      <p class="meta">The scripts, the labelled accounts, the test texts and every single answer the detector gave (<code>eval/predictions.json</code>) are in the repository.</p>
+    </section>
+  </main>
+</div>
 <script src="metrics.js"></script>
 </body>
 </html>

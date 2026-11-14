@@ -20,7 +20,7 @@ def test_wilson_interval():
 
 def test_results_file_is_served_and_complete():
     d = c.get("/eval/results.json").json()
-    for section in ("bots", "bots_before", "similar"):
+    for section in ("bots", "bots_before", "similar", "techniques"):
         assert d[section]["run_at"] and d[section]["what"], section
     for part in ("holdout", "tune"):
         assert d["bots"][part]["n_bots"] == 30 and d["bots"][part]["n_humans"] == 30
