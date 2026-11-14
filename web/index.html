@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Decode the Noise</title>
+<textarea id="in" rows="6" cols="60" placeholder="Paste a Bluesky post URL or text"></textarea><br>
+<button id="go">Analyze</button>
+<pre id="out"></pre>
+<script>
+document.getElementById("go").onclick = async () => {
+  const v = document.getElementById("in").value.trim();
+  const body = /^https?:\/\//.test(v) ? {url: v} : {text: v};
+  const r = await fetch("/api/analyze", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  document.getElementById("out").textContent = JSON.stringify(await r.json(), null, 2);
+};
+</script>

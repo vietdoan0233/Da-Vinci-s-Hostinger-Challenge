@@ -143,12 +143,12 @@ with two people. Hour figures are guesses.
 
 ### Feature 0: skeleton live on Hostinger (about 1.5 h)
 
-- [ ] 0.1 `git init` in this folder (it currently sits inside a repo rooted at the home directory). Move `bot_score.py` to `app/`. Add `.gitignore` with `.env`, `*.db`, `__pycache__`.
-- [ ] 0.2 `requirements.txt`: fastapi, uvicorn, httpx, openai, pytest. Nothing else.
-- [ ] 0.3 `app/main.py`: `GET /api/health`, and `POST /api/analyze` returning the contract above with every section `null`. Validate input: exactly one of `url` or `text`, text at most 5000 characters.
-- [ ] 0.4 `web/index.html`: text box, Analyze button, raw JSON printed below. Served by FastAPI.
-- [ ] 0.5 `tests/test_api.py`: health returns ok; analyze rejects empty and oversized input.
-- [ ] 0.6 `Dockerfile`, `compose.yml` (app + Caddy), `Caddyfile` with the team domain, `.env.example`.
+- [x] 0.1 Repo already initialised here. Move `bot_score.py` to `app/`. Add `.gitignore` with `.env`, `*.db`, `__pycache__`.
+- [x] 0.2 `requirements.txt`: fastapi, uvicorn, httpx, openai, pytest. Nothing else.
+- [x] 0.3 `app/main.py`: `GET /api/health`, and `POST /api/analyze` returning the contract above with every section `null`. Validate input: exactly one of `url` or `text`, text at most 5000 characters.
+- [x] 0.4 `web/index.html`: text box, Analyze button, raw JSON printed below. Served by FastAPI.
+- [x] 0.5 `tests/test_api.py`: health returns ok; analyze rejects empty and oversized input.
+- [x] 0.6 `Dockerfile`, `compose.yml` (app + Caddy), `Caddyfile` with the team domain, `.env.example`.
 - [ ] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
 - [ ] Done when: `https://<domain>/api/health` returns ok from a phone on mobile data.
 
