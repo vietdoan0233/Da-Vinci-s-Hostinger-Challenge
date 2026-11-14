@@ -89,9 +89,10 @@
       "Detector: " + d.detector.where + (d.detector.server_version ? ", version " + d.detector.server_version : "") + ", prompt version " + d.detector.prompt_version + ". Model: " + d.detector.model + ".");
     add(out, "h3", null, "By technique");
     var body = table(out, ["Technique", "Labelled examples", "Precision", "Recall"]);
-    d.per_technique.forEach(function (r) {
-      var tr = add(body, "tr", r.reportable ? null : "weak");
-      add(tr, "td", null, r.technique + (r.reportable ? "" : " (too few examples to rely on)"));
+    // techniques with too few labelled examples stay in results.json but are not drawn
+    d.per_technique.filter(function (r) { return r.reportable; }).forEach(function (r) {
+      var tr = add(body, "tr");
+      add(tr, "td", null, r.technique);
       add(tr, "td", "n", String(r.labelled));
       tr.appendChild(cell(r.precision)); tr.appendChild(cell(r.recall));
     });
