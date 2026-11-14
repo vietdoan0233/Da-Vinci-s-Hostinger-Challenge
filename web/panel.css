@@ -126,3 +126,10 @@ img.avatar { object-fit: cover; background: var(--card); }
 .quoted { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
 .quoted-by { display: block; margin-bottom: 4px; color: var(--dim); font-size: 13px; text-decoration: none; }
 a.quoted-by:hover { text-decoration: underline; }
+
+/* ---- video transcript findings ---- */
+.chunk { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.chunk .post-text { font-size: 15px; line-height: 21px; margin: 0; color: var(--dim); }
+.chunk .post-text mark.hl { color: var(--text); }
+.pill.time { min-width: 58px; padding: 4px 10px; color: var(--blue); border-color: var(--line); cursor: pointer; }
+.pill.time:hover { background: rgba(29, 155, 240, .1); opacity: 1; }

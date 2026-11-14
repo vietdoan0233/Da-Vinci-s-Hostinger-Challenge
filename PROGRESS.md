@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 72 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 103 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -17,6 +17,8 @@ As of 2026-11-14. Tests: 72 pass. The skeleton is live at https://davincicommit.
 | 5.1-5.7 | Measurement: `eval/` scripts, labelled data and an accuracy page (`/metrics.html`). Bot-likeness on a hold-out of 30 declared bots and 30 verified people: 20 of 30 bots flagged, 8 of 30 from behaviour alone (0 of 30 before the posting-schedule rule), 0 of 30 people flagged. Copy detection: survives hashtags, links, caps; one changed word drops 28% of copies below the 0.7 line. Technique numbers: full run on the live site in progress. |
 | 7.1-7.7, 7.9 | Live sources (Oxylabs Web API): the post's main claim is searched from the US, Finland and Germany, up to four pages are read in full, and each point shown quotes a page that was read. Tested with Oxylabs and the AI faked; no real Oxylabs call has been checked yet (7.8). |
 | Media | A post's images and quoted post are sent to the AI with the text; techniques found there are marked as from the image or the quoted post. |
+| 10.1-10.4 | YouTube: a video link is read through its captions, a minute at a time, and each flagged stretch is listed with its time. Checked against real YouTube from a laptop (transcript in 1.5 s) and in the page with faked AI answers. Not checked from the VPS. |
+| 6.1-6.7 | Extension (`extension/`): a Chrome side panel that takes the tab's link and calls the API. Bluesky posts, YouTube videos, and right-click on selected text anywhere. Checked as a page with the browser APIs stubbed; not yet loaded in a real Chrome. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 

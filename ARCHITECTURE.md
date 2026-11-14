@@ -51,6 +51,7 @@ app/main.py         routes, rate limit, static files
 app/llm.py          AI Router client
 app/techniques.py   prompt, technique list, output validation
 app/bluesky.py      URL -> post, author, author's recent posts, search
+app/youtube.py      video link -> timed transcript chunks
 app/bot_score.py    moved from the repo root in step 0.1
 app/similar.py      candidate search + overlap ranking
 app/coverage.py     claim -> Oxylabs search + scrape -> quoted points from live pages
@@ -58,6 +59,7 @@ app/cache.py        SQLite get/set
 web/index.html      paste box + panel
 web/panel.js        renders an analysis into a DOM node (shared with extension)
 web/panel.css       styles for the panel (shared with extension)
+web/app.js          page logic: input, API calls, thread and video loading (shared with extension)
 web/metrics.html    precision and false-positive numbers
 extension/          manifest.json, content.js, copy of panel.js
 eval/               labelled data, run scripts, results.json
@@ -113,6 +115,18 @@ quoted post could not be read, and always for a video, since only its cover fram
 ```
 
 `techniques` is `null` when the reply was not scanned and a list when it was. `next` is `null` on the last page.
+
+`GET /api/video?url=<YouTube link>&offset=0` returns one page of six transcript chunks:
+
+```json
+{
+  "video": {"id": "", "url": "", "title": "", "channel": "", "truncated": false},
+  "chunks": [{"t": 0.0, "text": "", "techniques": [{"name": "", "quote": "", "why": ""}], "errors": {}}],
+  "total": 0, "next": 6, "errors": {}
+}
+```
+
+`t` is the chunk's start in seconds. A chunk whose check failed has `techniques: null` and a reason in its `errors`.
 
 ## Rules that hold across features
 
@@ -240,16 +254,28 @@ sample size and a 95% Wilson interval.
 - [ ] 5.8 Finish the full technique run on the live site and commit its numbers (in progress when this was written).
 - [ ] Done when: the metrics page is live and its numbers match a fresh run of the scripts.
 
-### Feature 6: the panel next to the post (about 2 h)
+### Feature 6: the panel next to the post (browser extension)
 
-- [ ] 6.1 `extension/manifest.json`: MV3, content script on `https://bsky.app/*`, host permission for the API domain only.
-- [ ] 6.2 `content.js`: add an "Analyse" button to each post, including ones loaded while scrolling (one `MutationObserver`).
-- [ ] 6.3 On click, work out the post URL, call `/api/analyze`, show a loading state.
-- [ ] 6.4 Open a panel beside the post in a shadow root so site styles do not leak, and render with the same `panel.js`.
-- [ ] 6.5 Enable CORS on the API for the extension. Close on Escape and on a close button; the button and panel are reachable by keyboard.
-- [ ] 6.6 Error and rate-limit states shown in the panel, not the console.
-- [ ] 6.7 `extension/README.md`: three lines on loading it unpacked.
-- [ ] Done when: clicking Analyse on a post at bsky.app shows the same result as the live web page.
+Built as a Chrome side panel that takes the tab's link and calls the API, instead of a button injected
+into bsky.app: it needs no per-site page code, so the same panel also serves YouTube and selected text.
+
+- [x] 6.1 `extension/manifest.json`: MV3, side panel, host permissions for the API domain and youtube.com only.
+- [x] 6.2 Toolbar button opens the panel beside the page. Opening it analyses the tab once; after that the reader presses "Analyse this tab". Nothing is sent while just browsing.
+- [x] 6.3 `sidepanel.js` reads the active tab's URL and hands it to the shared `app.js`, which calls `/api/analyze`, `/api/replies` or `/api/video`.
+- [x] 6.4 Renders with the same `panel.js`, `panel.css` and `app.js` as the website (copies; a test keeps them identical).
+- [x] 6.5 CORS on the API for extension origins. Any site: select text, right-click, "Decode this text".
+- [x] 6.6 Error and rate-limit states shown in the panel, not the console.
+- [x] 6.7 `extension/README.md`: three lines on loading it unpacked.
+- [ ] Done when: with the extension loaded in Chrome, a post at bsky.app shows the same result as the live web page. (Not yet loaded in a real Chrome: checked as a page with the browser APIs stubbed.)
+
+### Feature 10: YouTube videos
+
+- [x] 10.1 `app/youtube.py`: video link -> captions -> chunks of about a minute with start times. Uses `youtube-transcript-api` (new dependency). Cached 10 minutes. Videos over about 40 minutes are cut off and say so.
+- [x] 10.2 `GET /api/video?url=&offset=`: six chunks per request, each checked for techniques in parallel. Own rate limit (30 per minute per IP).
+- [x] 10.3 Page: a YouTube link shows the video's title and channel, a running count, and each flagged stretch with its time, quotes highlighted and reasons. The time opens that moment; in the extension it moves the video in the tab.
+- [x] 10.4 Tests: link parsing, chunking, paging, no captions, AI failure.
+- [ ] 10.5 Check from the VPS that YouTube answers transcript requests. It works from a home connection; cloud servers are sometimes refused. If refused, the extension must read the captions in the reader's browser and send them.
+- [ ] Done when: a real video on the live site lists flagged moments, and a clicked time opens that moment.
 
 ### Feature 9: the whole thread
 

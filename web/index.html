@@ -105,7 +105,7 @@
       </div>
       <div class="compose-body">
         <label for="in" hidden>Post link or text</label>
-        <textarea id="in" rows="2" placeholder="Paste a Bluesky post link or the text of a post"></textarea>
+        <textarea id="in" rows="2" placeholder="Paste a Bluesky post link, a YouTube video link, or the text of a post"></textarea>
         <div class="compose-row">
           <button class="chip" type="button" data-ex="Wake up people, the mainstream media is hiding the truth about the water supply from you. Real patriots already know who is behind it!">Loaded example</button>
           <button class="chip" type="button" data-ex="Light rain in Helsinki this afternoon, clearing by evening. Highs around 4C.">Neutral example</button>
@@ -142,6 +142,7 @@
         <li><b>Bot-likeness.</b> <span>Posting rhythm, profile and text reuse give a suspicion score with reasons. It is not a probability.</span></li>
         <li><b>Copies.</b> <span>We search Bluesky for other accounts posting the same words. Matching text shows coordination, not automation.</span></li>
         <li><b>Live sources.</b> <span>We search the web for the post's main claim and read the pages in full. Each point quotes its source. It is a sample of the web, not a verdict.</span></li>
+        <li><b>Videos.</b> <span>For a YouTube link we read the captions and check them a minute at a time. Each finding links to its moment in the video.</span></li>
         <li><b>Thread.</b> <span>Every reply gets its own bot-likeness score. Replies scoring above 0.4 are also checked for techniques. Click a reply to analyse it in full.</span></li>
       </ol>
     </section>
@@ -150,148 +151,6 @@
 </div>
 
 <script src="panel.js"></script>
-<script>
-(function () {
-  "use strict";
-  var MAX = 5000;
-  var $ = function (id) { return document.getElementById(id); };
-  var input = $("in"), go = $("go"), status = $("status"), count = $("count");
-  var isUrl = function (v) { return /^https?:\/\/\S+$/.test(v); };
-
-  function refresh() {
-    var v = input.value.trim();
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 240) + "px";
-    var over = !isUrl(v) && v.length > MAX;
-    go.disabled = !v || over;
-    count.textContent = v.length > MAX * 0.8 && !isUrl(v) ? v.length + " / " + MAX : "";
-    count.classList.toggle("over", over);
-  }
-
-  function say(text, cls, spin) {
-    status.textContent = "";
-    status.className = "status" + (cls ? " " + cls : "");
-    if (spin) { var s = document.createElement("div"); s.className = "spinner"; status.appendChild(s); }
-    status.appendChild(document.createTextNode(text));
-    status.hidden = false;
-  }
-
-  /* ---- thread: ten replies at a time, more as the reader scrolls ---- */
-  var thread = { url: null, next: null, busy: false, run: 0 };
-  var more = $("more");
-
-  function moreSay(text, spin) {
-    more.textContent = "";
-    if (spin) { var s = document.createElement("div"); s.className = "spinner"; more.appendChild(s); }
-    more.appendChild(document.createTextNode(text));
-  }
-
-  async function loadReplies() {
-    if (thread.busy || thread.next == null) return;
-    thread.busy = true;
-    var mine = thread.run, offset = thread.next;
-    moreSay(offset ? "Loading more replies…" : "Reading the thread…", true);
-    try {
-      var r = await fetch("/api/replies?url=" + encodeURIComponent(thread.url) + "&offset=" + offset);
-      var data = await r.json().catch(function () { return null; });
-      if (mine !== thread.run) return;  // the reader opened another post meanwhile
-      if (r.status === 429) { thread.retry = true; return moreSay((data && data.detail) || "Too many requests. Scroll again in a minute."); }
-      if (!r.ok || !data || (data.errors && data.errors.replies)) { thread.next = null; return moreSay("Replies could not be loaded: " + ((data && data.errors && data.errors.replies) || "the server did not answer") + "."); }
-      $("thread-title").textContent = data.total ? "Replies (" + data.total + ")" : "Replies";
-      data.replies.forEach(function (item) { $("replies").appendChild(DecodePanel.renderReply(item, open)); });
-      thread.next = data.next;
-      moreSay(data.total === 0 ? "No replies to this post." : data.next == null ? "End of the thread." : "");
-    } catch (e) {
-      if (mine === thread.run) moreSay("Replies could not be loaded. Check your connection and scroll again.");
-    } finally {
-      if (mine === thread.run) thread.busy = false;
-      // the marker may still be on screen (short page): keep going until it is pushed below the fold
-      if (mine === thread.run && thread.next != null && !thread.retry && more.getBoundingClientRect().top < innerHeight + 200) loadReplies();
-      thread.retry = false;
-    }
-  }
-
-  function startThread(url) {
-    thread = { url: url, next: url ? 0 : null, busy: false, run: thread.run + 1 };
-    $("replies").textContent = "";
-    $("thread-title").textContent = "Replies";
-    $("thread").hidden = !url;
-    moreSay("");
-    if (url) loadReplies();
-  }
-
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      if (entries.some(function (e) { return e.isIntersecting; })) loadReplies();
-    }, { rootMargin: "300px" }).observe(more);
-  } else {
-    addEventListener("scroll", function () { if (more.getBoundingClientRect().top < innerHeight + 300) loadReplies(); });
-  }
-
-  // A clicked reply becomes the main post, with its own replies below it.
-  function open(url) {
-    input.value = url;
-    refresh();
-    window.scrollTo({ top: 0 });
-    run(true);
-  }
-
-  async function run(push) {
-    var v = input.value.trim();
-    if (!v || go.disabled) return;
-    var url = isUrl(v);
-    go.disabled = true;
-    startThread(null);
-    $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = true;
-    say(url ? "Reading the post and checking it…" : "Checking the text…", "", true);
-    try {
-      var r = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" },
-                                             body: JSON.stringify(url ? { url: v } : { text: v }) });
-      var data = await r.json().catch(function () { return null; });
-      if (r.status === 429) return say((data && data.detail) || "Too many requests. Try again in a minute.", "error");
-      if (!r.ok || !data) return say("That input could not be analysed. Paste a Bluesky post link or up to " + MAX + " characters of text.", "error");
-      if (url && !data.post) return say((data.errors && data.errors.post) || "The post could not be read.", "error");
-      DecodePanel.renderPost($("post"), data, v);
-      DecodePanel.renderTechniques($("tech"), data);
-      DecodePanel.renderBot($("bot"), data);
-      DecodePanel.renderSimilar($("sim"), data);
-      DecodePanel.renderCoverage($("cov"), data);
-      DecodePanel.linkHighlights($("post"), $("tech"));
-      status.hidden = true;
-      $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = false;
-      // a link is shareable; pasted text stays out of the address bar
-      var target = url ? "?q=" + encodeURIComponent(v) : location.pathname;
-      if (push && target !== location.search) history.pushState(null, "", target);
-      else history.replaceState(null, "", target);
-      if (url) startThread(v);
-    } catch (e) {
-      say("The server could not be reached. Check your connection and try again.", "error");
-    } finally {
-      refresh();
-    }
-  }
-
-  input.addEventListener("input", refresh);
-  input.addEventListener("keydown", function (e) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) run(true); });
-  $("form").addEventListener("submit", function (e) { e.preventDefault(); run(true); });
-  // Back and forward walk through the posts the reader opened.
-  addEventListener("popstate", function () {
-    var q = new URLSearchParams(location.search).get("q");
-    input.value = q || ""; refresh();
-    if (q) run(false); else location.reload();
-  });
-  // Back to the empty start page; when already there, put the cursor in the box.
-  $("new").addEventListener("click", function () {
-    if (location.search || !$("result").hidden) location.href = location.pathname;
-    else { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); }
-  });
-  document.querySelectorAll(".chip").forEach(function (c) {
-    c.addEventListener("click", function () { input.value = c.dataset.ex; refresh(); run(true); });
-  });
-
-  var q = new URLSearchParams(location.search).get("q");
-  if (q) { input.value = q; refresh(); run(); } else refresh();
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
