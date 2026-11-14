@@ -88,3 +88,17 @@ def test_extension_shares_the_web_files_and_is_well_formed():
         assert "innerHTML" not in f.read_text(), f.name
     html = (ROOT / "extension" / "sidepanel.html").read_text()
     assert "<script>" not in html  # extension pages may not run inline scripts
+
+
+def test_oxylabs_captions_prefer_the_uploaders_english_track(monkeypatch):
+    def track(word):
+        return {"events": [{"tStartMs": 1500, "segs": [{"utf8": word}, {"utf8": " there\n"}]}, {"tStartMs": 4000, "segs": [{"utf8": "\n"}]}, {"tStartMs": 5000}]}
+    answer = {"results": [{"json": {"uploader_provided": {"de": track("hallo"), "en": track("hello")}, "auto_generated": {"en": track("hullo")}}}]}
+    monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: answer)
+    assert youtube._oxylabs_segments(VID) == [{"t": 1.5, "text": "hello there"}]  # blank lines dropped
+    answer["results"][0]["json"] = {"auto_generated": {"fi": track("hei")}}
+    assert youtube._oxylabs_segments(VID)[0]["text"] == "hei there"  # no English: any language
+    for empty in ({"results": []}, {"results": [{"json": {}}]}, {"state": "done"}):
+        monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout, e=empty: e)
+        with pytest.raises(youtube.YouTubeError, match="no captions"):
+            youtube._oxylabs_segments(VID)

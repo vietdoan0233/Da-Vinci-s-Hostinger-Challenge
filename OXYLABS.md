@@ -6,6 +6,7 @@ Each analysed post gets a "What live sources say" card. The code is in `app/cove
 |---|---|---|
 | `POST /v1/search` with `location` | Three times per post (US, FI, DE), with a neutral query for the post's main factual claim | Find pages about the claim on the web as it is now, and show how the results differ by country. Up to four results per country are kept, one per site. |
 | `POST /v1/scrape` (`output: ["markdown"]`) | Once per kept result from the first country with results, in parallel | Read the whole page. The model sees page text only, never search snippets, so each point comes from what the page says. |
+| `POST /v1/scrape/media/youtube/subtitles` | Once per YouTube video, only when YouTube refuses the server's own caption request (it refuses the VPS) | Read the video's captions so the transcript can be checked. The code is in `app/youtube.py`. |
 
 What the user sees:
 
