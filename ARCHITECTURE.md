@@ -276,6 +276,8 @@ into bsky.app: it needs no per-site page code, so the same panel also serves You
 - [x] 10.3 Page: a YouTube link shows the video's title and channel, a running count, and each flagged stretch with its time, quotes highlighted and reasons. The time opens that moment; in the extension it moves the video in the tab.
 - [x] 10.4 Tests: link parsing, chunking, paging, no captions, AI failure.
 - [ ] 10.5 Check from the VPS that YouTube answers transcript requests. It works from a home connection; cloud servers are sometimes refused. If refused, the extension must read the captions in the reader's browser and send them.
+- [x] 10.6 The VPS is refused (seen 2026-11-14). When `OXYLABS_WEB_API_KEY` is set, captions are read first through the Oxylabs subtitles scraper (`POST /v1/scrape/media/youtube/subtitles`, English first, then any language, a person's captions before auto-generated ones), and YouTube is asked directly only if that gives nothing. If both fail the message names both. Tests with Oxylabs stubbed.
+- [ ] 10.7 Check 10.6 on the VPS with the real key. The docs show no sample reply, so the reader looks for a caption track at any depth in several formats (json3, WebVTT, XML, text rows); if a real reply reads as "found no captions", look at its shape in the server log.
 - [ ] Done when: a real video on the live site lists flagged moments, and a clicked time opens that moment.
 
 ### Feature 11: any web link
