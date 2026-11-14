@@ -96,7 +96,6 @@
       add(tr, "td", "n", String(r.labelled));
       tr.appendChild(cell(r.precision)); tr.appendChild(cell(r.recall));
     });
-    caveats(out, d.caveats);
   }
 
   function botRows(body, now, before, label) {
