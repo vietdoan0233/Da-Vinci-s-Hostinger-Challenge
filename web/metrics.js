@@ -20,7 +20,10 @@
   function val(r) { return r.n ? r.k / r.n : r.value; }
   function range(r) { return r.ci95 ? "95% range " + pct(r.ci95[0]) + "–" + pct(r.ci95[1]) : ""; }
 
-  // A rate as "63%" with "19 of 30 · 95% range 46–78%" under it.
+  // The count and range behind a figure, shown when the reader hovers it. The sample size itself
+  // is stated in each section's text, so the tables carry the main figure only.
+  function detail(r) { return r.k + " of " + r.n + (r.ci95 ? " · " + range(r) : ""); }
+
   // The rate on a 0 to 100% track: a tick at the measured value, a band over its 95% range.
   function meter(r) {
     var m = el("div", "meter");
@@ -40,7 +43,7 @@
     var rate = add(td, "div", "rate");
     rate.appendChild(meter(r));
     add(rate, "span", null, pct(val(r)));
-    td.appendChild(el("div", "of", r.k + " of " + r.n + " · " + range(r)));
+    td.title = detail(r);
     return td;
   }
 
@@ -48,7 +51,7 @@
     var t = add(parent, "div", "tile");
     add(t, "div", "label", label);
     add(t, "div", "num", plain != null ? plain : r ? pct(val(r)) : "–");
-    if (r) { t.appendChild(meter(r)); add(t, "div", "of", r.k + " of " + r.n + " · " + range(r)); }
+    if (r) { t.appendChild(meter(r)); t.title = detail(r); }
   }
 
   function table(parent, heads) {
@@ -102,7 +105,7 @@
       tr.appendChild(cell(r.recall));
       var b = before && before[i] ? before[i].recall : null;
       var td = add(tr, "td", "n", b ? pct(val(b)) : "–");
-      if (b) td.appendChild(el("div", "of", b.k + " of " + b.n));
+      if (b) td.title = detail(b);
       tr.appendChild(cell(r.false_positive_rate));
     });
   }
@@ -142,7 +145,7 @@
     var tiles = add(out, "div", "tiles");
     tile(tiles, "Unrelated texts wrongly called a copy", d.unrelated_pairs.called_a_copy);
     tile(tiles, "Unrelated texts wrongly shown as similar", d.unrelated_pairs.shown_as_similar);
-    add(out, "p", "meta", d.n_texts + " real texts of 12 words or more, each edited ten ways. \"Called a copy\" (70% overlap) is what counts against an author's bot-likeness; \"shown\" (30% overlap) is what appears in the list.");
+    add(out, "p", "meta", d.n_texts + " real texts of 12 words or more, each edited ten ways, and " + d.unrelated_pairs.called_a_copy.n + " pairs of unrelated texts. \"Called a copy\" (70% overlap) is what counts against an author's bot-likeness; \"shown\" (30% overlap) is what appears in the list.");
     var body = table(out, ["How the copy was changed", "Still called a copy", "Still shown as similar"]);
     d.edits.forEach(function (e) {
       var tr = add(body, "tr");

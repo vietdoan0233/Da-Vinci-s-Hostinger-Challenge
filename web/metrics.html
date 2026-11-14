@@ -61,7 +61,8 @@
   .tile { display: flex; flex-direction: column; background: var(--card); border-radius: 16px; padding: 16px; }
   .tile .label { color: var(--dim); font-size: 14px; line-height: 19px; padding-bottom: 14px; }
   .tile .num { margin-top: auto; font-size: 44px; font-weight: 800; line-height: 48px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .tile .meter { margin: 12px 0 10px; }
+  .tile .meter { margin: 12px 0 4px; }
+  .tile[title], td[title] { cursor: help; }
   .tile .of { color: var(--dim); font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; }
 
   .scroll { overflow-x: auto; background: var(--card); border-radius: 16px; }
@@ -155,7 +156,7 @@
     <header class="intro">
       <h1>How often is this tool wrong?</h1>
       <p class="lead">Every number on this page is written by a script in the project's <code>eval/</code> folder and read from <code>eval/results.json</code>. Nothing is typed in by hand.</p>
-      <p class="dim">Each rate comes with its sample size and a 95% range, because the samples are small and the true rate could sit anywhere in that range.</p>
+      <p class="dim">The samples are small, so the true rate could sit anywhere in a figure's 95% range. Each section states its sample size; hover a figure for its exact count and range.</p>
       <div class="legend">
         <div class="meter" aria-hidden="true"><span class="band" style="left:46%;width:32%"></span><span class="tick" style="left:63%"></span></div>
         <span>On every bar the white tick is the measured rate and the blue band is its 95% range, on a scale from 0 to 100%.</span>
