@@ -25,7 +25,7 @@ above front-end polish.
 
 Not verified yet, check in the step that needs it:
 - The AI Router base URL and model names (step 1.1).
-- Whether Bluesky `app.bsky.feed.searchPosts` works without login from the VPS (step 4.1). If not, log in with an app password.
+- Whether Bluesky `app.bsky.feed.searchPosts` works without login from the VPS (step 4.1). It works on `api.bsky.app` from a home connection (checked 2026-11-14); `public.api.bsky.app` returns 403 for search. Recheck from the VPS; if refused, log in with an app password.
 - Whether the SemEval corpus can be downloaded without registration (step 5.1).
 
 ## Components
@@ -188,12 +188,12 @@ with two people. Hour figures are guesses.
 
 ### Feature 4: similar posts and coordination (about 1.5 h)
 
-- [ ] 4.1 `bluesky.search(query) -> [{author, text, url, ts}]`. Check it works without login from the VPS; otherwise add app-password login from `.env`.
-- [ ] 4.2 `app/similar.py`: build the query from the post's 5 to 8 rarest words, fetch up to 50 results, drop the post itself.
-- [ ] 4.3 Rank by `bot_score.similarity`, keep overlap of 0.3 or more, top 10.
-- [ ] 4.4 Fill `similar`. Pass the same list as `others` into `bot_score.score` so the text-reuse category goes live.
-- [ ] 4.5 Panel: list with author, overlap percent, time, link. Header line such as "7 accounts posted near-identical text, 5 within 10 minutes". Label it coordination, not automation: people share copypasta too.
-- [ ] 4.6 Tests: query builder on a fixture, ranking order, self-match removed.
+- [x] 4.1 `bluesky.search(query) -> [{author, text, url, ts}]` on `api.bsky.app`, limited to 3 days either side of the post. Works without login locally; recheck from the VPS, otherwise add app-password login from `.env`.
+- [x] 4.2 `app/similar.py`: up to 3 queries of 3 rare words each, 50 results per query, merged. Bluesky search requires every word, so one 5 to 8 word query missed copies that changed a single word. Drop the post itself and the post's own author.
+- [x] 4.3 Rank by `bot_score.similarity`, keep overlap of 0.3 or more, one item per account, top 10.
+- [ ] 4.4 Fill `similar`. Pass `similar.as_others(items)` (not the raw list: the contract says `author`, `bot_score` reads `account`) as `others` into `bot_score.score` so the text-reuse category goes live. `similar` is filled for pasted text; link input and the `bot_score` hand-off wait for features 2 and 3.
+- [ ] 4.5 Panel: list with author, overlap percent, time, link. Header line from `similar.summary()`, such as "7 accounts posted near-identical text, 5 within 10 minutes". Label it coordination, not automation: people share copypasta too.
+- [x] 4.6 Tests: query builder on a fixture, ranking order, self-match removed (`tests/test_similar.py`). Known weaknesses for the metrics page are in the `app/similar.py` header.
 - [ ] Done when: a known copypasta post shows its copies on the live site and an original post shows none.
 
 ### Feature 5: measured precision and false positives (about 2 h)

@@ -1,8 +1,11 @@
 import os
 
+import httpx
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
+
+from app import similar
 
 app = FastAPI()
 
@@ -25,8 +28,18 @@ def health():
 
 @app.post("/api/analyze")
 def analyze(body: AnalyzeIn):
-    return {"post": None, "techniques": None, "bot": None, "similar": None,
-            "coverage": None, "sides": None, "errors": {}}
+    out = {"post": None, "techniques": None, "bot": None, "similar": None,
+           "coverage": None, "sides": None, "errors": {}}
+    if body.text is None:
+        out["errors"]["similar"] = "post links are not read yet (feature 2); paste the post text instead"
+        return out
+    try:
+        out["similar"] = similar.find({"text": body.text})
+    except similar.NotEnoughData as e:
+        out["errors"]["similar"] = f"not enough data: {e}"
+    except httpx.HTTPError:
+        out["errors"]["similar"] = "Bluesky search is unavailable right now"
+    return out
 
 
 # Last: a "/" mount would shadow routes registered after it.

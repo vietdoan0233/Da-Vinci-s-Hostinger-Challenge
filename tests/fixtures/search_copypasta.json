@@ -1,0 +1,20 @@
+{
+  "posts": [
+    {"uri": "at://did:plc:orig/app.bsky.feed.post/3orig", "author": {"did": "did:plc:orig", "handle": "original.bsky.social"},
+     "record": {"text": "Wake up people, the mainstream media is hiding the truth about the water supply from you", "createdAt": "2026-11-14T12:00:00Z"}},
+    {"uri": "at://did:plc:c1/app.bsky.feed.post/3c1", "author": {"did": "did:plc:c1", "handle": "copy1.bsky.social"},
+     "record": {"text": "Wake up people, the mainstream media is hiding the truth about the water supply from you #truth", "createdAt": "2026-11-14T12:01:00Z"}},
+    {"uri": "at://did:plc:c2/app.bsky.feed.post/3c2", "author": {"did": "did:plc:c2", "handle": "copy2.bsky.social"},
+     "record": {"text": "WAKE UP PEOPLE!!! The mainstream media is hiding the truth about the water supply from you https://example.com", "createdAt": "2026-11-14T12:03:00Z"}},
+    {"uri": "at://did:plc:c3/app.bsky.feed.post/3c3", "author": {"did": "did:plc:c3", "handle": "copy3.bsky.social"},
+     "record": {"text": "wake up people the mainstream media is hiding the truth about the water supply from you @someone", "createdAt": "2026-11-14T12:05:00Z"}},
+    {"uri": "at://did:plc:late/app.bsky.feed.post/3late", "author": {"did": "did:plc:late", "handle": "late.bsky.social"},
+     "record": {"text": "Wake up people, the mainstream media is hiding the truth about the water supply from you", "createdAt": "2026-11-15T09:00:00Z"}},
+    {"uri": "at://did:plc:part/app.bsky.feed.post/3part", "author": {"did": "did:plc:part", "handle": "partial.bsky.social"},
+     "record": {"text": "Honestly I doubt the mainstream media is hiding the truth about the water supply, here is the city report", "createdAt": "2026-11-14T13:00:00Z"}},
+    {"uri": "at://did:plc:other/app.bsky.feed.post/3other", "author": {"did": "did:plc:other", "handle": "other.bsky.social"},
+     "record": {"text": "The city water supply report came out today and the mainstream papers covered it well", "createdAt": "2026-11-14T12:02:00Z"}}
+  ],
+  "cursor": "7",
+  "hitsTotal": 7
+}
