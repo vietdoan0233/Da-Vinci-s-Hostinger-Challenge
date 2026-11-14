@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 50 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 67 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -13,6 +13,7 @@ As of 2026-11-14. Tests: 50 pass. The skeleton is live at https://davincicommit.
 | 3.1-3.5, 4.4 | Bot-likeness: a post link fills `bot` from the author's profile, post times and the copies found. |
 | 1.8, 2.7, 3.3, 3.4, 4.5 | Panel: `web/panel.js` + `web/panel.css` render the post with quotes highlighted, techniques, bot-likeness and copies. `?q=<post link>` opens a result directly. Checked locally with faked data, desktop and narrow widths. |
 | 9.1-9.6 | Thread: a post link also loads its replies ten at a time as the reader scrolls. Each reply shows its own bot-likeness score; replies above 0.4 are also checked for techniques. Clicking a reply opens it as the main post. Checked against the live Bluesky API on a 182-reply post (2-3 s per page) and in the page with faked data. |
+| Detector order | Techniques come from the 20-technique prompt through the Hostinger AI Router. The six-technique Anthropic detector (`app/anthropic_detect.py`) is the backup when the router is unset or fails. Neither has been run on the live URL. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 

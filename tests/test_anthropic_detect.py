@@ -131,30 +131,54 @@ def test_find_returns_contract_shape(monkeypatch):
         {"name": "Doubt", "quote": "so quiet about the contracts", "why": "insinuating question"}]
 
 
-def test_techniques_prefers_anthropic_when_key_set(monkeypatch):
+def _raise(exc):
+    return lambda *a: (_ for _ in ()).throw(exc)
+
+
+def test_techniques_uses_router_first_even_with_anthropic_key(monkeypatch):
     from app import techniques
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-real-key")
+    monkeypatch.setattr("app.anthropic_detect.find", _raise(AssertionError("backup must not be called")))
+    monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
+        {"name": "Slogans", "quote": "so quiet", "why": "w"}]})
+    assert techniques.find("Why so quiet about it?")[0]["name"] == "Slogans"  # one of the 20, not of the six
+
+
+def test_techniques_falls_back_to_anthropic_when_router_not_configured(monkeypatch):
+    from app import techniques, llm as router
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-real-key")
+    monkeypatch.setattr("app.llm.ask_json", _raise(router.NotConfigured("x")))
     monkeypatch.setattr("app.anthropic_detect.find", lambda t: [{"name": "Doubt", "quote": "x", "why": "y"}])
-    monkeypatch.setattr("app.llm.ask_json", lambda s, u: (_ for _ in ()).throw(AssertionError("router must not be called")))
     assert techniques.find("some post text here")[0]["name"] == "Doubt"
 
 
-def test_techniques_falls_back_to_router_on_anthropic_failure(monkeypatch):
+def test_techniques_falls_back_to_anthropic_when_router_fails(monkeypatch):
     from app import techniques
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-real-key")
-    monkeypatch.setattr("app.anthropic_detect.find", lambda t: (_ for _ in ()).throw(LLMError("API status 529")))
-    monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
-        {"name": "Doubt", "quote": "so quiet", "why": "w"}]})
-    assert techniques.find("Why so quiet about it?")[0]["name"] == "Doubt"
+    monkeypatch.setattr("app.llm.ask_json", _raise(TimeoutError("slow")))
+    monkeypatch.setattr("app.anthropic_detect.find", lambda t: [{"name": "Doubt", "quote": "x", "why": "y"}])
+    assert techniques.find("another post text here")[0]["name"] == "Doubt"
+
+
+def test_techniques_without_anthropic_key_never_calls_backup(monkeypatch):
+    from app import techniques, llm as router
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setattr("app.llm.ask_json", _raise(router.NotConfigured("x")))
+    monkeypatch.setattr("app.anthropic_detect.find", _raise(AssertionError("backup must not be called")))
+    with pytest.raises(router.NotConfigured):
+        techniques.find("a post nobody can analyse")
 
 
 def test_techniques_reports_failure_not_clean_when_nothing_available(monkeypatch):
     from app import techniques, llm as router
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-real-key")
-    monkeypatch.setattr("app.anthropic_detect.find", lambda t: (_ for _ in ()).throw(LLMError("API status 529")))
-    monkeypatch.setattr("app.llm.ask_json", lambda s, u: (_ for _ in ()).throw(router.NotConfigured("x")))
+    monkeypatch.setattr("app.anthropic_detect.find", _raise(LLMError("API status 529")))
+    monkeypatch.setattr("app.llm.ask_json", _raise(router.NotConfigured("x")))
     with pytest.raises(LLMError):
         techniques.find("A post that cannot be analysed anywhere.")
+    monkeypatch.setattr("app.llm.ask_json", _raise(TimeoutError("slow")))
+    with pytest.raises(TimeoutError):
+        techniques.find("Another post that cannot be analysed anywhere.")
 
 
 def test_api_analyze_end_to_end_with_anthropic_path(monkeypatch):
@@ -162,6 +186,7 @@ def test_api_analyze_end_to_end_with_anthropic_path(monkeypatch):
     from app import main
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-not-a-real-key")
     monkeypatch.setattr("app.anthropic_detect.find", lambda t: [{"name": "Smears", "quote": "liar", "why": "attacks character"}])
+    monkeypatch.setattr("app.llm.ask_json", _raise(__import__("app.llm", fromlist=["x"]).NotConfigured("x")))  # router not set up
     r = TestClient(main.app).post("/api/analyze", json={"text": "He is a liar and everyone knows it, sadly enough."})
     assert r.status_code == 200
     j = r.json()
