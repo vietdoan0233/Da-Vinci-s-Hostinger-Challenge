@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 21 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 39 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -18,7 +18,8 @@ Checked against the live Bluesky API: post text, author profile, 38 post times, 
 - **2.7** Author and time in the panel waits for `panel.js` (step 1.8).
 - **4.4** `similar` is filled, but the copies are not yet passed into `bot_score.score` (`similar.as_others`). That comes with Feature 3.
 - **4.5** The similar-posts panel waits for `panel.js`.
-- **Feature 1** (techniques, LLM), **Feature 3** (bot-likeness wiring), Features 5-8: not started. Feature 3 is unblocked: `get_author`, `get_author_timestamps` and `similar.as_others` all exist.
+- **Feature 1** (techniques): 1.2-1.7 and 1.9 merged; the code paths are tested with the AI faked. **1.1 still needs a real call**: set `AI_ROUTER_BASE_URL`, `AI_ROUTER_API_KEY` and `AI_ROUTER_MODEL` on the VPS and check that one post returns techniques. 1.8 waits for `panel.js`. Technique list is now SemEval-2021 Task 6 (20 techniques), not the 2020 list.
+- **Feature 3** (bot-likeness wiring), Features 5-8: not started. Feature 3 is unblocked: `get_author`, `get_author_timestamps` and `similar.as_others` all exist.
 
 ## Deploy notes
 

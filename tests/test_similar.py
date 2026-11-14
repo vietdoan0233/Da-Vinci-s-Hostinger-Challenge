@@ -6,6 +6,7 @@ import pytest
 
 from app import bluesky, bot_score, similar
 
+REAL_SEARCH = bluesky.search  # captured before conftest stubs it
 FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "search_copypasta.json").read_text())
 POST = {"text": "Wake up people, the mainstream media is hiding the truth about the water supply from you",
         "url": "https://bsky.app/profile/original.bsky.social/post/3orig",
@@ -17,7 +18,7 @@ def fake_client():
 
 
 def fixture_search(query, around_ts=None):
-    return bluesky.search(query, around_ts, client=fake_client())
+    return REAL_SEARCH(query, around_ts, client=fake_client())
 
 
 def test_search_maps_fields():
@@ -34,7 +35,7 @@ def test_search_sends_time_window():
     def handler(req):
         seen.update(req.url.params)
         return httpx.Response(200, json={"posts": []})
-    bluesky.search("a b c", around_ts=POST["ts"], client=httpx.Client(transport=httpx.MockTransport(handler)))
+    REAL_SEARCH("a b c", around_ts=POST["ts"], client=httpx.Client(transport=httpx.MockTransport(handler)))
     assert seen["since"] == "2026-11-11T12:00:00Z" and seen["until"] == "2026-11-17T12:00:00Z"
 
 
