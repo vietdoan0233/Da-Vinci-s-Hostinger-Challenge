@@ -1,0 +1,31 @@
+/* Layout for the narrow side panel. Result styles come from panel.css. */
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+a { color: var(--blue); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.top { position: sticky; top: 0; z-index: 2; padding: 12px 16px; font-size: 18px; font-weight: 800; background: rgba(0, 0, 0, .7); backdrop-filter: blur(12px); }
+.tabbar { display: flex; align-items: center; gap: 10px; padding: 4px 16px 12px; border-bottom: 1px solid var(--line); }
+#tab-hint { flex: 1; min-width: 0; color: var(--dim); font-size: 13px; line-height: 17px; overflow-wrap: anywhere; }
+
+.compose { padding: 4px 16px 10px; border-bottom: 1px solid var(--line); }
+textarea { width: 100%; min-height: 44px; max-height: 160px; resize: none; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-size: 15px; line-height: 20px; padding: 8px 0; }
+textarea::placeholder { color: var(--dim); }
+.compose-row { display: flex; align-items: center; gap: 8px; }
+.count { margin-left: auto; color: var(--dim); font-size: 13px; }
+.count.over { color: var(--red); }
+.go { flex: none; padding: 7px 14px; border: 0; border-radius: 999px; background: #eff3f4; color: #0f1419; font-weight: 700; font-size: 14px; }
+.go:hover { background: #d7dbdc; }
+.go:disabled { opacity: .5; cursor: default; }
+.compose-row .go { margin-left: auto; }
+.count:not(:empty) + .go { margin-left: 0; }
+
+.status { padding: 22px 20px; color: var(--dim); font-size: 14px; line-height: 19px; text-align: center; }
+.status.error { color: var(--red); }
+.spinner { width: 24px; height: 24px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid rgba(29, 155, 240, .25); border-top-color: var(--blue); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+
+.card.side { margin: 12px 16px; }

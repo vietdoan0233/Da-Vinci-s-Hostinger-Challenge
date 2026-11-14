@@ -7,12 +7,16 @@ from concurrent.futures import ThreadPoolExecutor
 
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import bluesky, bot_score, llm, similar, techniques
+from app import bluesky, bot_score, llm, similar, techniques, youtube
 
 app = FastAPI()
+# The browser extension calls the API from its own origin. The API is public and holds no cookies.
+app.add_middleware(CORSMiddleware, allow_origin_regex=r"^(chrome|moz)-extension://.*$",
+                   allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 log = logging.getLogger("app")
 
 
@@ -132,6 +136,37 @@ def replies(request: Request, url: str = Query(min_length=1, max_length=300), of
         items = list(pool.map(analyze_reply, page))
     more = offset + REPLY_PAGE < len(found)
     return {"replies": items, "total": len(found), "next": offset + REPLY_PAGE if more else None, "errors": {}}
+
+
+VIDEO_PAGE = 6  # transcript chunks per request: one AI call each, in parallel
+VIDEO_RATE_LIMIT = 30
+
+
+@app.get("/api/video")
+def video(request: Request, url: str = Query(min_length=1, max_length=300), offset: int = Query(0, ge=0)):
+    """One page of a YouTube video's transcript, each chunk checked for techniques."""
+    check_rate(client_ip(request), "video", VIDEO_RATE_LIMIT)
+    out = {"video": None, "chunks": [], "total": 0, "next": None, "errors": {}}
+    try:
+        vid = youtube.parse_url(url)
+        parts, truncated = youtube.get_chunks(vid)
+    except youtube.YouTubeError as e:
+        out["errors"]["video"] = str(e)
+        return out
+    out["video"] = {"id": vid, "url": f"https://www.youtube.com/watch?v={vid}", "truncated": truncated,
+                    **youtube.get_info(vid)}
+
+    def check(chunk):
+        errors = {}
+        return {"t": chunk["t"], "text": chunk["text"],
+                "techniques": find_techniques(chunk["text"], errors), "errors": errors}
+    page = parts[offset:offset + VIDEO_PAGE]
+    if page:
+        with ThreadPoolExecutor(max_workers=VIDEO_PAGE) as pool:
+            out["chunks"] = list(pool.map(check, page))
+    out["total"] = len(parts)
+    out["next"] = offset + VIDEO_PAGE if offset + VIDEO_PAGE < len(parts) else None
+    return out
 
 
 # Last: a "/" mount would shadow routes registered after it.

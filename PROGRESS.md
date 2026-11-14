@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 67 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 85 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -14,6 +14,8 @@ As of 2026-11-14. Tests: 67 pass. The skeleton is live at https://davincicommit.
 | 1.8, 2.7, 3.3, 3.4, 4.5 | Panel: `web/panel.js` + `web/panel.css` render the post with quotes highlighted, techniques, bot-likeness and copies. `?q=<post link>` opens a result directly. Checked locally with faked data, desktop and narrow widths. |
 | 9.1-9.6 | Thread: a post link also loads its replies ten at a time as the reader scrolls. Each reply shows its own bot-likeness score; replies above 0.4 are also checked for techniques. Clicking a reply opens it as the main post. Checked against the live Bluesky API on a 182-reply post (2-3 s per page) and in the page with faked data. |
 | Detector order | Techniques come from the 20-technique prompt through the Hostinger AI Router. The six-technique Anthropic detector (`app/anthropic_detect.py`) is the backup when the router is unset or fails. Neither has been run on the live URL. |
+| 10.1-10.4 | YouTube: a video link is read through its captions, a minute at a time, and each flagged stretch is listed with its time. Checked against real YouTube from a laptop (transcript in 1.5 s) and in the page with faked AI answers. Not checked from the VPS. |
+| 6.1-6.7 | Extension (`extension/`): a Chrome side panel that takes the tab's link and calls the API. Bluesky posts, YouTube videos, and right-click on selected text anywhere. Checked as a page with the browser APIs stubbed; not yet loaded in a real Chrome. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 

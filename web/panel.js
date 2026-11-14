@@ -362,6 +362,89 @@
     return row;
   }
 
+  /* ---- video transcripts ---- */
+
+  function clock(t) {
+    t = Math.max(0, Math.floor(t));
+    var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), sec = t % 60;
+    return (h ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (sec < 10 ? "0" : "") + sec;
+  }
+
+  // Draws the video header and an empty findings list; returns the list node to append chunks to.
+  function renderVideoStart(postNode, techNode, video) {
+    postNode.textContent = "";
+    var art = el("article", "post");
+    var head = el("div", "post-head");
+    head.appendChild(avatar(video.channel || "Video", "lg"));
+    var who = el("div", "who");
+    who.appendChild(el("div", "name", video.channel || "YouTube video"));
+    who.appendChild(el("div", "handle", "YouTube"));
+    head.appendChild(who);
+    var src = safeUrl(video.url);
+    if (src) {
+      var open = el("a", "open");
+      open.href = src; open.target = "_blank"; open.rel = "noopener noreferrer";
+      open.setAttribute("aria-label", "Open the video");
+      open.appendChild(icon(ICONS.link));
+      head.appendChild(open);
+    }
+    art.appendChild(head);
+    art.appendChild(el("div", "post-text", video.title || "Untitled video"));
+    art.appendChild(el("div", "post-meta", "Captions read from YouTube"));
+    art.appendChild(el("div", "stats"));
+    postNode.appendChild(art);
+
+    techNode.textContent = "";
+    techNode.appendChild(el("h2", "sec-title", "Techniques found in this video"));
+    techNode.appendChild(el("p", "note dim video-progress", "Checking the transcript…"));
+    var list = el("div", "chunks");
+    techNode.appendChild(list);
+    return list;
+  }
+
+  function videoProgress(postNode, techNode, p) {
+    var stats = postNode.querySelector(".stats");
+    var total = Object.keys(p.counts).reduce(function (n, k) { return n + p.counts[k]; }, 0);
+    stats.textContent = "";
+    stats.appendChild(stat(String(total), total === 1 ? "Technique" : "Techniques"));
+    stats.appendChild(stat(p.flagged + " of " + p.seen, "segments flagged"));
+    var top = Object.keys(p.counts).sort(function (a, b) { return p.counts[b] - p.counts[a]; })[0];
+    if (top && p.counts[top] > 1) stats.appendChild(stat(top, "most used (" + p.counts[top] + ")"));
+    var line = techNode.querySelector(".video-progress");
+    if (!p.done) line.textContent = "Checked " + p.seen + " of " + p.total + " segments…";
+    else if (!p.flagged) { line.className = "note video-progress"; line.textContent = "No manipulation techniques found in " + p.seen + " segments."; }
+    else line.textContent = "Checked all " + p.seen + " segments; " + (p.seen - p.flagged) + " had none." +
+      (p.truncated ? " Only the first part of this long video was checked." : "") + " Flags describe wording, not intent: jokes and quotes of other people can be flagged.";
+  }
+
+  function videoNote(techNode, text, warn) {
+    var line = techNode.querySelector(".video-progress");
+    if (line) { line.className = "note video-progress" + (warn ? " warn" : " dim"); line.textContent = text; }
+  }
+
+  // One flagged stretch of the transcript. The time opens that moment; onSeek(seconds, link) may handle it instead.
+  function renderChunk(chunk, video, onSeek) {
+    var row = el("article", "chunk");
+    var when = el("a", "pill time", clock(chunk.t));
+    var base = safeUrl(video.url);
+    if (base) { when.href = base + "&t=" + Math.floor(chunk.t) + "s"; when.target = "_blank"; when.rel = "noopener noreferrer"; }
+    when.setAttribute("aria-label", "Go to " + clock(chunk.t) + " in the video");
+    when.addEventListener("click", function (e) { if (onSeek) { e.preventDefault(); onSeek(chunk.t, when.href); } });
+    row.appendChild(when);
+    var body = el("div", "reply-body");
+    body.appendChild(highlighted(chunk.text, chunk.techniques));
+    var list = el("div", "reply-techs");
+    chunk.techniques.forEach(function (t) {
+      var line = el("div", "reply-tech");
+      line.appendChild(el("b", null, t.name));
+      if (t.why) line.appendChild(document.createTextNode(" " + t.why));
+      list.appendChild(line);
+    });
+    body.appendChild(list);
+    row.appendChild(body);
+    return row;
+  }
+
   // Everything in one column, for the extension panel.
   function renderPanel(node, analysis, inputText) {
     node.textContent = "";
@@ -379,6 +462,7 @@
 
   window.DecodePanel = {
     renderPanel: renderPanel, renderPost: renderPost, renderTechniques: renderTechniques,
-    renderBot: renderBot, renderSimilar: renderSimilar, renderReply: renderReply, linkHighlights: linkHighlights
+    renderBot: renderBot, renderSimilar: renderSimilar, renderReply: renderReply, linkHighlights: linkHighlights,
+    renderVideoStart: renderVideoStart, videoProgress: videoProgress, videoNote: videoNote, renderChunk: renderChunk
   };
 })();
