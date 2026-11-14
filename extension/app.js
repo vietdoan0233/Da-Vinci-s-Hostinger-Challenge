@@ -106,6 +106,13 @@
         if (!video) {
           video = data.video;
           list = DecodePanel.renderVideoStart($("post"), $("tech"), video);
+          // the channel that uploaded the video, never its commenters
+          DecodePanel.renderBot($("bot"), { post: video, bot: video.bot, errors: data.errors });
+          var who = document.createElement("p");
+          who.className = "note dim";
+          who.textContent = "This is about the channel that uploaded the video. Upload times are not available, so posting rhythm is not checked.";
+          $("bot").appendChild(who);
+          $("bot").hidden = false;
           status.hidden = true;
           $("result").hidden = false;
           var target = "?q=" + encodeURIComponent(v);

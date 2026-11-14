@@ -199,6 +199,19 @@ def eval_results():
     return FileResponse(path, media_type="application/json")
 
 
+def channel_bot(channel_url):
+    """-> (bot, error) for the channel that uploaded a video. Upload times are not available
+    (the channel data gives relative dates only), so posting rhythm is never among the things checked."""
+    try:
+        result = bot_score.score(youtube.get_channel(channel_url), platform="youtube")
+        return {k: result[k] for k in ("score", "verdict", "checked", "reasons")}, None
+    except youtube.YouTubeError as e:
+        return None, str(e)
+    except Exception:  # odd channel data must not fail the video
+        log.exception("channel score failed")
+        return None, "the channel's details could not be read"
+
+
 VIDEO_PAGE = 6  # transcript chunks per request: one AI call each, in parallel
 VIDEO_RATE_LIMIT = 30
 
@@ -214,8 +227,9 @@ def video(request: Request, url: str = Query(min_length=1, max_length=300), offs
     except youtube.YouTubeError as e:
         out["errors"]["video"] = str(e)
         return out
-    out["video"] = {"id": vid, "url": f"https://www.youtube.com/watch?v={vid}", "truncated": truncated,
-                    **youtube.get_info(vid)}
+    info = youtube.get_info(vid)
+    out["video"] = {"id": vid, "url": f"https://www.youtube.com/watch?v={vid}", "truncated": truncated, **info, "bot": None}
+    channel = _coverage_pool.submit(channel_bot, info.get("channel_url", ""))  # beside the chunk checks: it waits on Oxylabs
 
     def check(chunk):
         errors = {}
@@ -227,6 +241,9 @@ def video(request: Request, url: str = Query(min_length=1, max_length=300), offs
             out["chunks"] = list(pool.map(check, page))
     out["total"] = len(parts)
     out["next"] = offset + VIDEO_PAGE if offset + VIDEO_PAGE < len(parts) else None
+    out["video"]["bot"], err = channel.result()
+    if err:
+        out["errors"]["bot"] = err
     return out
 
 

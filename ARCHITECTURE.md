@@ -128,13 +128,15 @@ quoted post could not be read, and always for a video, since only its cover fram
 
 ```json
 {
-  "video": {"id": "", "url": "", "title": "", "channel": "", "truncated": false},
+  "video": {"id": "", "url": "", "title": "", "channel": "", "channel_url": "", "truncated": false,
+            "bot": {"score": 0.0, "verdict": "", "checked": [], "reasons": []}},
   "chunks": [{"t": 0.0, "text": "", "techniques": [{"name": "", "quote": "", "why": ""}], "errors": {}}],
   "total": 0, "next": 6, "errors": {}
 }
 ```
 
 `t` is the chunk's start in seconds. A chunk whose check failed has `techniques: null` and a reason in its `errors`.
+`video.bot` is the bot-likeness of the channel that uploaded the video, or `null` with a reason in `errors.bot`.
 
 ## Rules that hold across features
 
@@ -186,9 +188,13 @@ Honesty notes for the pitch and the metrics page:
 - Not validated on labelled data. The upgrade path is fitting these weights on TwiBot-20/22.
 - Skipped on purpose: BotometerLite's handle-likelihood (needs a bigram table of real handles) and likes growth rate (most platforms hide it).
 
-### Draft: Reddit and YouTube (not built, not measured)
+### Reddit and YouTube profile formulas (built, not measured)
 
-A draft for scoring accounts on two more sites with the same model. Nothing here is in `bot_score.py`.
+Scoring accounts on two more sites with the same model: `reddit_profile_score` and `youtube_profile_score`
+in `bot_score.py`, chosen with `score(..., platform="reddit" | "youtube")`.
+YouTube is connected: `/api/video` fills `video.bot` for the channel that uploaded the video.
+Reddit is not connected: its account data could not be read (403 without an app key, and the Oxylabs
+scrape of it fails, checked 2026-11-15), so the formula has no caller yet.
 The weights are hand-set guesses, like the Bluesky ones, and need a labelled set before any number is quoted.
 Cadence, rate and the declared-bot rule stay as they are; only the profile formula changes, because each
 site exposes different fields. A field that is missing contributes 0 and lowers the confidence, as now.
@@ -233,11 +239,11 @@ confidence = (weights of features that had data) / 6.6
 ```
 
 A clean channel gives about 0.05, any single feature at maximum stays under 0.3, all at maximum gives about 0.97.
-- The posting-schedule floor must not apply when the usual gap is a day or more. Creators upload weekly at a
-  fixed hour on purpose; only several scheduled uploads a day look automated.
-- Upload times: the channel data gives relative dates only ("4mo ago"), too coarse for the cadence tests. Exact
-  times need the channel's public feed (the 15 newest uploads), not checked from the VPS. Until then cadence is
-  "not enough data".
+- Upload times are not available: the channel data gives relative dates only ("4mo ago") and YouTube's channel
+  feed answered 500 (checked 2026-11-15). So posting rhythm is never checked, the profile alone tops out near
+  0.2, and a channel reads "not enough data to judge" unless it declares itself a bot.
+- Not built, needed once upload times exist: the posting-schedule floor must not apply when the usual gap is a
+  day or more. Creators upload weekly at a fixed hour on purpose.
 - No avatar feature: YouTube's default avatar cannot be told from a chosen one.
 
 ## Build order

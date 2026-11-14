@@ -45,7 +45,8 @@ def test_video_pages_and_checks_each_chunk(monkeypatch):
     monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
         {"name": "Smears", "quote": "liars", "why": "Attacks reputation."}, {"name": "Smears", "quote": "not in the text", "why": "x"}]})
     r = c.get("/api/video", params={"url": f"https://youtu.be/{VID}"}).json()
-    assert r["video"] == {"id": VID, "url": f"https://www.youtube.com/watch?v={VID}", "truncated": False, "title": "A talk", "channel": "Someone"}
+    assert r["video"] == {"id": VID, "url": f"https://www.youtube.com/watch?v={VID}", "truncated": False, "title": "A talk", "channel": "Someone", "bot": None}
+    assert r["errors"] == {"bot": "the channel's details could not be read"}  # no channel link: not enough data, never a clean score
     assert r["total"] == 8 and r["next"] == main.VIDEO_PAGE and len(r["chunks"]) == main.VIDEO_PAGE
     assert r["chunks"][1]["t"] == 60.0 and r["chunks"][1]["techniques"] == [{"name": "Smears", "quote": "liars", "why": "Attacks reputation."}]
     last = c.get("/api/video", params={"url": f"https://youtu.be/{VID}", "offset": main.VIDEO_PAGE}).json()
@@ -102,3 +103,56 @@ def test_oxylabs_captions_prefer_the_uploaders_english_track(monkeypatch):
         monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout, e=empty: e)
         with pytest.raises(youtube.YouTubeError, match="no captions"):
             youtube._oxylabs_segments(VID)
+
+
+CHANNEL = {"id": "UC1", "joined_date": "Feb 1 2015", "subscriber_count": "4.56M", "video_count": 442,
+           "view_count": "2,600,576,030", "description": "Official channel"}
+
+
+def test_channel_fields_feed_the_youtube_score(monkeypatch):
+    monkeypatch.setenv("OXYLABS_WEB_API_KEY", "k")
+    monkeypatch.setattr(youtube, "_cache", {})
+    seen = []
+    monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: seen.append((endpoint, payload)) or {"results": [{"json": dict(CHANNEL)}]})
+    acc = youtube.get_channel("https://www.youtube.com/@RickAstleyYT")
+    assert seen == [("scrape/media/youtube/channel", {"query": "@RickAstleyYT", "output": ["json"]})]
+    assert acc == {"handle": "@RickAstleyYT", "bio": "Official channel", "video_count": 442, "views": 2600576030,
+                   "subscribers": 4560000, "created_at": 1422748800.0}
+    youtube.get_channel("https://www.youtube.com/@RickAstleyYT")
+    assert len(seen) == 1  # cached: a video's pages cost one call
+
+    stub(monkeypatch)
+    monkeypatch.setattr(youtube, "get_info", lambda vid: {"title": "A talk", "channel": "Rick", "channel_url": "https://www.youtube.com/@RickAstleyYT"})
+    monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": []})
+    r = c.get("/api/video", params={"url": f"https://youtu.be/{VID}"}).json()
+    assert r["video"]["bot"] == {"score": 0.0, "verdict": "not enough data to judge", "checked": ["profile"], "reasons": []}
+    assert "bot" not in r["errors"]
+
+
+def test_channel_with_hidden_or_missing_fields_and_no_key(monkeypatch):
+    monkeypatch.setenv("OXYLABS_WEB_API_KEY", "k")
+    monkeypatch.setattr(youtube, "_cache", {})
+    hidden = {"id": "UC2", "subscriber_count": "", "joined_date": "unknown", "video_count": 3}
+    monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: {"results": [{"json": hidden}]})
+    assert youtube.get_channel("https://www.youtube.com/@quiet") == {"handle": "@quiet", "bio": "", "video_count": 3}
+    monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: {"results": [{"html": "<html>404"}]})
+    with pytest.raises(youtube.YouTubeError):
+        youtube.get_channel("https://www.youtube.com/@gone")
+    monkeypatch.delenv("OXYLABS_WEB_API_KEY")
+    with pytest.raises(youtube.YouTubeError):
+        youtube.get_channel("https://www.youtube.com/@quiet2")
+    assert main.channel_bot("") == (None, "the channel's details could not be read")
+
+
+def test_reddit_and_youtube_formulas():
+    from app import bot_score
+    day = 86400
+    spam = {"created_at": 0, "handle": "Ornery-Walrus1234", "link_karma": 100, "comment_karma": 0,
+            "verified_email": False, "bio": "", "default_avatar": True}
+    p, conf, reason = bot_score.reddit_profile_score(spam, day)
+    assert p > 0.8 and conf == pytest.approx(1) and "1 days old" in reason
+    assert bot_score.reddit_profile_score({}, 0)[0] == pytest.approx(0.047, abs=0.01)
+    assert bot_score.score({"handle": "RemindMeBot"}, platform="reddit")["verdict"] == "likely automated or coordinated"
+    farm = {"created_at": 0, "handle": "@user-ab12cd34ef", "video_count": 300, "views": 900, "subscribers": 2, "bio": ""}
+    r = bot_score.score(farm, platform="youtube", now=5 * day)
+    assert r["checked"] == ["profile"] and r["verdict"] == "not enough data to judge" and "uploads per day" in r["reasons"][0]
