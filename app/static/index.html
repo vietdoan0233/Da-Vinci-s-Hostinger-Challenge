@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decode noise</title>
+<style>
+:root{--bg:#fbfaf7;--fg:#1d1d1b;--mut:#6a6a64;--card:#fff;--line:#dcd9d0;--accent:#1f5f8b;--flag:#fde7b0;--flagline:#c88a00}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#17181a;--fg:#ecebe6;--mut:#a3a29a;--card:#212326;--line:#3a3c40;--accent:#7db7e0;--flag:#5a4510;--flagline:#e0a92b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.5rem;margin:.2em 0}
+.note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem;color:var(--mut)}
+.note ul{margin:.3em 0 0 1.1em;padding:0}
+textarea{width:100%;min-height:150px;margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);font:inherit;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:disabled{opacity:.5;cursor:wait}
+#out{margin-top:18px}
+.msg{padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.msg.err{border-color:#b3261e}
+.sent{margin:.5em 0;padding:8px 10px;border-radius:8px;border:1px solid transparent}
+.sent.flag{background:var(--flag);border-color:var(--flagline)}
+.sent.border{border-bottom:2px dotted var(--mut);border-radius:0}
+.chip{display:inline-block;font-size:.78rem;font-weight:600;background:var(--accent);color:#fff;border-radius:999px;padding:1px 9px;margin-right:6px}
+.why{font-size:.84rem;color:var(--mut);margin-top:4px}
+.small{font-size:.85rem;color:var(--mut)}
+@media(max-width:480px){main{padding:14px 16px 50px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Decode noise</h1>
+  <div class="small">Research prototype. Paste a short English text to see which sentences match persuasion techniques.</div>
+  <div class="note" style="margin-top:12px">
+    <strong>What this tool does not do</strong>
+    <ul>
+      <li>It does not say whether a statement is true or false. It is not a fact-checker.</li>
+      <li>It does not infer intent, honesty or affiliation, and does not say who is right.</li>
+      <li>"No technique flagged" is not "neutral".</li>
+      <li>HTTP is not encrypted. Do not paste personal or confidential text.</li>
+    </ul>
+  </div>
+  <textarea id="t" maxlength="5000" placeholder="Paste text here (max 5000 characters)"></textarea>
+  <div class="row">
+    <button class="primary" id="go">Analyze</button>
+    <button id="ex1">Example: loaded wording</button>
+    <button id="ex2">Example: plain report</button>
+    <span class="small" id="cnt"></span>
+  </div>
+  <div id="out" aria-live="polite"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const EX1="These corrupt traitors have destroyed our country with their disgusting lies, and everyone knows the vile elites are laughing at ordinary people while they steal everything we have built.";
+const EX2="The finance ministry said on Tuesday that the budget deficit for the first quarter was 2.1 billion euros, according to figures published by the national statistics office. Officials said the figure was in line with forecasts made in January.";
+$("ex1").onclick=()=>{$("t").value=EX1;count()};
+$("ex2").onclick=()=>{$("t").value=EX2;count()};
+function count(){$("cnt").textContent=$("t").value.length+" / 5000"}
+$("t").oninput=count;count();
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function msg(text,cls){const d=el("div","msg "+(cls||""),text);return d}
+function render(r){
+  const out=$("out");out.replaceChildren();
+  if(r.status==="cannot_determine"||r.status==="error"){out.append(msg(r.message,r.status==="error"?"err":""));return}
+  if(r.message)out.append(msg(r.message));
+  r.sentences.forEach(s=>{
+    const d=el("div","sent"+(s.flags.length?" flag":s.borderline.length?" border":""));
+    d.append(el("div","",s.text));
+    s.flags.forEach(f=>{
+      const w=el("div","why");
+      w.append(el("span","chip",f.technique));
+      w.append(document.createTextNode(`model score ${f.score.toFixed(2)} (not a probability); flag threshold ${f.threshold.toFixed(2)}. Wording matches this technique. Not a verdict on truth or intent.`));
+      d.append(w)});
+    s.borderline.forEach(b=>d.append(el("div","why",`Cannot determine: ${b.technique} score ${b.score.toFixed(2)} is below the ${b.threshold.toFixed(2)} flag threshold. Not flagged.`)));
+    out.append(d)});
+  if(r.disabled_techniques&&r.disabled_techniques.length)
+    out.append(el("div","small","Not reliable, not shown: "+r.disabled_techniques.join(", ")+"."));
+}
+$("go").onclick=async()=>{
+  const b=$("go");b.disabled=true;
+  try{
+    const res=await fetch("/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:$("t").value})});
+    if(!res.ok)throw 0;render(await res.json());
+  }catch(e){$("out").replaceChildren(msg("Analysis failed. Nothing was judged.","err"))}
+  b.disabled=false};
+</script>
+</body>
+</html>
