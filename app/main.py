@@ -55,9 +55,17 @@ def check_rate(ip, bucket="analyze", limit=RATE_LIMIT):
         q.append(now)
 
 
-def find_techniques(text, errors):
+def find_techniques(text, errors, media=(), quoted=None):
+    if any(m["type"] == "video" for m in [*media, *(quoted["media"] if quoted else [])]):
+        errors["media"] = "not enough data: only the video's cover frame and description were checked, not the footage or sound"
     try:
-        return techniques.find(text)
+        return techniques.find(text, media, quoted)
+    except techniques.MediaUnread:
+        log.exception("media analysis failed")
+        errors["media"] = "not enough data: the images and quoted post could not be read, only the post's own text was checked"
+        if text.strip():
+            return find_techniques(text, errors)
+        errors["techniques"] = "the images and quoted post could not be read and the post has no text"
     except llm.NotConfigured:
         errors["techniques"] = "technique detection is not configured on this server"
     except Exception:  # LLM down, timeout or unparseable reply: report it, never show "none found"
@@ -78,7 +86,7 @@ def analyze(body: AnalyzeIn, request: Request):
         except bluesky.BlueskyError as e:
             out["errors"]["post"] = str(e)
             return out
-    out["techniques"] = find_techniques(post["text"], out["errors"])
+    out["techniques"] = find_techniques(post["text"], out["errors"], post.get("media", ()), post.get("quoted"))
     try:
         out["similar"] = similar.find(post)
     except similar.NotEnoughData as e:
@@ -114,8 +122,8 @@ def analyze_reply(reply):
     except Exception:
         log.exception("reply bot score failed")
         item["errors"]["bot"] = "author history unavailable"
-    if item["bot"] and item["bot"]["score"] > REPLY_TECH_AT and reply["text"].strip():
-        item["techniques"] = find_techniques(reply["text"], item["errors"])
+    if item["bot"] and item["bot"]["score"] > REPLY_TECH_AT and (reply["text"].strip() or reply.get("media")):
+        item["techniques"] = find_techniques(reply["text"], item["errors"], reply.get("media", ()), reply.get("quoted"))
     return item
 
 

@@ -41,6 +41,32 @@ def _to_post(p):
     }
 
 
+MEDIA_HOSTS = ("https://cdn.bsky.app/", "https://video.bsky.app/")  # the LLM provider fetches these; nothing else
+
+
+def _media(embed):
+    """Images and video in one embed view -> [{type, url, alt}]."""
+    e = embed or {}
+    e = e.get("media") or e  # a quote post with its own media wraps the real embed
+    out = [{"type": "image", "url": i.get("thumb"), "alt": i.get("alt") or ""} for i in e.get("images") or []]
+    if e.get("playlist"):
+        # shortcut: a video is represented by its cover frame and alt text only; reading the
+        # footage or sound needs frame extraction (ffmpeg) and speech-to-text, add when needed
+        out.append({"type": "video", "url": e.get("thumbnail"), "alt": e.get("alt") or ""})
+    return [m for m in out if str(m["url"]).startswith(MEDIA_HOSTS)]
+
+
+def _quoted(embed):
+    """The post this one quotes -> {author, text, url, media}, or None (no quote, or it is deleted or blocked)."""
+    r = (embed or {}).get("record") or {}
+    r = r.get("record") or r  # a quote post with its own media nests the quoted post one deeper
+    if not (isinstance(r.get("value"), dict) and r.get("author") and r.get("uri")):
+        return None
+    handle = r["author"]["handle"]
+    return {"author": handle, "text": r["value"].get("text", ""), "url": post_url(r["uri"], handle),
+            "media": [m for e in r.get("embeds") or [] for m in _media(e)]}
+
+
 def search(query, around_ts=None, limit=50, client=None):
     """-> [{author, did, text, url, ts}]. Every word in `query` must appear in a hit.
 
@@ -96,6 +122,7 @@ def get_post(url):
     p = posts[0]
     rec = p["record"]
     return {"text": rec.get("text", ""), "author": p["author"]["handle"], "url": url,
+            "media": _media(p.get("embed")), "quoted": _quoted(p.get("embed")),
             "ts": iso_to_epoch(rec.get("createdAt") or p["indexedAt"])}
 
 
@@ -118,7 +145,7 @@ def get_author_timestamps(handle):
 
 
 def get_replies(url):
-    """Direct replies to a post, most liked first -> [{text, author, name, avatar, url, ts, likes, replies}].
+    """Direct replies to a post, most liked first -> [{text, media, quoted, author, name, avatar, url, ts, likes, replies}].
 
     One getPostThread call returns them all (181 for a 182-reply post, checked
     2026-11-14) and is cached, so paging through them costs nothing extra.
@@ -133,7 +160,8 @@ def get_replies(url):
             continue
         rec, author = p.get("record", {}), p["author"]
         created = rec.get("createdAt") or p.get("indexedAt")
-        out.append({"text": rec.get("text", ""), "author": author["handle"],
+        out.append({"text": rec.get("text", ""), "media": _media(p.get("embed")), "quoted": _quoted(p.get("embed")),
+                    "author": author["handle"],
                     "name": author.get("displayName") or "", "avatar": author.get("avatar") or "",
                     "url": post_url(p["uri"], author["handle"]), "ts": iso_to_epoch(created) if created else None,
                     "likes": p.get("likeCount", 0), "replies": p.get("replyCount", 0)})

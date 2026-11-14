@@ -73,8 +73,9 @@ front end never changes shape and unfinished sections are simply `null`.
 
 ```json
 {
-  "post":       {"text": "", "author": "", "url": "", "ts": 0},
-  "techniques": [{"name": "", "quote": "", "why": ""}],
+  "post":       {"text": "", "author": "", "url": "", "ts": 0, "media": [{"type": "image", "url": "", "alt": ""}],
+                 "quoted": {"author": "", "text": "", "url": "", "media": []}},
+  "techniques": [{"name": "", "quote": "", "why": "", "source": "image"}],
   "bot":        {"score": 0.0, "verdict": "", "checked": [], "reasons": []},
   "similar":    [{"author": "", "text": "", "url": "", "ts": 0, "overlap": 0.0}],
   "coverage":   null,
@@ -85,13 +86,20 @@ front end never changes shape and unfinished sections are simply `null`.
 
 A section that fails goes into `errors` and the rest still returns.
 
+`media` lists the post's images and videos (`type` is `image` or `video`; a video's `url` is its cover
+frame). `quoted` is the post this one quotes, written by someone else, or `null`. Both are sent to the LLM
+with the text. A technique has no `source` when its quote is in the post's own text, `source: "image"`
+when it was read from one of the post's images, and `source: "quoted"` when it is in the quoted post's
+text or images, so it is never shown as the author's own words. `errors.media` says when the images or
+quoted post could not be read, and always for a video, since only its cover frame is looked at.
+
 `GET /api/health` returns `{"ok": true, "version": "<git sha>"}`.
 
 `GET /api/replies?url=<post link>&offset=0` returns one page of ten direct replies, most liked first:
 
 ```json
 {
-  "replies": [{"post": {"text": "", "author": "", "name": "", "avatar": "", "url": "", "ts": 0, "likes": 0, "replies": 0},
+  "replies": [{"post": {"text": "", "media": [], "quoted": null, "author": "", "name": "", "avatar": "", "url": "", "ts": 0, "likes": 0, "replies": 0},
                "bot": {"score": 0.0, "verdict": "", "checked": [], "reasons": []},
                "techniques": null,
                "errors": {}}],

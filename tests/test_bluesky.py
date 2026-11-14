@@ -79,3 +79,37 @@ def test_analyze_author_failure_gives_bot_error(monkeypatch):
 def test_analyze_text_has_no_bot():
     r = TestClient(main.app).post("/api/analyze", json={"text": "hello there"}).json()
     assert r["bot"] is None and "bot" not in r["errors"]
+
+
+def test_media_from_embeds():
+    img = {"thumb": "https://cdn.bsky.app/img/feed_thumbnail/plain/d/c@jpeg", "fullsize": "x", "alt": "a sign"}
+    video = {"playlist": "https://video.bsky.app/watch/d/c/playlist.m3u8", "thumbnail": "https://video.bsky.app/watch/d/c/thumbnail.jpg"}
+    shown = {"type": "image", "url": img["thumb"], "alt": "a sign"}
+    assert bluesky._media({"images": [img, {"thumb": "https://evil.example/x.jpg"}]}) == [shown]  # other hosts never reach the LLM
+    assert bluesky._media({"record": {}, "media": video}) == [{"type": "video", "url": video["thumbnail"], "alt": ""}]
+    assert bluesky._media(None) == [] and bluesky.get_post(URL)["media"] == []
+
+
+def test_quoted_post_is_read_separately():
+    img = {"thumb": "https://cdn.bsky.app/img/feed_thumbnail/plain/d/c@jpeg", "alt": "a sign"}
+    record = {"uri": "at://did:plc:q/app.bsky.feed.post/3q", "author": {"handle": "other.bsky.social"},
+              "value": {"text": "What happened to the money?"}, "embeds": [{"images": [img]}]}
+    want = {"author": "other.bsky.social", "text": "What happened to the money?",
+            "url": "https://bsky.app/profile/other.bsky.social/post/3q", "media": [{"type": "image", "url": img["thumb"], "alt": "a sign"}]}
+    assert bluesky._quoted({"record": record}) == want
+    assert bluesky._quoted({"record": {"record": record}, "media": {"images": [img]}}) == want  # quote plus own picture
+    assert bluesky._media({"record": record}) == []  # the quoted picture is not the post's own
+    assert bluesky._quoted({"record": {"uri": "at://x", "blocked": True}}) is None and bluesky._quoted(None) is None
+
+
+def test_analyze_falls_back_to_text_when_media_unreadable(monkeypatch):
+    media = [{"type": "video", "url": "https://video.bsky.app/watch/d/c/thumbnail.jpg", "alt": ""}]
+    monkeypatch.setattr(bluesky, "get_post", lambda url: {"text": "hello there", "author": "bsky.app", "url": url, "ts": 1.8e9, "media": media})
+
+    def llm(system, user, images=()):
+        if images:
+            raise ValueError("no vision")
+        return {"techniques": []}
+    monkeypatch.setattr("app.llm.ask_json", llm)
+    r = TestClient(main.app).post("/api/analyze", json={"url": URL}).json()
+    assert r["techniques"] == [] and "could not be read" in r["errors"]["media"] and r["post"]["media"] == media

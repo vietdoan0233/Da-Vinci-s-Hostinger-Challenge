@@ -34,7 +34,10 @@ def parse_json(reply):
     return json.loads(m.group(0))
 
 
-def ask_json(system, user):
+def ask_json(system, user, images=()):
+    """images: https URLs the model should look at alongside the text."""
+    if images:
+        user = [{"type": "text", "text": user}] + [{"type": "image_url", "image_url": {"url": u}} for u in images]
     r = _get_client().chat.completions.create(
         model=os.environ.get("AI_ROUTER_MODEL", ""),
         messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],

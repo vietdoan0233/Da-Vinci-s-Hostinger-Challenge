@@ -26,7 +26,7 @@ def test_get_replies_maps_sorts_and_skips_blocked(monkeypatch):
     monkeypatch.setattr(bluesky, "_get", fake)
     got = bluesky.get_replies(URL)
     assert [r["author"] for r in got] == ["top.bsky.social", "low.bsky.social"]
-    assert got[0] == {"text": "top", "author": "top.bsky.social", "name": "Name", "avatar": "https://cdn.bsky.app/a.jpg",
+    assert got[0] == {"text": "top", "media": [], "quoted": None, "author": "top.bsky.social", "name": "Name", "avatar": "https://cdn.bsky.app/a.jpg",
                       "url": "https://bsky.app/profile/top.bsky.social/post/2", "ts": bluesky.iso_to_epoch("2026-11-14T12:00:00Z"),
                       "likes": 50, "replies": 2}
 

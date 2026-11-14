@@ -126,6 +126,36 @@
     return s;
   }
 
+  // A post's images and video cover frames. Alt text is untrusted: set as a property, never as HTML.
+  function mediaRow(post) {
+    var row = el("div", "post-media");
+    ((post && post.media) || []).forEach(function (m) {
+      var src = safeUrl(m.url);
+      if (!src) return;
+      var img = document.createElement("img");
+      img.alt = m.alt || (m.type === "video" ? "Video cover frame, no description" : "Image, no description");
+      img.loading = "lazy"; img.referrerPolicy = "no-referrer"; img.src = src;
+      row.appendChild(img);
+    });
+    return row;
+  }
+
+  // The post this one quotes, as its own bordered card: someone else wrote it, so it carries their handle.
+  // Only techniques found in the quoted post are highlighted here; blanks keep the hover indexes in step.
+  function quoteCard(post, techniques) {
+    var q = post && post.quoted;
+    if (!q) return document.createDocumentFragment();
+    var card = el("div", "quoted");
+    var src = safeUrl(q.url), who = el(src ? "a" : "div", "quoted-by", "Quoted post by @" + q.author);
+    if (src) { who.href = src; who.target = "_blank"; who.rel = "noopener noreferrer"; }
+    card.appendChild(who);
+    card.appendChild(highlighted(q.text, (techniques || []).map(function (t) {
+      return t.source === "quoted" ? t : { name: "", quote: "" };
+    })));
+    card.appendChild(mediaRow(q));
+    return card;
+  }
+
   // The post itself, laid out like a focused post, with quotes highlighted.
   function renderPost(node, a, inputText) {
     node.textContent = "";
@@ -155,6 +185,8 @@
     }
     art.appendChild(head);
     art.appendChild(highlighted(text, a.techniques));
+    art.appendChild(mediaRow(post));
+    art.appendChild(quoteCard(post, a.techniques));
     var meta = el("div", "post-meta", (post && post.ts ? fmtTime(post.ts) + " · " : "") + (post ? "Bluesky" : "Pasted text"));
     art.appendChild(meta);
 
@@ -172,6 +204,7 @@
   function renderTechniques(node, a) {
     node.textContent = "";
     node.appendChild(el("h2", "sec-title", "Techniques found in this post"));
+    if ((a.errors || {}).media) node.appendChild(note("warn", a.errors.media.replace(/^not enough data: /, "Not enough data: ")));
     if (!a.techniques) {
       node.appendChild(note("warn", "Not checked: " + ((a.errors || {}).techniques || (a.errors || {}).post || "no result")));
       return;
@@ -189,6 +222,8 @@
       var body = el("div", "tech-body");
       body.appendChild(el("div", "tech-name", t.name));
       body.appendChild(el("blockquote", "tech-quote", t.quote));
+      if (t.source === "image") body.appendChild(el("p", "tech-why", "Quote read from the post's image."));
+      if (t.source === "quoted") body.appendChild(el("p", "tech-why", "Found in the quoted post" + (a.post && a.post.quoted ? " by @" + a.post.quoted.author : "") + ", not in this author's own words."));
       if (t.why) body.appendChild(el("p", "tech-why", t.why));
       row.appendChild(body);
       node.appendChild(row);
@@ -329,6 +364,8 @@
     body.appendChild(head);
 
     body.appendChild(highlighted(post.text, item.techniques));
+    body.appendChild(mediaRow(post));
+    body.appendChild(quoteCard(post, item.techniques));
 
     if (item.techniques && item.techniques.length) {
       var list = el("div", "reply-techs");
@@ -336,12 +373,15 @@
         var line = el("div", "reply-tech");
         line.appendChild(el("b", null, t.name));
         if (t.why) line.appendChild(document.createTextNode(" " + t.why));
+        if (t.source === "quoted") line.appendChild(document.createTextNode(" (Found in the quoted post.)"));
         list.appendChild(line);
       });
       body.appendChild(list);
     } else if (item.techniques) {
       body.appendChild(el("div", "reply-note", "Scanned for techniques: none found."));
-    } else if ((item.errors || {}).techniques) {
+    }
+    if ((item.errors || {}).media) body.appendChild(el("div", "reply-note warn", item.errors.media));
+    if (!item.techniques && (item.errors || {}).techniques) {
       body.appendChild(el("div", "reply-note warn", "Techniques not checked: " + item.errors.techniques));
     }
 
