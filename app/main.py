@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import bluesky
+from app import bluesky, web_research
 
 app = FastAPI()
 
@@ -34,6 +34,13 @@ def analyze(body: AnalyzeIn):
             out["post"] = bluesky.get_post(body.url)
         except bluesky.BlueskyError as e:
             out["errors"]["post"] = str(e)
+
+    post_text = out["post"]["text"] if out["post"] else body.text
+    if post_text:
+        try:
+            out["coverage"] = web_research.analyze(post_text)
+        except web_research.ResearchError as e:
+            out["errors"]["coverage"] = str(e)
     return out
 
 
