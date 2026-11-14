@@ -1,0 +1,240 @@
+"""Bot-likeness score for a social media account. Stdlib only.
+
+Ported from FCaptcha (MIT, github.com/WebDecoy/FCaptcha, server-python/):
+  - Detection = (category, score, confidence, reason)       server.py Detection
+  - category  = 1 - PRODUCT(1 - score*confidence)  noisy-OR  calculate_category_scores
+  - final     = SUM(category * weight)                       calculate_final_score
+  - dispositive floor 0.9, corroboration floor 0.6           apply_*_floor
+  - interval CV and KS-uniformity tests                      detection.py keystroke cadence
+  - "one fingerprint seen from many IPs"                     FingerprintStore
+    -> here "one text seen from many accounts"
+
+Not ported: everything that needs the visitor's live browser (mouse, keystrokes,
+webdriver/CDP flags, TLS fingerprints, IP reputation). We only see public posts.
+
+Profile category: one logistic formula over the profile features listed in the
+BotometerLite paper (Yang, Varol, Hui, Menczer, AAAI 2020). Only their feature
+list is used; their model is closed, so the weights here are hand-set by us.
+Skipped on purpose: handle-likelihood (needs a bigram table of real handles) and
+likes growth rate (most platforms hide it).
+
+The bot-likeness score is in [0,1] and is NOT a calibrated probability.
+shortcut: thresholds and weights are hand-set, not fitted; fit them on a labelled
+set (e.g. TwiBot-20 / Cresci-2017) before quoting precision or false-positive rate.
+"""
+import math
+import re
+import time
+
+WEIGHTS = {"cadence": 0.30, "text_reuse": 0.30, "profile": 0.20, "rate": 0.10, "declared": 0.10}
+# shortcut: hand-set logistic weights, upgrade by fitting them on TwiBot-20/22
+PROFILE_BIAS, PROFILE_VERIFIED = -3.0, -2.0
+PROFILE_WEIGHTS = {"freq": 2.0, "friend": 1.5, "ratio": 1.2, "new": 1.2,
+                   "digits": 1.0, "nobio": 0.6, "noavatar": 0.6}  # sums to 8.1
+BEHAVIOURAL = ("cadence", "text_reuse", "rate")
+DISPOSITIVE_FLOOR = 0.9
+CORROBORATION_AGREE_AT, CORROBORATION_FLOOR = 0.4, 0.6
+MIN_INTERVALS = 10
+
+
+def _det(category, score, confidence, reason, dispositive=False):
+    return {"category": category, "score": score, "confidence": round(confidence, 3),
+            "reason": reason, "dispositive": dispositive}
+
+
+def _cadence(timestamps):
+    ts = sorted(timestamps)
+    iv = [b - a for a, b in zip(ts, ts[1:]) if b > a]
+    n = len(iv)
+    if n < MIN_INTERVALS:
+        return []
+    size = min(1.0, n / 20)  # few samples -> less confidence
+    out = []
+
+    mean = sum(iv) / n
+    cv = math.sqrt(sum((v - mean) ** 2 for v in iv) / n) / mean
+    if cv < 0.3:  # human posting is bursty (cv around 1 or more); schedulers are not
+        out.append(_det("cadence", 0.9 if cv < 0.1 else 0.6, 0.8 * size,
+                        f"Posts arrive at near-constant intervals (variation {cv:.2f}, people are usually above 1)"))
+
+    lo, hi = min(iv), max(iv)
+    if hi > lo:  # KS distance to uniform[lo, hi]: catches "random delay between a and b"
+        s = sorted(iv)
+        d = max(max(abs((i + 1) / n - (v - lo) / (hi - lo)), abs(i / n - (v - lo) / (hi - lo)))
+                for i, v in enumerate(s))
+        if d < 0.1:
+            out.append(_det("cadence", 0.7 if d < 0.05 else 0.5, 0.6 * size,
+                            "Gaps between posts look like a random-number generator (evenly spread), not a person"))
+
+    if len(ts) >= 30:  # no sleep: activity spread evenly over all 24 hours
+        counts = [0] * 24
+        for t in ts:
+            counts[int(t // 3600) % 24] += 1
+        h = -sum(c / len(ts) * math.log2(c / len(ts)) for c in counts if c) / math.log2(24)
+        if h > 0.95:
+            out.append(_det("cadence", 0.6, 0.5 * size, "Posts around the clock with no sleep gap"))
+    return out
+
+
+def _rate(timestamps):
+    if len(timestamps) < 10:
+        return []
+    per_day = len(timestamps) / max((max(timestamps) - min(timestamps)) / 86400, 1)
+    # DFRLab rule of thumb: 72/day suspicious, 144/day highly suspicious
+    if per_day > 144:
+        return [_det("rate", 0.9, 0.9, f"{per_day:.0f} posts per day")]
+    if per_day > 72:
+        return [_det("rate", 0.6, 0.7, f"{per_day:.0f} posts per day")]
+    return []
+
+
+def shingles(text):
+    w = re.sub(r"https?://\S+|[@#]\w+|[^\w\s]", " ", text.lower()).split()
+    if len(w) < 5:  # "lol" matching "lol" is not coordination
+        return set()
+    return {" ".join(w[i:i + 3]) for i in range(len(w) - 2)}
+
+
+def similarity(a, b):
+    a, b = shingles(a), shingles(b)
+    return len(a & b) / len(a | b) if a and b else 0.0
+
+
+def _text_reuse(post, others):
+    """post: {account, text, ts}. others: same shape, candidate similar posts."""
+    dupes = [o for o in others
+             if o.get("account") != post.get("account") and similarity(post["text"], o["text"]) >= 0.7]
+    accounts = {o.get("account") for o in dupes}
+    out = []
+    if len(accounts) >= 3:
+        big = len(accounts) >= 10
+        out.append(_det("text_reuse", 0.85 if big else 0.6, 0.85 if big else 0.7,
+                        f"Near-identical text posted by {len(accounts)} other accounts"))
+    if "ts" in post:
+        sync = {o.get("account") for o in dupes if "ts" in o and abs(o["ts"] - post["ts"]) <= 600}
+        if len(sync) >= 3:
+            out.append(_det("text_reuse", 0.8, 0.8,
+                            f"{len(sync)} of those copies were posted within 10 minutes of this one"))
+    return out
+
+
+def _clip(x):
+    return min(1.0, max(0.0, x))
+
+
+def profile_score(acc, now):
+    """-> (score, confidence, reason). A feature whose input is absent contributes 0."""
+    s = {}  # feature -> (value in [0,1], plain-language reason)
+    if "created_at" in acc:
+        age = max((now - acc["created_at"]) / 86400, 1)
+        s["new"] = (_clip(1 - age / 90), f"Account is {age:.0f} days old")
+        if "total_posts" in acc:  # 0 at 10 posts/day, 1 at 150
+            r = acc["total_posts"] / age
+            s["freq"] = (_clip(math.log10(max(r, 1e-9) / 10) / math.log10(15)),
+                         f"{r:.0f} posts per day since the account was created")
+        if "following" in acc:  # 0 at 5 follows/day, 1 at 100
+            r = acc["following"] / age
+            s["friend"] = (_clip(math.log10(max(r, 1e-9) / 5) / math.log10(20)),
+                           f"Follows {r:.0f} new accounts per day")
+    if "followers" in acc and "following" in acc:
+        f = acc["following"]
+        s["ratio"] = (_clip(1 - acc["followers"] / f / 0.5) if f >= 50 else 0.0,
+                      f"{acc['followers']} followers against {f} followed")
+    if "handle" in acc:
+        n = sum(c.isdigit() for c in acc["handle"])
+        s["digits"] = (_clip((n - 2) / 4), f"Handle contains {n} digits")
+    if "bio" in acc:
+        s["nobio"] = (0.0 if acc["bio"] else 1.0, "No bio")
+    if "default_avatar" in acc:
+        s["noavatar"] = (1.0 if acc["default_avatar"] else 0.0, "No profile picture")
+
+    w = PROFILE_WEIGHTS
+    z = PROFILE_BIAS + sum(w[k] * v for k, (v, _) in s.items()) + PROFILE_VERIFIED * bool(acc.get("verified"))
+    top = sorted((k for k in s if s[k][0] > 0), key=lambda k: -w[k] * s[k][0])[:3]
+    return 1 / (1 + math.exp(-z)), sum(w[k] for k in s) / sum(w.values()), "; ".join(s[k][1] for k in top)
+
+
+def _profile(acc, now):
+    out = []
+    p, conf, reason = profile_score(acc, now)
+    if p >= 0.2:  # clean accounts sit near 0.05 and keep an empty reasons list
+        out.append(_det("profile", round(p, 3), conf, reason))
+    # shortcut: keyword match, misses other languages; a declared bot may be harmless (weather bot)
+    if re.search(r"(?<!not a )\b(bot|automated)\b", acc.get("bio", ""), re.I):
+        out.append(_det("declared", 1.0, 1.0, "Account describes itself as a bot", dispositive=True))
+    return out
+
+
+def score(account=None, timestamps=(), post=None, others=(), now=None):
+    """account: {handle, bio, created_at, followers, following, default_avatar,
+              total_posts, verified} (all optional)
+    timestamps: epoch seconds of the account's recent posts
+    post / others: the post under analysis and candidate similar posts, {account, text, ts}
+    """
+    timestamps = list(timestamps)
+    dets = _cadence(timestamps) + _rate(timestamps)
+    if post:
+        dets += _text_reuse(post, others)
+    if account:
+        dets += _profile(account, now or time.time())
+
+    survives = {}
+    for d in dets:
+        survives[d["category"]] = survives.get(d["category"], 1.0) * (1 - d["score"] * d["confidence"])
+    cats = {c: round(1 - survives.get(c, 1.0), 3) for c in WEIGHTS}
+
+    total = sum(cats[c] * w for c, w in WEIGHTS.items())
+    if any(d["dispositive"] for d in dets):
+        total = max(total, DISPOSITIVE_FLOOR)
+    if sum(cats[c] >= CORROBORATION_AGREE_AT - 1e-9 for c in BEHAVIOURAL) >= 2:
+        total = max(total, CORROBORATION_FLOOR)
+
+    # What we could actually test. No evidence is not evidence of a human.
+    checked = [name for name, ok in (
+        ("cadence", len(timestamps) > MIN_INTERVALS),
+        ("text_reuse", bool(post and others and shingles(post["text"]))),
+        ("profile", bool(account)),
+    ) if ok]
+    if total >= 0.6:
+        verdict = "likely automated or coordinated"
+    elif total >= 0.3:
+        verdict = "some bot-like signals"
+    elif "cadence" not in checked and "text_reuse" not in checked:
+        verdict = "not enough data to judge"
+    else:
+        verdict = "no bot signals found"
+    return {"score": round(total, 3), "verdict": verdict, "checked": checked,
+            "categories": cats, "reasons": [d["reason"] for d in dets], "detections": dets}
+
+
+if __name__ == "__main__":
+    import random
+    random.seed(1)
+    text = "Wake up people the mainstream media is hiding the truth about this from you"
+
+    bot_ts = [1_700_000_000 + i * 3600 + random.uniform(-5, 5) for i in range(200)]
+    copies = [{"account": f"a{i}", "text": text + " #truth", "ts": bot_ts[-1] + i * 20} for i in range(5)]
+    bot = score({"handle": "maria48213377", "created_at": bot_ts[0] - 86400}, bot_ts,
+                {"account": "me", "text": text, "ts": bot_ts[-1]}, copies, now=bot_ts[-1])
+    assert bot["score"] >= 0.6, bot
+
+    human_ts = [1_700_000_000 + d * 86400 + random.uniform(8, 23) * 3600
+                for d in range(40) for _ in range(random.randint(0, 4))]
+    human = score({"handle": "thien", "bio": "not a bot, just tired", "created_at": 1_500_000_000,
+                   "followers": 200, "following": 300}, human_ts,
+                  {"account": "me", "text": text, "ts": human_ts[-1]},
+                  [{"account": "x", "text": "completely different words about cats and dogs here", "ts": 0}],
+                  now=max(human_ts))
+    assert human["score"] < 0.3 and not human["reasons"], human
+
+    assert score()["verdict"] == "not enough data to judge"
+    assert score({"bio": "I am a bot"})["score"] >= 0.9
+
+    day = 86400
+    assert abs(profile_score({}, 0)[0] - 0.047) < 0.01
+    lone = profile_score({"created_at": 0, "total_posts": 150 * 1000}, 1000 * day)[0]  # s_freq maxed
+    assert 0.2 < lone < 0.3, lone
+    worst = profile_score({"created_at": 0, "total_posts": 200, "following": 150, "followers": 0,
+                           "handle": "a123456", "bio": "", "default_avatar": True}, day)
+    assert worst[0] > 0.9 and abs(worst[1] - 1) < 1e-9, worst
+    print("ok  bot", bot["score"], bot["reasons"], "\n    human", human["score"])
