@@ -109,7 +109,7 @@ def main():
             "The labelled texts are political memes from 2020-2021, not Bluesky posts or video transcripts.",
             "The labels are for the meme's text alone (Subtask 1 of the task). This tool does not read images, so the task's image-and-text labels are not used.",
             "Annotators disagree with each other on technique labels too; a miss or an extra flag is not always the detector being wrong.",
-            f"Techniques with fewer than {MIN_SUPPORT} labelled examples are listed but their numbers are too uncertain to rely on.",
+            f"Techniques with fewer than {MIN_SUPPORT} labelled examples are left out of the table; their counts are in eval/results.json.",
             "The neutral set is 32 factual posts from 8 automated feeds; ordinary personal posts are not in it.",
         ]})
 
