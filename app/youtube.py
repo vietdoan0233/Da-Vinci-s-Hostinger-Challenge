@@ -2,13 +2,17 @@
 
 Uses the youtube-transcript-api package, which reads the captions YouTube shows
 under "Show transcript". Works from a home connection (checked 2026-11-14);
-YouTube sometimes refuses cloud servers, and that case gets its own message.
+YouTube refuses cloud servers (the VPS, checked 2026-11-14); then the captions are
+read through the Oxylabs Web API instead, when its key is set.
 """
+import os
 import re
 import time
 from urllib.parse import parse_qs, urlsplit
 
 import httpx
+
+from app import coverage
 
 ID_RE = re.compile(r"^[A-Za-z0-9_-]{11}$")
 CHUNK_CHARS = 700   # about 45-60 seconds of speech: enough context, short enough to quote from
@@ -75,10 +79,32 @@ def _fetch_segments(video_id):
     except (err.VideoUnavailable, err.InvalidVideoId):
         raise YouTubeError("Video not found (private, removed or mistyped)")
     except (err.RequestBlocked, err.IpBlocked):
+        if os.environ.get("OXYLABS_WEB_API_KEY"):
+            return _oxylabs_segments(video_id)
         raise YouTubeError("YouTube refused the transcript request from this server")
     except Exception as e:  # the library and YouTube both change; never a 500
         raise YouTubeError("The transcript could not be read") from e
     return [{"t": float(s.start), "text": " ".join(s.text.split())} for s in transcript if s.text.strip()]
+
+
+def _oxylabs_segments(video_id):
+    """The same captions through the Oxylabs Web API, for servers YouTube refuses (the VPS is one).
+    Response checked 2026-11-14: results[0].json.<origin>.<language> is YouTube's own caption
+    format, events of {tStartMs, segs: [{utf8}]}."""
+    try:
+        rows = coverage._oxy("scrape/media/youtube/subtitles", {"query": video_id}, 60).get("results") or [{}]
+        tracks = rows[0].get("json") or {}
+        by_lang = {**(tracks.get("auto_generated") or {}), **(tracks.get("uploader_provided") or {})}  # the uploader's own captions win
+        track = by_lang.get("en") or next(iter(by_lang.values()), None)  # English, else any language the video has
+        events = (track or {}).get("events") or []
+        out = [{"t": float(e.get("tStartMs") or 0) / 1000,
+                "text": " ".join("".join(str(s.get("utf8") or "") for s in e.get("segs") or []).split())} for e in events]
+    except (httpx.HTTPError, ValueError, AttributeError, IndexError, TypeError) as e:
+        raise YouTubeError("The transcript could not be read") from e
+    out = [s for s in out if s["text"]]
+    if not out:
+        raise YouTubeError("This video has no captions to read")
+    return out
 
 
 def make_chunks(segments, size=CHUNK_CHARS):
