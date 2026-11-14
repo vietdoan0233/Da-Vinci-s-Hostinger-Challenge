@@ -89,6 +89,6 @@ def analyze(text: str, model=None, detect=detect_language) -> dict:
     res = {"status": "ok", "language": lang, "n_sentences": len(out), "n_flagged": n_flagged,
            "disabled_techniques": [t for t in T if TH.get(t) is None], "sentences": out}
     if n_flagged == 0:
-        res["message"] = (f"No technique flagged in {len(out)} sentences. "
+        res["message"] = (f"No technique flagged in {len(out)} sentence{'' if len(out)==1 else 's'}. "
                           "This does not mean the text is neutral or accurate.")
     return res
