@@ -167,12 +167,12 @@ with two people. Hour figures are guesses.
 
 ### Feature 2: read a Bluesky post from its URL (about 1 h)
 
-- [ ] 2.1 `app/bluesky.py`: `parse_url(url) -> (handle, post_id)`. Reject anything that is not a `bsky.app` post URL.
-- [ ] 2.2 `get_post(url) -> {text, author, ts, url}` through the public API.
-- [ ] 2.3 `get_author(handle) -> {handle, bio, created_at, followers, following, default_avatar, total_posts, verified}`.
-- [ ] 2.4 `get_author_timestamps(handle) -> [epoch seconds]` for the last 100 posts.
-- [ ] 2.5 Cache each call for 10 minutes. 10 s timeout. A failure becomes an entry in `errors`.
-- [ ] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
+- [x] 2.1 `app/bluesky.py`: `parse_url(url) -> (handle, post_id)`. Reject anything that is not a `bsky.app` post URL.
+- [x] 2.2 `get_post(url) -> {text, author, ts, url}` through the public API.
+- [x] 2.3 `get_author(handle) -> {handle, bio, created_at, followers, following, default_avatar, total_posts, verified}`.
+- [x] 2.4 `get_author_timestamps(handle) -> [epoch seconds]` for the last 100 posts.
+- [x] 2.5 Cache each call for 10 minutes. 10 s timeout. A failure becomes an entry in `errors`.
+- [x] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
 - [ ] 2.7 Web page: accept a URL as well as text. Panel shows author and time above the techniques.
 - [ ] 2.8 Tests on saved API responses in `tests/fixtures/`: URL parsing, field mapping, deleted post.
 - [ ] Done when: pasting a real Bluesky post URL on the live site shows its text and techniques.

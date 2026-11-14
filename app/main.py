@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
+from app import bluesky
+
 app = FastAPI()
 
 
@@ -25,8 +27,14 @@ def health():
 
 @app.post("/api/analyze")
 def analyze(body: AnalyzeIn):
-    return {"post": None, "techniques": None, "bot": None, "similar": None,
-            "coverage": None, "sides": None, "errors": {}}
+    out = {"post": None, "techniques": None, "bot": None, "similar": None,
+           "coverage": None, "sides": None, "errors": {}}
+    if body.url:
+        try:
+            out["post"] = bluesky.get_post(body.url)
+        except bluesky.BlueskyError as e:
+            out["errors"]["post"] = str(e)
+    return out
 
 
 # Last: a "/" mount would shadow routes registered after it.
