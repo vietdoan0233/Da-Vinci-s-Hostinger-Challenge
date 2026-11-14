@@ -12,9 +12,11 @@ both the false-positive guard and the prompt-injection guard.
 import re
 import unicodedata
 
-from app import cache, llm
+import os
 
-PROMPT_VERSION = 1  # bump on any prompt or list change, so cached answers are not reused
+from app import anthropic_detect, cache, llm
+
+PROMPT_VERSION = 2  # bump on any prompt or list change, so cached answers are not reused
 
 TECHNIQUES = {
     "Appeal to authority": "Claiming something is true because an authority or expert said so, without other evidence.",
@@ -111,6 +113,20 @@ def find(post_text):
     if hit is not None:
         return hit
     fenced = re.sub(r"</?\s*post\s*>", " ", post_text, flags=re.I)  # the post cannot close its own block
-    result = validate(llm.ask_json(SYSTEM, f"<post>\n{fenced}\n</post>"), post_text)
+    result, anthropic_error = None, None
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        # Preferred path: our measured six-technique detector. On failure fall through to the router
+        # path below; if that is also unavailable the caller reports an error, never "nothing found".
+        try:
+            result = anthropic_detect.find(post_text)
+        except anthropic_detect.LLMError as e:
+            anthropic_error = e
+    if result is None:
+        try:
+            result = validate(llm.ask_json(SYSTEM, f"<post>\n{fenced}\n</post>"), post_text)
+        except llm.NotConfigured:
+            if anthropic_error:
+                raise anthropic_error  # the router is not set up either: report the real failure
+            raise
     cache.set(k, result)
     return result
