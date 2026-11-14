@@ -123,7 +123,6 @@
     botRows(body, h.behaviour_only, hb && hb.behaviour_only, "Behaviour only");
     add(out, "p", "meta", "What changed: the first run showed that no known bot was caught by its behaviour, only by saying \"bot\" in its bio. The timing test was thrown off by a single long gap. A rule for posting schedules (most gaps the same length) was added and set on a separate tuning set of " +
       d.tune.n_bots + " bots and " + d.tune.n_humans + " people, then measured here.");
-    caveats(out, d.caveats);
     var det = add(out, "details");
     add(det, "summary", null, "Every account and its score (" + d.accounts.length + ")");
     var b2 = table(det, ["Account", "Set", "Is", "Score shown", "Behaviour only"]);
