@@ -21,7 +21,6 @@
   .nav { display: flex; align-items: center; gap: 18px; padding: 12px; border-radius: 999px; font-size: 20px; color: var(--text); text-decoration: none; background: none; border: 0; width: fit-content; }
   .nav:hover { background: rgba(231, 233, 234, .1); }
   .nav.active { font-weight: 700; }
-  #how:target { outline: 2px solid var(--blue); }  /* the card is often already on screen, so the link must show something */
   .nav .ic { width: 26px; height: 26px; }
   .cta { margin-top: 14px; width: 90%; padding: 15px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 700; font-size: 17px; }
   .cta:hover { background: var(--blue-hover); }
@@ -81,14 +80,6 @@
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h3M10 9v14M16 4v24M22 11v10M28 16h-3"/></svg>
       <span>Decode the Noise</span>
     </div>
-    <a class="nav active" href="./">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6 2 11h2.500v9.500h6V15h3v5.500h6V11H22L12 2.600z"/></svg>
-      <span>Analyze</span>
-    </a>
-    <a class="nav" href="#how">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm-1 6h2v7h-2v-7zm0-3h2v2h-2V7z"/></svg>
-      <span>How it works</span>
-    </a>
     <a class="nav" href="metrics.html">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h3v10H4zm6.500 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
       <span>Accuracy</span>
