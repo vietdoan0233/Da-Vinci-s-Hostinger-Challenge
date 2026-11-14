@@ -60,13 +60,6 @@
     return add(t, "tbody");
   }
 
-  function caveats(parent, list) {
-    var box = add(parent, "div", "caveats");
-    add(box, "h3", null, "Read these numbers with this in mind");
-    var ul = add(box, "ul");
-    (list || []).forEach(function (c) { add(ul, "li", null, c); });
-  }
-
   function section(id, title, data, draw) {
     out = add(root, "section", "sec");
     out.id = id;  // the links at the top of the page jump here
@@ -81,20 +74,19 @@
   function techniques(d) {
     var tiles = add(out, "div", "tiles");
     tile(tiles, "Precision: of the techniques it flagged, how many the annotators also marked", d.micro.precision);
-    tile(tiles, "Recall: of the techniques the annotators marked, how many it found", d.micro.recall);
     tile(tiles, "False alarms on memes with no technique", d.false_alarms.memes_with_no_technique);
     tile(tiles, "False alarms on factual posts (forecasts, scores, filings)", d.false_alarms.neutral_posts);
     add(out, "p", "meta", "Micro-F1 " + d.micro.f1.toFixed(3) + " on " + d.n_memes + " labelled meme texts and " + d.n_neutral +
       " factual posts. Micro-F1 is the measure SemEval-2021 Task 6 used. " + (d.not_answered ? d.not_answered + " texts got no answer and are not counted. " : "") +
       "Detector: " + d.detector.where + (d.detector.server_version ? ", version " + d.detector.server_version : "") + ", prompt version " + d.detector.prompt_version + ". Model: " + d.detector.model + ".");
     add(out, "h3", null, "By technique");
-    var body = table(out, ["Technique", "Labelled examples", "Precision", "Recall"]);
+    var body = table(out, ["Technique", "Labelled examples", "Precision"]);
     // techniques with too few labelled examples stay in results.json but are not drawn
     d.per_technique.filter(function (r) { return r.reportable; }).forEach(function (r) {
       var tr = add(body, "tr");
       add(tr, "td", null, r.technique);
       add(tr, "td", "n", String(r.labelled));
-      tr.appendChild(cell(r.precision)); tr.appendChild(cell(r.recall));
+      tr.appendChild(cell(r.precision));
     });
   }
 
@@ -150,7 +142,6 @@
       var tr = add(body, "tr");
       add(tr, "td", null, e.edit); tr.appendChild(cell(e.still_a_copy)); tr.appendChild(cell(e.still_shown));
     });
-    caveats(out, d.caveats);
   }
 
   fetch("eval/results.json").then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (d) {
