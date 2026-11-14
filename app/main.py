@@ -200,8 +200,8 @@ def eval_results():
 
 
 def channel_bot(channel_url):
-    """-> (bot, error) for the channel that uploaded a video. Upload times are not available
-    (the channel data gives relative dates only), so posting rhythm is never among the things checked."""
+    """-> (bot, error) for the channel that uploaded a video, from its public numbers: age, upload
+    frequency, views, subscribers and titles. YouTube gives no exact upload times."""
     try:
         result = bot_score.score(youtube.get_channel(channel_url), platform="youtube")
         return {k: result[k] for k in ("score", "verdict", "checked", "reasons")}, None

@@ -38,7 +38,9 @@ PROFILE_WEIGHTS = {"freq": 2.0, "friend": 1.5, "ratio": 1.2, "new": 1.2,
 # shortcut: hand-set and unmeasured, fit on labelled Reddit accounts and YouTube channels before quoting any rate
 REDDIT_WEIGHTS = {"new": 1.2, "autoname": 1.0, "linkonly": 1.0, "karma": 0.8,
                   "unverified": 0.6, "nobio": 0.3, "noavatar": 0.3}  # sums to 5.2
-YOUTUBE_WEIGHTS = {"freq": 2.0, "new": 1.2, "views": 1.0, "handle": 1.0, "subs": 0.8, "nobio": 0.6}  # sums to 6.6
+YOUTUBE_WEIGHTS = {"freq": 2.0, "recent": 1.5, "new": 1.2, "views": 1.0, "titles": 1.0,
+                   "handle": 1.0, "subs": 0.8, "nobio": 0.6}  # sums to 9.1
+YOUTUBE_ENOUGH = 0.5  # share of the weights that must have data before a channel gets a verdict
 BEHAVIOURAL = ("cadence", "text_reuse", "rate")
 DISPOSITIVE_FLOOR = 0.9
 CORROBORATION_AGREE_AT, CORROBORATION_FLOOR = 0.4, 0.6
@@ -216,8 +218,10 @@ def reddit_profile_score(acc, now):
 
 
 def youtube_profile_score(acc, now):
-    """acc: {handle, created_at, video_count, views, subscribers, bio, verified} (all optional).
-    Scores the channel that uploaded a video, never the people commenting on it."""
+    """acc: {handle, created_at, video_count, views, subscribers, bio, recent_per_day, titles, verified}
+    (all optional). Scores the channel that uploaded a video, never the people commenting on it.
+    YouTube gives no exact upload times, so this formula is the whole score for a channel: how often
+    it uploads, how old it is, and whether anyone watches."""
     s = {}
     videos = acc.get("video_count")
     if "created_at" in acc:
@@ -226,6 +230,14 @@ def youtube_profile_score(acc, now):
         if videos is not None:  # 0 at 3 uploads/day, 1 at 30
             r = videos / age
             s["freq"] = (_clip(math.log10(max(r, 1e-9) / 3)), f"{r:.0f} uploads per day since the channel was created")
+    if "recent_per_day" in acc:  # same scale, over its newest videos
+        r = acc["recent_per_day"]
+        s["recent"] = (_clip(math.log10(max(r, 1e-9) / 3)), f"About {r:.0f} uploads per day lately")
+    titles = acc.get("titles") or []
+    if len(titles) >= 10:  # one template filled in over and over: 0 at 30% of titles, 1 at 80%
+        heads = [" ".join(re.sub(r"[\W\d_]+", " ", t.lower()).split()[:4]) for t in titles]
+        share = sum(heads.count(h) > 1 for h in heads) / len(heads)
+        s["titles"] = (_clip((share - 0.3) / 0.5), f"{share:.0%} of its newest titles start with the same words")
     if videos is not None and "views" in acc:  # 0 at 100 views per video; needs 20 videos to mean anything
         per = acc["views"] / max(videos, 1)
         s["views"] = (_clip(1 - math.log10(1 + per) / 2) if videos >= 20 else 0.0,
@@ -266,11 +278,12 @@ def score(account=None, timestamps=(), post=None, others=(), now=None, platform=
     post / others: the post under analysis and candidate similar posts, {account, text, ts}
     """
     timestamps = list(timestamps)
+    now = now or time.time()
     dets = _cadence(timestamps) + _rate(timestamps)
     if post:
         dets += _text_reuse(post, others)
     if account:
-        dets += _profile(account, now or time.time(), platform)
+        dets += _profile(account, now, platform)
 
     survives = {}
     for d in dets:
@@ -290,11 +303,20 @@ def score(account=None, timestamps=(), post=None, others=(), now=None, platform=
         ("text_reuse", bool(post and others and shingles(post["text"]))),
         ("profile", bool(account)),
     ) if ok]
+    enough = "cadence" in checked or "text_reuse" in checked
+    if platform == "youtube" and account:  # no post times: the channel formula is the score, not a fifth of it
+        p, conf, _ = youtube_profile_score(account, now)
+        total, enough = max(total, p), conf >= YOUTUBE_ENOUGH
+        checked = [name for name, ok in (
+            ("upload frequency", "recent_per_day" in account or {"created_at", "video_count"} <= set(account)),
+            ("profile", True),
+            ("video titles", len(account.get("titles") or []) >= 10),
+        ) if ok]
     if total >= 0.6:
         verdict = "likely automated or coordinated"
     elif total >= 0.3:
         verdict = "some bot-like signals"
-    elif "cadence" not in checked and "text_reuse" not in checked:
+    elif not enough:
         verdict = "not enough data to judge"
     else:
         verdict = "no bot signals found"
@@ -347,8 +369,14 @@ if __name__ == "__main__":
                "subscribers": 4_560_000, "bio": "Official channel"}
     assert youtube_profile_score(channel, 4000 * day)[0] < 0.06
     assert 0.2 < youtube_profile_score({"created_at": 0, "video_count": 30 * 1000}, 1000 * day)[0] < 0.3
-    farm = {"created_at": 0, "handle": "@user-ab12cd34ef", "video_count": 300, "views": 900, "subscribers": 2, "bio": ""}
+    farm = {"created_at": 0, "handle": "@user-ab12cd34ef", "video_count": 300, "views": 900, "subscribers": 2, "bio": "",
+            "recent_per_day": 40, "titles": [f"Daily motivation quote number {i}" for i in range(20)]}
     worst = youtube_profile_score(farm, 5 * day)
     assert worst[0] > 0.9 and abs(worst[1] - 1) < 1e-9 and "uploads per day" in worst[2], worst
-    assert score(channel, platform="youtube", now=4000 * day)["verdict"] == "not enough data to judge"
+    assert score(channel, platform="youtube", now=4000 * day)["verdict"] == "no bot signals found"
+    assert score(farm, platform="youtube", now=5 * day)["verdict"] == "likely automated or coordinated"
+    assert score({"handle": "@quiet"}, platform="youtube")["verdict"] == "not enough data to judge"  # a handle alone
+    news = {"created_at": 0, "handle": "@BBCNews", "video_count": 34457, "views": 7_600_000_000, "subscribers": 20_300_000,
+            "bio": "News", "recent_per_day": 20, "titles": [f"{w} story of the day" for w in "abcdefghijklmnopqrst"]}
+    assert score(news, platform="youtube", now=7500 * day)["score"] < 0.3  # a busy newsroom is not a bot
     print("ok  bot", bot["score"], bot["reasons"], "\n    human", human["score"])
