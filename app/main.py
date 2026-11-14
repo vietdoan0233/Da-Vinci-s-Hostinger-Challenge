@@ -3,9 +3,10 @@ import os
 import threading
 import time
 from collections import defaultdict, deque
+from concurrent.futures import ThreadPoolExecutor
 
 import httpx
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
@@ -43,15 +44,26 @@ def client_ip(request: Request):
     return fwd.split(",")[-1].strip() if fwd else request.client.host
 
 
-def check_rate(ip):
+def check_rate(ip, bucket="analyze", limit=RATE_LIMIT):
     now = time.monotonic()
     with _hits_lock:
-        q = _hits[ip]
+        q = _hits[(bucket, ip)]
         while q and now - q[0] > RATE_WINDOW:
             q.popleft()
-        if len(q) >= RATE_LIMIT:
-            raise HTTPException(429, f"Too many requests: at most {RATE_LIMIT} per minute. Try again shortly.")
+        if len(q) >= limit:
+            raise HTTPException(429, f"Too many requests: at most {limit} per minute. Try again shortly.")
         q.append(now)
+
+
+def find_techniques(text, errors):
+    try:
+        return techniques.find(text)
+    except llm.NotConfigured:
+        errors["techniques"] = "technique detection is not configured on this server"
+    except Exception:  # LLM down, timeout or unparseable reply: report it, never show "none found"
+        log.exception("technique detection failed")
+        errors["techniques"] = "the AI service did not answer, try again shortly"
+    return None
 
 
 @app.post("/api/analyze")
@@ -66,13 +78,7 @@ def analyze(body: AnalyzeIn, request: Request):
         except bluesky.BlueskyError as e:
             out["errors"]["post"] = str(e)
             return out
-    try:
-        out["techniques"] = techniques.find(post["text"])
-    except llm.NotConfigured:
-        out["errors"]["techniques"] = "technique detection is not configured on this server"
-    except Exception:  # LLM down, timeout or unparseable reply: report it, never show "none found"
-        log.exception("technique detection failed")
-        out["errors"]["techniques"] = "the AI service did not answer, try again shortly"
+    out["techniques"] = find_techniques(post["text"], out["errors"])
     try:
         out["similar"] = similar.find(post)
     except similar.NotEnoughData as e:
@@ -91,6 +97,41 @@ def analyze(body: AnalyzeIn, request: Request):
             log.exception("bot score failed")
             out["errors"]["bot"] = "author history unavailable"
     return out
+
+
+REPLY_PAGE = 10
+REPLY_TECH_AT = 0.4  # replies above this bot-likeness score are also checked for techniques
+REPLY_RATE_LIMIT = 30  # scrolling a thread asks for a page at a time
+
+
+def analyze_reply(reply):
+    """Bot-likeness for every reply; techniques only when the score is above REPLY_TECH_AT.
+    No copy search: that is for the post being analysed."""
+    item = {"post": reply, "bot": None, "techniques": None, "errors": {}}
+    try:
+        result = bot_score.score(bluesky.get_author(reply["author"]), bluesky.get_author_timestamps(reply["author"]))
+        item["bot"] = {k: result[k] for k in ("score", "verdict", "checked", "reasons")}
+    except Exception:
+        log.exception("reply bot score failed")
+        item["errors"]["bot"] = "author history unavailable"
+    if item["bot"] and item["bot"]["score"] > REPLY_TECH_AT and reply["text"].strip():
+        item["techniques"] = find_techniques(reply["text"], item["errors"])
+    return item
+
+
+@app.get("/api/replies")
+def replies(request: Request, url: str = Query(min_length=1, max_length=300), offset: int = Query(0, ge=0)):
+    """One page of a post's direct replies, most liked first, each with its own analysis."""
+    check_rate(client_ip(request), "replies", REPLY_RATE_LIMIT)
+    try:
+        found = bluesky.get_replies(url)
+    except bluesky.BlueskyError as e:
+        return {"replies": [], "total": 0, "next": None, "errors": {"replies": str(e)}}
+    page = found[offset:offset + REPLY_PAGE]
+    with ThreadPoolExecutor(max_workers=REPLY_PAGE) as pool:  # each reply needs its author's profile and feed
+        items = list(pool.map(analyze_reply, page))
+    more = offset + REPLY_PAGE < len(found)
+    return {"replies": items, "total": len(found), "next": offset + REPLY_PAGE if more else None, "errors": {}}
 
 
 # Last: a "/" mount would shadow routes registered after it.

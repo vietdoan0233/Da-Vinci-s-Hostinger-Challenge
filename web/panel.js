@@ -296,6 +296,72 @@
     });
   }
 
+  function compact(n) {
+    return n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n || 0);
+  }
+
+  function replyAvatar(post) {
+    var src = post.avatar && safeUrl(post.avatar);
+    if (!src) return avatar(post.author);
+    var img = document.createElement("img");
+    img.className = "avatar"; img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer";
+    img.src = src;
+    img.addEventListener("error", function () { img.replaceWith(avatar(post.author)); });
+    return img;
+  }
+
+  // One reply in the thread: its own bot-likeness score, and techniques when it was scanned.
+  // Clicking it calls onOpen(url) so the page can make it the main post.
+  function renderReply(item, onOpen) {
+    var post = item.post, bot = item.bot;
+    var row = el("article", "reply");
+    row.appendChild(replyAvatar(post));
+    var body = el("div", "reply-body");
+
+    var head = el("div", "reply-head");
+    head.appendChild(el("span", "reply-name", post.name || shortName(post.author)));
+    head.appendChild(el("span", "reply-handle", "@" + post.author));
+    if (post.ts) head.appendChild(el("span", "reply-time", "· " + new Date(post.ts * 1000).toLocaleDateString([], { month: "short", day: "numeric" })));
+    var badge = el("span", "score " + (bot ? verdictLevel(bot) : "none"), bot ? "Bot-likeness " + bot.score.toFixed(2) : "Bot-likeness n/a");
+    badge.title = bot ? bot.verdict + (bot.reasons.length ? ": " + bot.reasons.join("; ") : "") + ". A suspicion score, not a probability."
+                      : "Not enough data: " + ((item.errors || {}).bot || "author could not be checked");
+    head.appendChild(badge);
+    body.appendChild(head);
+
+    body.appendChild(highlighted(post.text, item.techniques));
+
+    if (item.techniques && item.techniques.length) {
+      var list = el("div", "reply-techs");
+      item.techniques.forEach(function (t) {
+        var line = el("div", "reply-tech");
+        line.appendChild(el("b", null, t.name));
+        if (t.why) line.appendChild(document.createTextNode(" " + t.why));
+        list.appendChild(line);
+      });
+      body.appendChild(list);
+    } else if (item.techniques) {
+      body.appendChild(el("div", "reply-note", "Scanned for techniques: none found."));
+    } else if ((item.errors || {}).techniques) {
+      body.appendChild(el("div", "reply-note warn", "Techniques not checked: " + item.errors.techniques));
+    }
+
+    var foot = el("div", "reply-foot");
+    foot.appendChild(el("span", null, compact(post.replies) + (post.replies === 1 ? " reply" : " replies")));
+    foot.appendChild(el("span", null, compact(post.likes) + (post.likes === 1 ? " like" : " likes")));
+    body.appendChild(foot);
+    row.appendChild(body);
+
+    var url = safeUrl(post.url);
+    if (url && onOpen) {
+      row.tabIndex = 0;
+      row.setAttribute("role", "link");
+      row.setAttribute("aria-label", "Analyse this reply by " + post.author);
+      row.addEventListener("click", function () { if (!String(window.getSelection())) onOpen(url); });
+      row.addEventListener("keydown", function (e) { if (e.key === "Enter") onOpen(url); });
+    }
+    return row;
+  }
+
   // Everything in one column, for the extension panel.
   function renderPanel(node, analysis, inputText) {
     node.textContent = "";
@@ -313,6 +379,6 @@
 
   window.DecodePanel = {
     renderPanel: renderPanel, renderPost: renderPost, renderTechniques: renderTechniques,
-    renderBot: renderBot, renderSimilar: renderSimilar, linkHighlights: linkHighlights
+    renderBot: renderBot, renderSimilar: renderSimilar, renderReply: renderReply, linkHighlights: linkHighlights
   };
 })();

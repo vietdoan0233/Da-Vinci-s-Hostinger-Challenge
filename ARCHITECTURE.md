@@ -87,6 +87,20 @@ A section that fails goes into `errors` and the rest still returns.
 
 `GET /api/health` returns `{"ok": true, "version": "<git sha>"}`.
 
+`GET /api/replies?url=<post link>&offset=0` returns one page of ten direct replies, most liked first:
+
+```json
+{
+  "replies": [{"post": {"text": "", "author": "", "name": "", "avatar": "", "url": "", "ts": 0, "likes": 0, "replies": 0},
+               "bot": {"score": 0.0, "verdict": "", "checked": [], "reasons": []},
+               "techniques": null,
+               "errors": {}}],
+  "total": 0, "next": 10, "errors": {}
+}
+```
+
+`techniques` is `null` when the reply was not scanned and a list when it was. `next` is `null` on the last page.
+
 ## Rules that hold across features
 
 - Every verdict carries a reason a non-expert can read. No bare numbers.
@@ -218,6 +232,18 @@ with two people. Hour figures are guesses.
 - [ ] 6.6 Error and rate-limit states shown in the panel, not the console.
 - [ ] 6.7 `extension/README.md`: three lines on loading it unpacked.
 - [ ] Done when: clicking Analyse on a post at bsky.app shows the same result as the live web page.
+
+### Feature 9: the whole thread
+
+A post link also loads the post's replies, so a reader can see who is in the thread.
+
+- [x] 9.1 `bluesky.get_replies(url)`: direct replies from one `getPostThread` call, most liked first. Cached with the other reads.
+- [x] 9.2 `GET /api/replies`: ten replies per page. Every reply gets a bot-likeness score from its author's profile and post times. A reply scoring above 0.4 is also checked for techniques. No copy search for replies.
+- [x] 9.3 Own rate limit (30 per minute per IP), separate from `/api/analyze`. At most ten AI calls per page, and the cache covers repeats.
+- [x] 9.4 Panel: replies under the techniques, each with its score badge and, when scanned, its techniques with quotes highlighted. Ten more load as the reader scrolls.
+- [x] 9.5 Clicking a reply makes it the main post with its own replies. Back and forward move between opened posts.
+- [x] 9.6 Tests: field mapping and order, paging, the 0.4 threshold, author failure, thread failure, rate limit.
+- [ ] Done when: a long thread on the live site loads ten replies, loads more on scroll, and a clicked reply opens with its own replies.
 
 ### Feature 7, later: coverage tab
 
