@@ -21,6 +21,7 @@
   .nav { display: flex; align-items: center; gap: 18px; padding: 12px; border-radius: 999px; font-size: 20px; color: var(--text); text-decoration: none; background: none; border: 0; width: fit-content; }
   .nav:hover { background: rgba(231, 233, 234, .1); }
   .nav.active { font-weight: 700; }
+  #how:target { outline: 2px solid var(--blue); }  /* the card is often already on screen, so the link must show something */
   .nav .ic { width: 26px; height: 26px; }
   .cta { margin-top: 14px; width: 90%; padding: 15px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 700; font-size: 17px; }
   .cta:hover { background: var(--blue-hover); }
@@ -275,7 +276,11 @@
     input.value = q || ""; refresh();
     if (q) run(false); else location.reload();
   });
-  $("new").addEventListener("click", function () { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); });
+  // Back to the empty start page; when already there, put the cursor in the box.
+  $("new").addEventListener("click", function () {
+    if (location.search || !$("result").hidden) location.href = location.pathname;
+    else { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); }
+  });
   document.querySelectorAll(".chip").forEach(function (c) {
     c.addEventListener("click", function () { input.value = c.dataset.ex; refresh(); run(true); });
   });
