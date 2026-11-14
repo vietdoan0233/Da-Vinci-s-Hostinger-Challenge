@@ -14,7 +14,7 @@ decisions, the API contract and the step-by-step build plan.
 ## Stack
 
 Python 3.12, FastAPI, httpx, OpenAI SDK pointed at the Hostinger AI Router,
-SQLite, vanilla JS, Chrome MV3 extension, Docker Compose with Caddy on a
+SQLite, vanilla JS, Chrome MV3 extension, Docker Compose with Traefik on a
 Hostinger VPS. Data source is the Bluesky public API.
 
 ## Commands (available once feature 0 is done)

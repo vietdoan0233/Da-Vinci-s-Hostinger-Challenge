@@ -47,11 +47,6 @@ def test_analyze_search_down_is_an_error_not_empty(monkeypatch):
     assert r["similar"] is None and "unavailable" in r["errors"]["similar"]
 
 
-def test_analyze_url_input_reports_similar_not_ready():
-    r = c.post("/api/analyze", json={"url": "https://bsky.app/profile/a/post/b"}).json()
-    assert r["similar"] is None and "feature 2" in r["errors"]["similar"]
-
-
 def test_analyze_fills_techniques(monkeypatch):
     monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
         {"name": "Loaded Language", "quote": "hiding the truth", "why": "Emotional wording."},
@@ -87,3 +82,12 @@ def test_rate_limit_per_visitor():
     assert c.post("/api/analyze", json={"text": "hello"}, headers={"X-Forwarded-For": "2.2.2.2"}).status_code == 200
     assert c.post("/api/analyze", json={"text": "hello"},
                   headers={"X-Forwarded-For": "9.9.9.9, 1.1.1.1"}).status_code == 429
+
+
+def test_analyze_url_runs_techniques_on_fetched_text(monkeypatch):
+    monkeypatch.setattr("app.bluesky.get_post", lambda url: {
+        "text": COPY, "author": "a.bsky.social", "url": url, "ts": 1.0})
+    monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
+        {"name": "Loaded Language", "quote": "hiding the truth", "why": "Emotional wording."}]})
+    r = c.post("/api/analyze", json={"url": "https://bsky.app/profile/a.bsky.social/post/x"}).json()
+    assert r["post"]["text"] == COPY and r["techniques"][0]["quote"] == "hiding the truth"

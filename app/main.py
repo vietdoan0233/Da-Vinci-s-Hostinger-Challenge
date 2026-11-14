@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import llm, similar, techniques
+from app import bluesky, llm, similar, techniques
 
 app = FastAPI()
 log = logging.getLogger("app")
@@ -37,8 +37,8 @@ _hits_lock = threading.Lock()
 
 
 def client_ip(request: Request):
-    # Caddy appends the real client address as the last X-Forwarded-For entry; earlier
-    # entries can be forged by the client. The app port is not published, so only Caddy sets it.
+    # The proxy (Traefik) appends the real client address as the last X-Forwarded-For entry; earlier
+    # entries can be forged by the client. The app port is not published, so only the proxy sets it.
     fwd = request.headers.get("x-forwarded-for")
     return fwd.split(",")[-1].strip() if fwd else request.client.host
 
@@ -59,19 +59,22 @@ def analyze(body: AnalyzeIn, request: Request):
     check_rate(client_ip(request))
     out = {"post": None, "techniques": None, "bot": None, "similar": None,
            "coverage": None, "sides": None, "errors": {}}
-    if body.text is None:
-        out["errors"]["techniques"] = "post links are not read yet (feature 2); paste the post text instead"
-        out["errors"]["similar"] = "post links are not read yet (feature 2); paste the post text instead"
-        return out
+    post = {"text": body.text}
+    if body.url:
+        try:
+            post = out["post"] = bluesky.get_post(body.url)
+        except bluesky.BlueskyError as e:
+            out["errors"]["post"] = str(e)
+            return out
     try:
-        out["techniques"] = techniques.find(body.text)
+        out["techniques"] = techniques.find(post["text"])
     except llm.NotConfigured:
         out["errors"]["techniques"] = "technique detection is not configured on this server"
     except Exception:  # LLM down, timeout or unparseable reply: report it, never show "none found"
         log.exception("technique detection failed")
         out["errors"]["techniques"] = "the AI service did not answer, try again shortly"
     try:
-        out["similar"] = similar.find({"text": body.text})
+        out["similar"] = similar.find(post)
     except similar.NotEnoughData as e:
         out["errors"]["similar"] = f"not enough data: {e}"
     except httpx.HTTPError:

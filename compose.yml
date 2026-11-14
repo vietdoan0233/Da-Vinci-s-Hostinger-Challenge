@@ -1,20 +1,21 @@
+# The VPS template already runs Traefik on ports 80/443 (letsencrypt resolver), so no Caddy here.
 services:
   app:
+    # git context so the same file also works when pasted into the Hostinger Docker manager
     build:
-      context: .
+      context: https://github.com/vietdoan0233/Da-Vinci-s-Hostinger-Challenge.git#main
       args:
         GIT_SHA: ${GIT_SHA:-dev}
-    env_file: .env
-    restart: unless-stopped
-  caddy:
-    image: caddy:2
-    ports: ["80:80", "443:443"]
     environment:
-      DOMAIN: ${DOMAIN}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-    depends_on: [app]
+      AI_ROUTER_API_KEY: ${AI_ROUTER_API_KEY:-}
+      AI_ROUTER_BASE_URL: ${AI_ROUTER_BASE_URL:-}
+      AI_ROUTER_MODEL: ${AI_ROUTER_MODEL:-}
+      BSKY_HANDLE: ${BSKY_HANDLE:-}
+      BSKY_APP_PASSWORD: ${BSKY_APP_PASSWORD:-}
     restart: unless-stopped
-volumes:
-  caddy_data:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.decode.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.decode.entrypoints=websecure
+      - traefik.http.routers.decode.tls.certresolver=letsencrypt
+      - traefik.http.services.decode.loadbalancer.server.port=8000

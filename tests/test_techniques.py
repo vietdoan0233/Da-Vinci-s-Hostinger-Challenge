@@ -87,3 +87,9 @@ def test_not_configured_without_env(monkeypatch):
     monkeypatch.setattr(llm, "_client", None)
     with pytest.raises(llm.NotConfigured):
         llm._get_client()
+
+
+def test_unwritable_cache_does_not_fail_the_request(monkeypatch, tmp_path):
+    monkeypatch.setenv("CACHE_PATH", str(tmp_path / "no" / "such" / "dir" / "cache.db"))
+    monkeypatch.setattr("app.llm.ask_json", lambda s, u: answer(("Slogans", "VACCINATE your children NOW")))
+    assert len(techniques.find(POST)) == 1

@@ -21,7 +21,7 @@ above front-end polish.
 | Storage | One SQLite file as a cache | Saves LLM credits on repeat views. Nothing else needs persisting. |
 | Front end | One static page + one shared `panel.js`, no framework, no build step | The same panel renders on the web page and inside the extension. |
 | Extension | Chrome MV3 content script on `bsky.app` | The "window next to the post". Loaded unpacked for the demo. |
-| Deploy | Docker Compose on the Hostinger VPS, Caddy for HTTPS | The extension runs on an https page, so the API must be https. |
+| Deploy | Docker Compose on the Hostinger VPS, Traefik (already on the VPS) for HTTPS | The extension runs on an https page, so the API must be https. |
 
 Not verified yet, check in the step that needs it:
 - The AI Router base URL and model names (step 1.1).
@@ -33,7 +33,7 @@ Not verified yet, check in the step that needs it:
 ```
  bsky.app page                     Hostinger VPS (Docker Compose)
 ┌──────────────────┐              ┌──────────────────────────────────────────┐
-│ extension/       │   HTTPS      │ Caddy ──► FastAPI (app/main.py)          │
+│ extension/       │   HTTPS      │ Traefik ─► FastAPI (app/main.py)          │
 │  content.js      ├─────────────►│            ├─ techniques.py ─► AI Router │
 │  panel.js        │              │            ├─ bluesky.py   ─► Bluesky API│
 └──────────────────┘              │            ├─ bot_score.py               │
@@ -60,7 +60,7 @@ web/metrics.html    precision and false-positive numbers
 extension/          manifest.json, content.js, copy of panel.js
 eval/               labelled data, run scripts, results.json
 tests/
-Dockerfile, compose.yml, Caddyfile, .env.example
+Dockerfile, compose.yml, .env.example
 ```
 
 ## API contract
@@ -148,8 +148,8 @@ with two people. Hour figures are guesses.
 - [x] 0.3 `app/main.py`: `GET /api/health`, and `POST /api/analyze` returning the contract above with every section `null`. Validate input: exactly one of `url` or `text`, text at most 5000 characters.
 - [x] 0.4 `web/index.html`: text box, Analyze button, raw JSON printed below. Served by FastAPI.
 - [x] 0.5 `tests/test_api.py`: health returns ok; analyze rejects empty and oversized input.
-- [x] 0.6 `Dockerfile`, `compose.yml` (app + Caddy), `Caddyfile` with the team domain, `.env.example`.
-- [ ] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
+- [x] 0.6 `Dockerfile`, `compose.yml` (app, Traefik labels), `.env.example`.
+- [x] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
 - [ ] Done when: `https://<domain>/api/health` returns ok from a phone on mobile data.
 
 ### Feature 1: name the technique (about 2 h)
@@ -160,21 +160,21 @@ with two people. Hour figures are guesses.
 - [x] 1.4 Validation: drop any item whose `name` is not in the list or whose `quote` is not a substring of the post. This is the false-positive guard and the prompt-injection guard. The substring check ignores case, curly quotes and spacing.
 - [x] 1.5 `app/cache.py`: SQLite table `(key, json, created)`. Key is a hash of the text plus the prompt version.
 - [x] 1.6 Rate limit `POST /api/analyze` per IP (10 per minute, in memory). The endpoint is public and spends credits. IP is the last `X-Forwarded-For` entry, which Caddy sets.
-- [ ] 1.7 Wire into `/api/analyze` so `techniques` is filled for both `text` and `url` input. Text input done; `url` input waits for feature 2.
+- [x] 1.7 Wire into `/api/analyze` so `techniques` is filled for both `text` and `url` input.
 - [ ] 1.8 `web/panel.js`: `renderPanel(node, analysis)`. Techniques section: name, the quote highlighted, the reason. Empty list shows "No manipulation techniques found".
 - [x] 1.9 Tests with the LLM stubbed: invalid name dropped, invented quote dropped, empty list passes through, cache hit skips the LLM.
 - [ ] Done when: a loaded post on the live site shows techniques with quotes, and a weather report shows none.
 
 ### Feature 2: read a Bluesky post from its URL (about 1 h)
 
-- [ ] 2.1 `app/bluesky.py`: `parse_url(url) -> (handle, post_id)`. Reject anything that is not a `bsky.app` post URL.
-- [ ] 2.2 `get_post(url) -> {text, author, ts, url}` through the public API.
-- [ ] 2.3 `get_author(handle) -> {handle, bio, created_at, followers, following, default_avatar, total_posts, verified}`.
-- [ ] 2.4 `get_author_timestamps(handle) -> [epoch seconds]` for the last 100 posts.
-- [ ] 2.5 Cache each call for 10 minutes. 10 s timeout. A failure becomes an entry in `errors`.
-- [ ] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
+- [x] 2.1 `app/bluesky.py`: `parse_url(url) -> (handle, post_id)`. Reject anything that is not a `bsky.app` post URL.
+- [x] 2.2 `get_post(url) -> {text, author, ts, url}` through the public API.
+- [x] 2.3 `get_author(handle) -> {handle, bio, created_at, followers, following, default_avatar, total_posts, verified}`.
+- [x] 2.4 `get_author_timestamps(handle) -> [epoch seconds]` for the last 100 posts.
+- [x] 2.5 Cache each call for 10 minutes. 10 s timeout. A failure becomes an entry in `errors`.
+- [x] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
 - [ ] 2.7 Web page: accept a URL as well as text. Panel shows author and time above the techniques.
-- [ ] 2.8 Tests on saved API responses in `tests/fixtures/`: URL parsing, field mapping, deleted post.
+- [x] 2.8 Tests on saved API responses in `tests/fixtures/`: URL parsing, field mapping, deleted post.
 - [ ] Done when: pasting a real Bluesky post URL on the live site shows its text and techniques.
 
 ### Feature 3: bot-likeness score (about 1 h)
