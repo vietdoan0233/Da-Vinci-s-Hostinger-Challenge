@@ -1,0 +1,8 @@
+﻿.env
+.env.*
+data_raw/
+models/
+*.joblib
+__pycache__/
+.venv/
+cache/
