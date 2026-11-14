@@ -251,7 +251,7 @@ sample size and a 95% Wilson interval.
 - [x] 5.5 Scripts write their own section of `eval/results.json` with sample sizes and the run time. `eval/run_similar.py` adds a copy-detection test on edited copies.
 - [x] 5.6 `web/metrics.html` + `metrics.js` read the file through `GET /eval/results.json` and show the tables, the caveats and a "not measured" list. Linked from the main page. A section with no results says "not measured yet".
 - [x] 5.7 First adjustment made: the bot test showed no known bot caught on behaviour alone, so a posting-schedule rule was added to `bot_score.py`, set on the tune set and measured on the hold-out set. The earlier numbers are kept as `bots_before` and shown beside the new ones.
-- [ ] 5.8 Finish the full technique run on the live site and commit its numbers (in progress when this was written).
+- [x] 5.8 Full technique run on the live site (232 texts): precision 57%, recall 46%, micro-F1 0.506; false alarms on 17 of 41 no-technique memes and 1 of 32 factual posts. Every answer is in `eval/predictions.json`.
 - [ ] Done when: the metrics page is live and its numbers match a fresh run of the scripts.
 
 ### Feature 6: the panel next to the post (browser extension)
