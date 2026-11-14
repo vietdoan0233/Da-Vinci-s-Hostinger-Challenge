@@ -1,4 +1,4 @@
-# Oxylabs Web API in Decode the Noise
+# Oxylabs Web API in Unmasked
 
 Each analysed post gets a "What live sources say" card. The code is in `app/coverage.py`.
 

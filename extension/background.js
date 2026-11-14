@@ -1,9 +1,9 @@
 // Clicking the toolbar button opens the panel beside the page.
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(function () {});
 
-// On any site: select text, right-click, "Decode this text".
+// On any site: select text, right-click, "Unmask this text".
 chrome.runtime.onInstalled.addListener(function () {
-  chrome.contextMenus.create({ id: "decode-selection", title: "Decode this text", contexts: ["selection"] });
+  chrome.contextMenus.create({ id: "decode-selection", title: "Unmask this text", contexts: ["selection"] });
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {

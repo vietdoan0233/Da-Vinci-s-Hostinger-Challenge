@@ -1,4 +1,4 @@
-# Decode the Noise (Hostinger challenge, Junction)
+# Unmasked (Hostinger "Decode the Noise" challenge, Junction)
 
 A panel next to a social media post showing manipulation techniques, author
 bot-likeness and copies of the post. Read `ARCHITECTURE.md` first: it holds the
