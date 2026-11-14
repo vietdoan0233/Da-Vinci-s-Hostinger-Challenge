@@ -115,3 +115,26 @@ def get_author_timestamps(handle):
     feed = _get("app.bsky.feed.getAuthorFeed", actor=handle, limit=100, filter="posts_no_replies")["feed"]
     # reposts carry someone else's post; they are not this author's cadence
     return [iso_to_epoch(i["post"]["record"]["createdAt"]) for i in feed if "reason" not in i]
+
+
+def get_replies(url):
+    """Direct replies to a post, most liked first -> [{text, author, name, avatar, url, ts, likes, replies}].
+
+    One getPostThread call returns them all (181 for a 182-reply post, checked
+    2026-11-14) and is cached, so paging through them costs nothing extra.
+    """
+    handle, rkey = parse_url(url)
+    thread = _get("app.bsky.feed.getPostThread", uri=f"at://{_did(handle)}/app.bsky.feed.post/{rkey}",
+                  depth=1, parentHeight=0).get("thread", {})
+    out = []
+    for r in thread.get("replies", []):
+        p = r.get("post")  # blocked and deleted replies come without one
+        if not p:
+            continue
+        rec, author = p.get("record", {}), p["author"]
+        created = rec.get("createdAt") or p.get("indexedAt")
+        out.append({"text": rec.get("text", ""), "author": author["handle"],
+                    "name": author.get("displayName") or "", "avatar": author.get("avatar") or "",
+                    "url": post_url(p["uri"], author["handle"]), "ts": iso_to_epoch(created) if created else None,
+                    "likes": p.get("likeCount", 0), "replies": p.get("replyCount", 0)})
+    return sorted(out, key=lambda x: (-x["likes"], x["ts"] or 0))
