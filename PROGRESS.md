@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 67 pass. `main` matches GitHub (`8747c9d`). https://davincicommit.tech serves recent code (the panel and `/api/replies` are there), but technique detection is not configured on it and no feature after 0 has been checked there with a real post.
+As of 2026-11-14. Tests: 72 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -13,7 +13,10 @@ As of 2026-11-14. Tests: 67 pass. `main` matches GitHub (`8747c9d`). https://dav
 | 3.1-3.5, 4.4 | Bot-likeness: a post link fills `bot` from the author's profile, post times and the copies found. |
 | 1.8, 2.7, 3.3, 3.4, 4.5 | Panel: `web/panel.js` + `web/panel.css` render the post with quotes highlighted, techniques, bot-likeness and copies. `?q=<post link>` opens a result directly. Checked locally with faked data, desktop and narrow widths. |
 | 9.1-9.6 | Thread: a post link also loads its replies ten at a time as the reader scrolls. Each reply shows its own bot-likeness score; replies above 0.4 are also checked for techniques. Clicking a reply opens it as the main post. Checked against the live Bluesky API on a 182-reply post (2-3 s per page) and in the page with faked data. |
-| Detector order | Techniques come from the 20-technique prompt through the Hostinger AI Router. The six-technique Anthropic detector (`app/anthropic_detect.py`) is the backup when the router is unset or fails. Neither is configured on the live URL. |
+| Detector order | Techniques come from the 20-technique prompt through the Hostinger AI Router. The six-technique Anthropic detector (`app/anthropic_detect.py`) is the backup when the router is unset or fails. Neither has been run on the live URL. |
+| 5.1-5.7 | Measurement: `eval/` scripts, labelled data and an accuracy page (`/metrics.html`). Bot-likeness on a hold-out of 30 declared bots and 30 verified people: 20 of 30 bots flagged, 8 of 30 from behaviour alone (0 of 30 before the posting-schedule rule), 0 of 30 people flagged. Copy detection: survives hashtags, links, caps; one changed word drops 28% of copies below the 0.7 line. Technique numbers: full run on the live site in progress. |
+| 7.1-7.7, 7.9 | Live sources (Oxylabs Web API): the post's main claim is searched from the US, Finland and Germany, up to four pages are read in full, and each point shown quotes a page that was read. Tested with Oxylabs and the AI faked; no real Oxylabs call has been checked yet (7.8). |
+| Media | A post's images and quoted post are sent to the AI with the text; techniques found there are marked as from the image or the quoted post. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 
@@ -21,11 +24,10 @@ Checked against the live Bluesky API: post text, author profile, 38 post times, 
 
 - **1.1 needs a real AI Router call.** Checked 2026-11-14: a pasted post on the live site returns `"technique detection is not configured on this server"`. Set `AI_ROUTER_BASE_URL`, `AI_ROUTER_API_KEY` and `AI_ROUTER_MODEL` in the VPS project's environment, restart, and check that one post returns techniques. This blocks the "Done when" of Features 1, 2 and 9.
 - **The "Done when" line of Features 0, 1, 2, 3, 4 and 9 is unticked.** The live site has the code (panel, `/api/replies`, `similar` all answer), but nobody has run the checks there: a loaded post and a weather report (1), a real post URL (2), a feed bot and a teammate's account (3), a copypasta post and an original (4), a long thread (9), and health from a phone on mobile data (0).
-- **Feature 5** (measured precision and false positives): not started, no `eval/` folder. It uses the SemEval-2021 Task 6 test set (20 techniques), not the 2020 list. The judges' metrics page depends on it.
 - **Feature 6** (Chrome extension): not started, no `extension/` folder.
-- **Features 7-8** (coverage, sides): not started, marked "later" in the plan.
+- **Feature 7 is not checked live.** Step 7.8: run one real post on the live site with `OXYLABS_WEB_API_KEY` set and confirm the card shows quoted points. `codex/oxylabs-live-context` is superseded by it and can be deleted.
+- **Feature 8** (sides): not started.
 - **`aarush/detector-standin` is unmerged**: an older, separate app (TF-IDF classifier, its own `/analyze`, port 80). Nothing in `main` uses it.
-- **`codex/oxylabs-live-context` is unmerged** and branched before Features 1 and 4. It rewrites `web/index.html` and `app/main.py`, fills `coverage` in a different shape from the plan's Feature 7, and adds an Oxylabs key. It needs rebasing onto the panel (`web/panel.js`) before it can merge.
 
 ## Deploy notes
 

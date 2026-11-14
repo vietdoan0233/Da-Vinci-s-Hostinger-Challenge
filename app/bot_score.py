@@ -35,11 +35,17 @@ BEHAVIOURAL = ("cadence", "text_reuse", "rate")
 DISPOSITIVE_FLOOR = 0.9
 CORROBORATION_AGREE_AT, CORROBORATION_FLOOR = 0.4, 0.6
 MIN_INTERVALS = 10
+SCHEDULE_AT, SCHEDULE_STRONG_AT = 0.6, 0.8          # share of gaps within 10% of the median gap
+SCHEDULE_FLOOR, SCHEDULE_STRONG_FLOOR = 0.35, 0.6   # "some bot-like signals" / "likely automated"
 
 
-def _det(category, score, confidence, reason, dispositive=False):
+def _det(category, score, confidence, reason, dispositive=False, floor=0.0):
     return {"category": category, "score": score, "confidence": round(confidence, 3),
-            "reason": reason, "dispositive": dispositive}
+            "reason": reason, "dispositive": dispositive, "floor": floor}
+
+
+def _span(seconds):
+    return f"{seconds / 3600:.0f} h" if seconds >= 5400 else f"{seconds / 60:.0f} min"
 
 
 def _cadence(timestamps):
@@ -56,6 +62,18 @@ def _cadence(timestamps):
     if cv < 0.3:  # human posting is bursty (cv around 1 or more); schedulers are not
         out.append(_det("cadence", 0.9 if cv < 0.1 else 0.6, 0.8 * size,
                         f"Posts arrive at near-constant intervals (variation {cv:.2f}, people are usually above 1)"))
+
+    # A posting schedule: most gaps are the same length. Unlike the variation test above, one
+    # outage or skipped slot does not hide it. Added after eval/run_bots.py showed that test
+    # missing every known bot; thresholds set on the tune set (people there reach 0.44 at most).
+    med = sorted(iv)[n // 2]
+    if med >= 60:
+        same = sum(abs(v - med) <= 0.1 * med for v in iv) / n
+        if same >= SCHEDULE_AT:
+            strong = same >= SCHEDULE_STRONG_AT and n >= 20
+            out.append(_det("cadence", 0.95 if strong else 0.75, 0.9 * size,
+                            f"{same:.0%} of the gaps between posts are the same length (about {_span(med)}): a schedule",
+                            floor=SCHEDULE_STRONG_FLOOR if strong else SCHEDULE_FLOOR))
 
     lo, hi = min(iv), max(iv)
     if hi > lo:  # KS distance to uniform[lo, hi]: catches "random delay between a and b"
@@ -188,6 +206,7 @@ def score(account=None, timestamps=(), post=None, others=(), now=None):
         total = max(total, DISPOSITIVE_FLOOR)
     if sum(cats[c] >= CORROBORATION_AGREE_AT - 1e-9 for c in BEHAVIOURAL) >= 2:
         total = max(total, CORROBORATION_FLOOR)
+    total = max([total] + [d["floor"] for d in dets])  # a clear posting schedule is enough on its own
 
     # What we could actually test. No evidence is not evidence of a human.
     checked = [name for name, ok in (

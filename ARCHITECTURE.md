@@ -132,6 +132,7 @@ category = 1 - PRODUCT(1 - score_i * confidence_i)      over detections in it
 score    = 0.30*cadence + 0.30*text_reuse + 0.20*profile + 0.10*rate + 0.10*declared
 floor 0.9 if the bio self-declares a bot
 floor 0.6 if two of (cadence, text_reuse, rate) are each >= 0.4
+floor 0.6 if 80% or more of the gaps between posts are the same length (a posting schedule), 0.35 from 60%
 >= 0.6 likely automated or coordinated, >= 0.3 some bot-like signals
 ```
 
@@ -224,16 +225,20 @@ with two people. Hour figures are guesses.
 - [x] 4.6 Tests: query builder on a fixture, ranking order, self-match removed (`tests/test_similar.py`). Known weaknesses for the metrics page are in the `app/similar.py` header.
 - [ ] Done when: a known copypasta post shows its copies on the live site and an original post shows none.
 
-### Feature 5: measured precision and false positives (about 2 h)
+### Feature 5: measured precision and false positives
 
-- [ ] 5.1 Techniques data: the SemEval-2021 Task 6 test set (200 labelled meme texts; dev set of 63 for prompt tuning, training set only for few-shot examples) plus about 30 neutral Bluesky posts collected by hand, since memes are not posts. Report per-technique numbers only where there are at least 10 examples. Stored in `eval/`.
-- [ ] 5.2 `eval/run_techniques.py`: per-technique precision and recall, and the share of neutral posts that got any technique at all (the false-positive rate).
-- [ ] 5.3 Bot data: 30 accounts that are openly bots and 30 accounts known to be people, handles and labels in `eval/bots.csv`.
-- [ ] 5.4 `eval/run_bots.py`: precision, recall and false-positive rate at the 0.3 and 0.6 thresholds. State on the page that openly declared bots are the easy case, the sample is 60, and the profile weights are hand-set.
-- [ ] 5.5 Both scripts write `eval/results.json` with the sample sizes and the date.
-- [ ] 5.6 `web/metrics.html` reads that file and shows the tables plus a "known weaknesses" list. Linked from the main page.
-- [ ] 5.7 If the numbers are poor, adjust the prompt or the thresholds, rerun, and keep the earlier numbers on the page as "before".
-- [ ] Done when: the metrics page is live and its numbers match a fresh run of both scripts.
+Every number on the accuracy page comes from `eval/results.json`, written by these scripts. Each rate carries its
+sample size and a 95% Wilson interval.
+
+- [x] 5.1 Techniques data: the SemEval-2021 Task 6 test set (200 labelled meme texts, 41 with no technique) in `eval/data/`, plus 32 factual Bluesky posts taken by rule from 8 automated feeds (the first four posts of six words or more from each).
+- [x] 5.2 `eval/run_techniques.py`: micro precision, recall and F1 (the SemEval measure), per-technique numbers (marked unreliable under 10 labelled examples), false alarms on no-technique memes and on the factual posts. Runs through a live server or in-process. Saves every answer in `eval/predictions.json`.
+- [x] 5.3 Bot data: `eval/bots.csv`, 60 openly automated accounts and 60 verified people, split into a tune set and a hold-out set. Profiles and post times are saved in `eval/data/accounts_snapshot.json` so a run can be repeated exactly.
+- [x] 5.4 `eval/run_bots.py`: precision, recall and false-positive rate at 0.3, 0.4 and 0.6, as shown and "behaviour only" (the bio's "bot" masked). States that declared bots are the easy case and that the weights are hand-set.
+- [x] 5.5 Scripts write their own section of `eval/results.json` with sample sizes and the run time. `eval/run_similar.py` adds a copy-detection test on edited copies.
+- [x] 5.6 `web/metrics.html` + `metrics.js` read the file through `GET /eval/results.json` and show the tables, the caveats and a "not measured" list. Linked from the main page. A section with no results says "not measured yet".
+- [x] 5.7 First adjustment made: the bot test showed no known bot caught on behaviour alone, so a posting-schedule rule was added to `bot_score.py`, set on the tune set and measured on the hold-out set. The earlier numbers are kept as `bots_before` and shown beside the new ones.
+- [ ] 5.8 Finish the full technique run on the live site and commit its numbers (in progress when this was written).
+- [ ] Done when: the metrics page is live and its numbers match a fresh run of the scripts.
 
 ### Feature 6: the panel next to the post (about 2 h)
 

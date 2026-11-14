@@ -23,8 +23,9 @@ Hostinger VPS. Data source is the Bluesky public API.
 uvicorn app.main:app --reload      # run locally on :8000
 pytest                             # tests, LLM and Bluesky are stubbed
 python app/bot_score.py            # scoring self-check
-python eval/run_techniques.py      # writes eval/results.json (spends credits)
-python eval/run_bots.py
+python -m eval.run_techniques --api https://davincicommit.tech   # writes eval/results.json (spends credits)
+python -m eval.run_bots            # add --refresh to re-read the accounts from Bluesky
+python -m eval.run_similar
 docker compose up -d --build       # on the VPS
 ```
 

@@ -1,0 +1,3464 @@
+{
+ "similar": {
+  "what": "Copy detection by shared three-word sequences, tested on edited copies of real texts.",
+  "n_texts": 150,
+  "edits": [
+   {
+    "edit": "Hashtag added",
+    "still_a_copy": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "Link added",
+    "still_a_copy": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "Mention added",
+    "still_a_copy": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "ALL CAPS",
+    "still_a_copy": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "Punctuation changed",
+    "still_a_copy": {
+     "value": 0.993,
+     "k": 149,
+     "n": 150,
+     "ci95": [
+      0.963,
+      0.999
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "One word changed",
+    "still_a_copy": {
+     "value": 0.72,
+     "k": 108,
+     "n": 150,
+     "ci95": [
+      0.643,
+      0.786
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "10% of words changed",
+    "still_a_copy": {
+     "value": 0.06,
+     "k": 9,
+     "n": 150,
+     "ci95": [
+      0.032,
+      0.11
+     ]
+    },
+    "still_shown": {
+     "value": 1.0,
+     "k": 150,
+     "n": 150,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   {
+    "edit": "20% of words changed",
+    "still_a_copy": {
+     "value": 0.0,
+     "k": 0,
+     "n": 150,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    },
+    "still_shown": {
+     "value": 0.753,
+     "k": 113,
+     "n": 150,
+     "ci95": [
+      0.679,
+      0.815
+     ]
+    }
+   },
+   {
+    "edit": "30% of words changed",
+    "still_a_copy": {
+     "value": 0.0,
+     "k": 0,
+     "n": 150,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    },
+    "still_shown": {
+     "value": 0.06,
+     "k": 9,
+     "n": 150,
+     "ci95": [
+      0.032,
+      0.11
+     ]
+    }
+   },
+   {
+    "edit": "Half the text cut off",
+    "still_a_copy": {
+     "value": 0.0,
+     "k": 0,
+     "n": 150,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    },
+    "still_shown": {
+     "value": 0.993,
+     "k": 149,
+     "n": 150,
+     "ci95": [
+      0.963,
+      0.999
+     ]
+    }
+   }
+  ],
+  "unrelated_pairs": {
+   "called_a_copy": {
+    "value": 0.0,
+    "k": 2,
+    "n": 11175,
+    "ci95": [
+     0.0,
+     0.001
+    ]
+   },
+   "shown_as_similar": {
+    "value": 0.001,
+    "k": 11,
+    "n": 11175,
+    "ci95": [
+     0.001,
+     0.002
+    ]
+   }
+  },
+  "caveats": [
+   "The copies are made by this script, not collected from a real campaign.",
+   "Rewording by hand or by an AI changes most three-word sequences, so reworded copies are missed. The rows above show where that starts.",
+   "This tests the comparison only. Whether Bluesky search returns the copies in the first place is not measured."
+  ],
+  "run_at": "2026-11-14 20:23 UTC"
+ },
+ "bots": {
+  "what": "Bot-likeness score from profile and posting times, on accounts whose nature is known.",
+  "holdout": {
+   "n_bots": 30,
+   "n_humans": 30,
+   "as_shown": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 20,
+      "n": 20,
+      "ci95": [
+       0.839,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.667,
+      "k": 20,
+      "n": 30,
+      "ci95": [
+       0.488,
+       0.808
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 19,
+      "n": 19,
+      "ci95": [
+       0.832,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.633,
+      "k": 19,
+      "n": 30,
+      "ci95": [
+       0.455,
+       0.781
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 19,
+      "n": 19,
+      "ci95": [
+       0.832,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.633,
+      "k": 19,
+      "n": 30,
+      "ci95": [
+       0.455,
+       0.781
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ],
+   "behaviour_only": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 8,
+      "n": 8,
+      "ci95": [
+       0.676,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.267,
+      "k": 8,
+      "n": 30,
+      "ci95": [
+       0.142,
+       0.444
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 6,
+      "n": 6,
+      "ci95": [
+       0.61,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.2,
+      "k": 6,
+      "n": 30,
+      "ci95": [
+       0.095,
+       0.373
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 6,
+      "n": 6,
+      "ci95": [
+       0.61,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.2,
+      "k": 6,
+      "n": 30,
+      "ci95": [
+       0.095,
+       0.373
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ]
+  },
+  "tune": {
+   "n_bots": 30,
+   "n_humans": 30,
+   "as_shown": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 23,
+      "n": 23,
+      "ci95": [
+       0.857,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.767,
+      "k": 23,
+      "n": 30,
+      "ci95": [
+       0.591,
+       0.882
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 22,
+      "n": 22,
+      "ci95": [
+       0.851,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.733,
+      "k": 22,
+      "n": 30,
+      "ci95": [
+       0.556,
+       0.858
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 22,
+      "n": 22,
+      "ci95": [
+       0.851,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.733,
+      "k": 22,
+      "n": 30,
+      "ci95": [
+       0.556,
+       0.858
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ],
+   "behaviour_only": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 8,
+      "n": 8,
+      "ci95": [
+       0.676,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.267,
+      "k": 8,
+      "n": 30,
+      "ci95": [
+       0.142,
+       0.444
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 7,
+      "n": 7,
+      "ci95": [
+       0.646,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.233,
+      "k": 7,
+      "n": 30,
+      "ci95": [
+       0.118,
+       0.409
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 7,
+      "n": 7,
+      "ci95": [
+       0.646,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.233,
+      "k": 7,
+      "n": 30,
+      "ci95": [
+       0.118,
+       0.409
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ]
+  },
+  "accounts": [
+   {
+    "handle": "rss-optimus.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.6,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "97% of the gaps between posts are the same length (about 31 min): a schedule"
+    ]
+   },
+   {
+    "handle": "fedbillbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "92% of the gaps between posts are the same length (about 60 min): a schedule",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "discoelysiumbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "99% of the gaps between posts are the same length (about 2 h): a schedule"
+    ]
+   },
+   {
+    "handle": "murderbotbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "99% of the gaps between posts are the same length (about 3 h): a schedule"
+    ]
+   },
+   {
+    "handle": "wmassweatherbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.23, people are usually above 1)",
+     "97% of the gaps between posts are the same length (about 12 h): a schedule"
+    ]
+   },
+   {
+    "handle": "seoul-weather-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "92% of the gaps between posts are the same length (about 60 min): a schedule"
+    ]
+   },
+   {
+    "handle": "efectococuyo.tierra-de-gracia.com",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.35,
+    "behaviour_only": 0.35,
+    "verdict": "some bot-like signals",
+    "posts_seen": 100,
+    "reasons": [
+     "77% of the gaps between posts are the same length (about 2 min): a schedule"
+    ]
+   },
+   {
+    "handle": "boston-4castbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.35,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "73% of the gaps between posts are the same length (about 3 h): a schedule"
+    ]
+   },
+   {
+    "handle": "earthquakebotsf.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "earthquakesla.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.09,
+    "behaviour_only": 0.09,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "billingswx.mtbot.info",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "helenawx.mtbot.info",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "mundodeportivo-rss.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.042,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "100 posts per day"
+    ]
+   },
+   {
+    "handle": "earthquake.skybot.party",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.042,
+    "behaviour_only": 0.042,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "86 posts per day"
+    ]
+   },
+   {
+    "handle": "mm-repubblica-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.041,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "94 posts per day since the account was created"
+    ]
+   },
+   {
+    "handle": "cbc-bc-rss-unoff.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "dailyhive-van-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hn.rbrt.fr",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nosnieuws.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 5,
+    "reasons": []
+   },
+   {
+    "handle": "globalnews-bc-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "oldnewthingrss.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "citynews-van-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "vetpapers.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "slshdt.atproto.rocks",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "mm-ilmanifesto-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "mm-ilsole24ore-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nzquake.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "usgs-quakebot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "weatherbot.saakeskus.fi",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "shamsbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "colbylsmith.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "joanwalsh.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 22,
+    "reasons": []
+   },
+   {
+    "handle": "kendilanian-nbc.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 78,
+    "reasons": []
+   },
+   {
+    "handle": "lizziedearden.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "carolrosenbergfeed.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 96,
+    "reasons": []
+   },
+   {
+    "handle": "sebsb.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 33,
+    "reasons": []
+   },
+   {
+    "handle": "davidgura.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "danielpayne.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 70,
+    "reasons": []
+   },
+   {
+    "handle": "brandibuchman.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "jeffrueter.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 51,
+    "reasons": []
+   },
+   {
+    "handle": "mkraju.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 55,
+    "reasons": []
+   },
+   {
+    "handle": "nahaltoosi.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 70,
+    "reasons": []
+   },
+   {
+    "handle": "ellereeve.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 12,
+    "reasons": []
+   },
+   {
+    "handle": "emilyzfeng.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 84,
+    "reasons": []
+   },
+   {
+    "handle": "megtirrell.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 99,
+    "reasons": []
+   },
+   {
+    "handle": "gbrumfiel.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 83,
+    "reasons": []
+   },
+   {
+    "handle": "sherylnyt.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 94,
+    "reasons": []
+   },
+   {
+    "handle": "sarahdwire.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 99,
+    "reasons": []
+   },
+   {
+    "handle": "hadasgold.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 52,
+    "reasons": []
+   },
+   {
+    "handle": "lisaocarroll.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "lmcgaughy.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 90,
+    "reasons": []
+   },
+   {
+    "handle": "cgrisales.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 48,
+    "reasons": []
+   },
+   {
+    "handle": "naomiohreally.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 72,
+    "reasons": []
+   },
+   {
+    "handle": "leloveluck.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 61,
+    "reasons": []
+   },
+   {
+    "handle": "ryanobles.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "markmackinnon.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 33,
+    "reasons": []
+   },
+   {
+    "handle": "tomdreisbach.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 57,
+    "reasons": []
+   },
+   {
+    "handle": "byshannonbond.com",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 36,
+    "reasons": []
+   },
+   {
+    "handle": "tim.fo",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 0,
+    "reasons": []
+   },
+   {
+    "handle": "iankmsmith.ft.com",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 84,
+    "reasons": []
+   },
+   {
+    "handle": "leguinbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "99% of the gaps between posts are the same length (about 2 h): a schedule"
+    ]
+   },
+   {
+    "handle": "pc98bot.gang-fight.com",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.6,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.00, people are usually above 1)",
+     "100% of the gaps between posts are the same length (about 4 h): a schedule"
+    ]
+   },
+   {
+    "handle": "ironchefbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.6,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "86% of the gaps between posts are the same length (about 2 h): a schedule"
+    ]
+   },
+   {
+    "handle": "yearprogress.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "98% of the gaps between posts are the same length (about 6 h): a schedule"
+    ]
+   },
+   {
+    "handle": "redwallfeasts.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.6,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "99% of the gaps between posts are the same length (about 4 h): a schedule"
+    ]
+   },
+   {
+    "handle": "siskel-ebert-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.00, people are usually above 1)",
+     "100% of the gaps between posts are the same length (about 11 h): a schedule",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "adoptbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.6,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.29, people are usually above 1)",
+     "88% of the gaps between posts are the same length (about 30 min): a schedule",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "ca-dmv-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.35,
+    "behaviour_only": 0.35,
+    "verdict": "some bot-like signals",
+    "posts_seen": 100,
+    "reasons": [
+     "62% of the gaps between posts are the same length (about 60 min): a schedule",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "bbcradio6musicbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.096,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "100 posts per day",
+     "312 posts per day since the account was created"
+    ]
+   },
+   {
+    "handle": "bbcnews-world-rss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "tagesschau.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "restaurant-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "bbcnews-uk-rss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notfriedgehnic.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "bigcases.bots.law",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notnhl.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notpierrevlebrun.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "fed-us-domain-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "abcnewsbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "orfnewsbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nfl4th.com",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "autsport-com.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "trumplitigation.bots.law",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "pollresults.org",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "transactionbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "aurora.nws-bot.us",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "newsycombinator.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "reductrss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "lobsters-feed.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hltvrssfeed.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "neonflag.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 86,
+    "reasons": []
+   },
+   {
+    "handle": "reporterrwright.ft.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 49,
+    "reasons": []
+   },
+   {
+    "handle": "dana-thereporter.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 4,
+    "reasons": []
+   },
+   {
+    "handle": "journalist-sherman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 45,
+    "reasons": []
+   },
+   {
+    "handle": "jimacosta.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 19,
+    "reasons": []
+   },
+   {
+    "handle": "swin24.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 37,
+    "reasons": []
+   },
+   {
+    "handle": "elienyc.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 55,
+    "reasons": []
+   },
+   {
+    "handle": "peterbakernyt.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "jeffstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "alivitali.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 44,
+    "reasons": []
+   },
+   {
+    "handle": "david-ornstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "stevanzetti.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 74,
+    "reasons": []
+   },
+   {
+    "handle": "joshgerstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 78,
+    "reasons": []
+   },
+   {
+    "handle": "premthakker.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 66,
+    "reasons": []
+   },
+   {
+    "handle": "tomwarren.co.uk",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 97,
+    "reasons": []
+   },
+   {
+    "handle": "bencasselman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 81,
+    "reasons": []
+   },
+   {
+    "handle": "christopherjm.ft.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 49,
+    "reasons": []
+   },
+   {
+    "handle": "kaitlancollins.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 62,
+    "reasons": []
+   },
+   {
+    "handle": "annettedittert.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 17,
+    "reasons": []
+   },
+   {
+    "handle": "hern.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "anniekarni.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 50,
+    "reasons": []
+   },
+   {
+    "handle": "dustinvolz.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 79,
+    "reasons": []
+   },
+   {
+    "handle": "titonka.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 91,
+    "reasons": []
+   },
+   {
+    "handle": "nicktimiraos.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hzeffman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "andrewfeinberg.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "ozkaterji.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 67,
+    "reasons": []
+   },
+   {
+    "handle": "peterwalker99.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 94,
+    "reasons": []
+   },
+   {
+    "handle": "laurengoode.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 30,
+    "reasons": []
+   },
+   {
+    "handle": "kakape.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 41,
+    "reasons": []
+   }
+  ],
+  "not_scored": [],
+  "caveats": [
+   "The bots are openly declared ones: the easy case. A network trying to look human is harder and is not measured here.",
+   "Many honest bots post when something happens (news, earthquakes, court filings). Their timing is irregular and cannot give them away.",
+   "The humans are verified journalists, who post more than most people. Ordinary low-activity accounts are not in the sample.",
+   "Only profile and posting-time signals are scored. Text reuse needs a post and its copies, and is not part of this test.",
+   "The weights in bot_score.py are hand-set. The posting-schedule rule was adjusted on the tune set; quote the hold-out numbers."
+  ],
+  "run_at": "2026-11-14 20:31 UTC"
+ },
+ "bots_before": {
+  "what": "Bot-likeness score from profile and posting times, on accounts whose nature is known.",
+  "holdout": {
+   "n_bots": 30,
+   "n_humans": 30,
+   "as_shown": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 18,
+      "n": 18,
+      "ci95": [
+       0.824,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.6,
+      "k": 18,
+      "n": 30,
+      "ci95": [
+       0.423,
+       0.754
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 18,
+      "n": 18,
+      "ci95": [
+       0.824,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.6,
+      "k": 18,
+      "n": 30,
+      "ci95": [
+       0.423,
+       0.754
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 18,
+      "n": 18,
+      "ci95": [
+       0.824,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.6,
+      "k": 18,
+      "n": 30,
+      "ci95": [
+       0.423,
+       0.754
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ],
+   "behaviour_only": [
+    {
+     "threshold": 0.3,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ]
+  },
+  "tune": {
+   "n_bots": 30,
+   "n_humans": 30,
+   "as_shown": [
+    {
+     "threshold": 0.3,
+     "precision": {
+      "value": 1.0,
+      "k": 19,
+      "n": 19,
+      "ci95": [
+       0.832,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.633,
+      "k": 19,
+      "n": 30,
+      "ci95": [
+       0.455,
+       0.781
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": {
+      "value": 1.0,
+      "k": 19,
+      "n": 19,
+      "ci95": [
+       0.832,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.633,
+      "k": 19,
+      "n": 30,
+      "ci95": [
+       0.455,
+       0.781
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": {
+      "value": 1.0,
+      "k": 19,
+      "n": 19,
+      "ci95": [
+       0.832,
+       1.0
+      ]
+     },
+     "recall": {
+      "value": 0.633,
+      "k": 19,
+      "n": 30,
+      "ci95": [
+       0.455,
+       0.781
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ],
+   "behaviour_only": [
+    {
+     "threshold": 0.3,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.4,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    },
+    {
+     "threshold": 0.6,
+     "precision": null,
+     "recall": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     },
+     "false_positive_rate": {
+      "value": 0.0,
+      "k": 0,
+      "n": 30,
+      "ci95": [
+       0.0,
+       0.114
+      ]
+     }
+    }
+   ]
+  },
+  "accounts": [
+   {
+    "handle": "wmassweatherbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.144,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.23, people are usually above 1)"
+    ]
+   },
+   {
+    "handle": "fedbillbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "earthquakebotsf.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "earthquakesla.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.09,
+    "behaviour_only": 0.09,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "billingswx.mtbot.info",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "helenawx.mtbot.info",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.09,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "mundodeportivo-rss.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.042,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "100 posts per day"
+    ]
+   },
+   {
+    "handle": "earthquake.skybot.party",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.042,
+    "behaviour_only": 0.042,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "86 posts per day"
+    ]
+   },
+   {
+    "handle": "mm-repubblica-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.041,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "94 posts per day since the account was created"
+    ]
+   },
+   {
+    "handle": "cbc-bc-rss-unoff.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "dailyhive-van-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "efectococuyo.tierra-de-gracia.com",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hn.rbrt.fr",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nosnieuws.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 5,
+    "reasons": []
+   },
+   {
+    "handle": "globalnews-bc-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "oldnewthingrss.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "citynews-van-un.yvr.whims.io",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "rss-optimus.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "vetpapers.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "slshdt.atproto.rocks",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "mm-ilmanifesto-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "mm-ilsole24ore-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "discoelysiumbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "murderbotbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nzquake.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "usgs-quakebot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "boston-4castbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "weatherbot.saakeskus.fi",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "seoul-weather-bot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "shamsbot.bsky.social",
+    "label": "bot",
+    "set": "holdout",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "colbylsmith.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "joanwalsh.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 22,
+    "reasons": []
+   },
+   {
+    "handle": "kendilanian-nbc.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 78,
+    "reasons": []
+   },
+   {
+    "handle": "lizziedearden.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "carolrosenbergfeed.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 96,
+    "reasons": []
+   },
+   {
+    "handle": "sebsb.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 33,
+    "reasons": []
+   },
+   {
+    "handle": "davidgura.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "danielpayne.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 70,
+    "reasons": []
+   },
+   {
+    "handle": "brandibuchman.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "jeffrueter.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 51,
+    "reasons": []
+   },
+   {
+    "handle": "mkraju.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 55,
+    "reasons": []
+   },
+   {
+    "handle": "nahaltoosi.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 70,
+    "reasons": []
+   },
+   {
+    "handle": "ellereeve.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 12,
+    "reasons": []
+   },
+   {
+    "handle": "emilyzfeng.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 84,
+    "reasons": []
+   },
+   {
+    "handle": "megtirrell.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 99,
+    "reasons": []
+   },
+   {
+    "handle": "gbrumfiel.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 83,
+    "reasons": []
+   },
+   {
+    "handle": "sherylnyt.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 94,
+    "reasons": []
+   },
+   {
+    "handle": "sarahdwire.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 99,
+    "reasons": []
+   },
+   {
+    "handle": "hadasgold.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 52,
+    "reasons": []
+   },
+   {
+    "handle": "lisaocarroll.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "lmcgaughy.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 90,
+    "reasons": []
+   },
+   {
+    "handle": "cgrisales.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 48,
+    "reasons": []
+   },
+   {
+    "handle": "naomiohreally.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 72,
+    "reasons": []
+   },
+   {
+    "handle": "leloveluck.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 61,
+    "reasons": []
+   },
+   {
+    "handle": "ryanobles.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "markmackinnon.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 33,
+    "reasons": []
+   },
+   {
+    "handle": "tomdreisbach.bsky.social",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 57,
+    "reasons": []
+   },
+   {
+    "handle": "byshannonbond.com",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 36,
+    "reasons": []
+   },
+   {
+    "handle": "tim.fo",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 0,
+    "reasons": []
+   },
+   {
+    "handle": "iankmsmith.ft.com",
+    "label": "human",
+    "set": "holdout",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 84,
+    "reasons": []
+   },
+   {
+    "handle": "siskel-ebert-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.241,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.00, people are usually above 1)",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "pc98bot.gang-fight.com",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.216,
+    "behaviour_only": 0.216,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.00, people are usually above 1)"
+    ]
+   },
+   {
+    "handle": "adoptbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.191,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts arrive at near-constant intervals (variation 0.29, people are usually above 1)",
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "bbcradio6musicbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.096,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": [
+     "100 posts per day",
+     "312 posts per day since the account was created"
+    ]
+   },
+   {
+    "handle": "ca-dmv-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.09,
+    "behaviour_only": 0.09,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": [
+     "Posts around the clock with no sleep gap"
+    ]
+   },
+   {
+    "handle": "bbcnews-world-rss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "tagesschau.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "restaurant-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "bbcnews-uk-rss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notfriedgehnic.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "leguinbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "ironchefbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "bigcases.bots.law",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notnhl.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "yearprogress.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "notpierrevlebrun.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "fed-us-domain-bot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "abcnewsbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "orfnewsbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "nfl4th.com",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "autsport-com.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "trumplitigation.bots.law",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "redwallfeasts.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "pollresults.org",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 95,
+    "reasons": []
+   },
+   {
+    "handle": "transactionbot.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "aurora.nws-bot.us",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "newsycombinator.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "reductrss.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "lobsters-feed.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hltvrssfeed.bsky.social",
+    "label": "bot",
+    "set": "tune",
+    "score": 0.9,
+    "behaviour_only": 0.0,
+    "verdict": "likely automated or coordinated",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "neonflag.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 86,
+    "reasons": []
+   },
+   {
+    "handle": "reporterrwright.ft.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 49,
+    "reasons": []
+   },
+   {
+    "handle": "dana-thereporter.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "not enough data to judge",
+    "posts_seen": 4,
+    "reasons": []
+   },
+   {
+    "handle": "journalist-sherman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 45,
+    "reasons": []
+   },
+   {
+    "handle": "jimacosta.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 19,
+    "reasons": []
+   },
+   {
+    "handle": "swin24.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 37,
+    "reasons": []
+   },
+   {
+    "handle": "elienyc.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 55,
+    "reasons": []
+   },
+   {
+    "handle": "peterbakernyt.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "jeffstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "alivitali.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 44,
+    "reasons": []
+   },
+   {
+    "handle": "david-ornstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "stevanzetti.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 74,
+    "reasons": []
+   },
+   {
+    "handle": "joshgerstein.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 78,
+    "reasons": []
+   },
+   {
+    "handle": "premthakker.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 66,
+    "reasons": []
+   },
+   {
+    "handle": "tomwarren.co.uk",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 97,
+    "reasons": []
+   },
+   {
+    "handle": "bencasselman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 81,
+    "reasons": []
+   },
+   {
+    "handle": "christopherjm.ft.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 49,
+    "reasons": []
+   },
+   {
+    "handle": "kaitlancollins.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 62,
+    "reasons": []
+   },
+   {
+    "handle": "annettedittert.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 17,
+    "reasons": []
+   },
+   {
+    "handle": "hern.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 85,
+    "reasons": []
+   },
+   {
+    "handle": "anniekarni.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 50,
+    "reasons": []
+   },
+   {
+    "handle": "dustinvolz.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 79,
+    "reasons": []
+   },
+   {
+    "handle": "titonka.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 91,
+    "reasons": []
+   },
+   {
+    "handle": "nicktimiraos.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 100,
+    "reasons": []
+   },
+   {
+    "handle": "hzeffman.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "andrewfeinberg.com",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 69,
+    "reasons": []
+   },
+   {
+    "handle": "ozkaterji.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 67,
+    "reasons": []
+   },
+   {
+    "handle": "peterwalker99.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 94,
+    "reasons": []
+   },
+   {
+    "handle": "laurengoode.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 30,
+    "reasons": []
+   },
+   {
+    "handle": "kakape.bsky.social",
+    "label": "human",
+    "set": "tune",
+    "score": 0.0,
+    "behaviour_only": 0.0,
+    "verdict": "no bot signals found",
+    "posts_seen": 41,
+    "reasons": []
+   }
+  ],
+  "not_scored": [],
+  "caveats": [
+   "The bots are openly declared ones: the easy case. A network trying to look human is harder and is not measured here.",
+   "Many honest bots post when something happens (news, earthquakes, court filings). Their timing is irregular and cannot give them away.",
+   "The humans are verified journalists, who post more than most people. Ordinary low-activity accounts are not in the sample.",
+   "Only profile and posting-time signals are scored. Text reuse needs a post and its copies, and is not part of this test.",
+   "The weights in bot_score.py are hand-set. The posting-schedule rule was adjusted on the tune set; quote the hold-out numbers."
+  ],
+  "run_at": "2026-11-14 20:31 UTC"
+ }
+}
