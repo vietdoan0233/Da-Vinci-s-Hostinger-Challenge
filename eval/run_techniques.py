@@ -2,14 +2,19 @@
 
     python -m eval.run_techniques --api https://davincicommit.tech     # through a running server
     python -m eval.run_techniques                                      # local, needs the AI keys in the environment
+    python -m eval.run_techniques --set dev                            # the 63-text dev set, for adjusting the prompt
 
-Spends AI credits: one call per text (232 texts). Answers are saved in eval/predictions.json as they
+Tune on the dev set, report on the test set. Changing the prompt while looking at test-set errors makes
+the test numbers flattering and no longer a fair measure.
+
+Spends AI credits: one call per text (232 texts). Answers are saved in eval/predictions_<set>_v<prompt version>.json as they
 arrive, so an interrupted run resumes where it stopped and a finished run can be audited line by line.
 
 Data:
   eval/data/semeval2021_task6_test.json  200 meme texts labelled by annotators with the same 20 techniques
                                          (SemEval-2021 Task 6 test set; 41 of them have no technique)
   eval/data/neutral_posts.json           32 factual Bluesky posts (forecasts, scores, filings): any flag here is a false alarm
+  eval/data/semeval2021_task6_dev.json   63 labelled meme texts (the task's dev set), used only with --set dev
 """
 import argparse
 import collections
@@ -22,7 +27,6 @@ import httpx
 from app import techniques
 from eval.common import HERE, rate, save_section
 
-PRED = HERE / "predictions.json"
 MIN_SUPPORT = 10  # per-technique numbers are only reported with at least this many labelled examples
 
 
@@ -48,12 +52,17 @@ def ask_local(text):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", help="base URL of a running server; omit to call the detector in this process")
+    ap.add_argument("--set", choices=("test", "dev"), default="test")
     ap.add_argument("--limit", type=int, help="only the first N texts of each set (for a smoke test)")
     ap.add_argument("--pause", type=float, default=6.5, help="seconds between calls (the server allows 10 a minute)")
     args = ap.parse_args()
 
-    memes = json.load(open(HERE / "data" / "semeval2021_task6_test.json"))[:args.limit]
-    neutral = json.load(open(HERE / "data" / "neutral_posts.json"))[:args.limit]
+    memes = json.load(open(HERE / "data" / f"semeval2021_task6_{args.set}.json"))[:args.limit]
+    neutral = json.load(open(HERE / "data" / "neutral_posts.json"))[:args.limit] if args.set == "test" else []
+    version = techniques.PROMPT_VERSION
+    if args.api:  # the server's prompt version is not visible from outside; the caller states it by matching code
+        print(f"Assuming the server runs prompt version {version} (this checkout). Deploy first if it does not.")
+    PRED = HERE / f"predictions_{args.set}_v{version}.json"  # one file per set and prompt version: answers are never mixed
     saved = json.loads(PRED.read_text()) if PRED.exists() else {}
     failed = 0
     for n, item in enumerate(memes + neutral):
@@ -86,15 +95,22 @@ def main():
     f1 = round(2 * tp / (2 * tp + fp + fn), 3) if tp else 0.0
     clean = [p for i, p in done if not i["labels"]]
     neutral_done = [got(i) for i in neutral if got(i)]
-    version = ""
+    if not done:
+        raise SystemExit(f"No answers ({failed} failed), nothing written. Check the AI keys or the server address.")
+    server = ""
     if args.api:
         try:
-            version = httpx.get(args.api.rstrip("/") + "/api/health", timeout=10).json().get("version", "")
+            server = httpx.get(args.api.rstrip("/") + "/api/health", timeout=10).json().get("version", "")
         except Exception:
             pass
-    save_section("techniques", {
+    section = "techniques" if args.set == "test" else "techniques_dev"
+    results = json.loads((HERE / "results.json").read_text()) if (HERE / "results.json").exists() else {}
+    old = results.get(section)
+    if old and old.get("detector", {}).get("prompt_version") != version:
+        save_section(section + "_before", {k: v for k, v in old.items() if k != "run_at"})  # keep the earlier prompt's numbers
+    save_section(section, {
         "what": "Technique detection compared with human labels, one text at a time.",
-        "detector": {"where": args.api or "local process", "server_version": version, "prompt_version": techniques.PROMPT_VERSION,
+        "detector": {"where": args.api or "local process", "server_version": server, "prompt_version": version, "set": args.set,
                      "model": "set on the server (AI_ROUTER_MODEL); not visible to this script" if args.api else "from the environment"},
         "n_memes": len(done), "n_neutral": len(neutral_done), "not_answered": failed,
         "micro": {"precision": precision, "recall": recall, "f1": f1},

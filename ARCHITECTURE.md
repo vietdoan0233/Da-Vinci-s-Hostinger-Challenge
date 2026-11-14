@@ -246,13 +246,13 @@ Every number on the accuracy page comes from `eval/results.json`, written by the
 sample size and a 95% Wilson interval.
 
 - [x] 5.1 Techniques data: the SemEval-2021 Task 6 test set (200 labelled meme texts, 41 with no technique) in `eval/data/`, plus 32 factual Bluesky posts taken by rule from 8 automated feeds (the first four posts of six words or more from each).
-- [x] 5.2 `eval/run_techniques.py`: micro precision, recall and F1 (the SemEval measure), per-technique numbers (marked unreliable under 10 labelled examples), false alarms on no-technique memes and on the factual posts. Runs through a live server or in-process. Saves every answer in `eval/predictions.json`.
+- [x] 5.2 `eval/run_techniques.py`: micro precision, recall and F1 (the SemEval measure), per-technique numbers (marked unreliable under 10 labelled examples), false alarms on no-technique memes and on the factual posts. Runs through a live server or in-process. Saves every answer in `eval/predictions_test_v3.json`.
 - [x] 5.3 Bot data: `eval/bots.csv`, 60 openly automated accounts and 60 verified people, split into a tune set and a hold-out set. Profiles and post times are saved in `eval/data/accounts_snapshot.json` so a run can be repeated exactly.
 - [x] 5.4 `eval/run_bots.py`: precision, recall and false-positive rate at 0.3, 0.4 and 0.6, as shown and "behaviour only" (the bio's "bot" masked). States that declared bots are the easy case and that the weights are hand-set.
 - [x] 5.5 Scripts write their own section of `eval/results.json` with sample sizes and the run time. `eval/run_similar.py` adds a copy-detection test on edited copies.
 - [x] 5.6 `web/metrics.html` + `metrics.js` read the file through `GET /eval/results.json` and show the tables, the caveats and a "not measured" list. Linked from the main page. A section with no results says "not measured yet".
 - [x] 5.7 First adjustment made: the bot test showed no known bot caught on behaviour alone, so a posting-schedule rule was added to `bot_score.py`, set on the tune set and measured on the hold-out set. The earlier numbers are kept as `bots_before` and shown beside the new ones.
-- [x] 5.8 Full technique run on the live site (232 texts): precision 57%, recall 46%, micro-F1 0.506; false alarms on 17 of 41 no-technique memes and 1 of 32 factual posts. Every answer is in `eval/predictions.json`.
+- [x] 5.8 Full technique run on the live site (232 texts): precision 57%, recall 46%, micro-F1 0.506; false alarms on 17 of 41 no-technique memes and 1 of 32 factual posts. Every answer is in `eval/predictions_test_v3.json`.
 - [ ] Done when: the metrics page is live and its numbers match a fresh run of the scripts.
 
 ### Feature 6: the panel next to the post (browser extension)
