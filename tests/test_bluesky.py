@@ -58,7 +58,7 @@ def test_analyze_fills_post_and_reports_failure(monkeypatch):
     monkeypatch.setattr("app.bluesky.search", lambda q, around_ts=None: [])
     c = TestClient(main.app)
     assert c.post("/api/analyze", json={"url": URL}).json()["post"]["author"] == "bsky.app"
-    r = c.post("/api/analyze", json={"url": "https://example.com/x"}).json()
+    r = c.post("/api/analyze", json={"url": "https://bsky.app/profile/alice.bsky.social"}).json()  # other links: test_webpage.py
     assert r["post"] is None and "bsky.app" in r["errors"]["post"]
 
 

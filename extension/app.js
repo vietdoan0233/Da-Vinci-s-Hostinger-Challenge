@@ -8,6 +8,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var input = $("in"), go = $("go"), status = $("status"), count = $("count");
   var isUrl = function (v) { return /^https?:\/\/\S+$/.test(v); };
+  var isBsky = function (v) { return /^https:\/\/bsky\.app\//i.test(v); };
   var isVideo = function (v) { return /^https?:\/\/((www|m|music)\.)?(youtube\.com\/(watch|shorts|embed|live)|youtu\.be\/)/i.test(v); };
 
   function refresh() {
@@ -143,14 +144,14 @@
     startThread(null);
     if (isVideo(v)) { $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = true; return runVideo(v, push); }
     $("result").hidden = $("bot").hidden = $("sim").hidden = $("cov").hidden = true;
-    say(url ? "Reading the post and checking it…" : "Checking the text…", "", true);
+    say(!url ? "Checking the text…" : isBsky(v) ? "Reading the post and checking it…" : "Reading the page and checking it…", "", true);
     try {
       var r = await fetch(API + "/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" },
                                              body: JSON.stringify(url ? { url: v } : { text: v }) });
       var data = await r.json().catch(function () { return null; });
       if (r.status === 429) return say((data && data.detail) || "Too many requests. Try again in a minute.", "error");
-      if (!r.ok || !data) return say("That input could not be analysed. Paste a Bluesky post link or up to " + MAX + " characters of text.", "error");
-      if (url && !data.post) return say((data.errors && data.errors.post) || "The post could not be read.", "error");
+      if (!r.ok || !data) return say("That input could not be analysed. Paste a link or up to " + MAX + " characters of text.", "error");
+      if (url && !data.post) return say((data.errors && data.errors.post) || "The link could not be read.", "error");
       DecodePanel.renderPost($("post"), data, v);
       DecodePanel.renderTechniques($("tech"), data);
       DecodePanel.renderBot($("bot"), data);
@@ -163,7 +164,7 @@
       var target = url ? "?q=" + encodeURIComponent(v) : location.pathname;
       if (push && target !== location.search) history.pushState(null, "", target);
       else history.replaceState(null, "", target);
-      if (url) startThread(v);
+      if (url && data.post.kind !== "page") startThread(v);  // only a Bluesky post has a thread
     } catch (e) {
       say("The server could not be reached. Check your connection and try again.", "error");
     } finally {

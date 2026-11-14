@@ -160,12 +160,13 @@
   function renderPost(node, a, inputText) {
     node.textContent = "";
     var post = a.post, text = post ? post.text : (inputText || "");
+    var page = !!post && post.kind === "page";  // a web link: the site's domain stands where the author would
     var art = el("article", "post");
     var head = el("div", "post-head");
     head.appendChild(avatar(post ? post.author : "T", "lg"));
     var who = el("div", "who");
-    who.appendChild(el("div", "name", post ? shortName(post.author) : "Pasted text"));
-    who.appendChild(el("div", "handle", post ? "@" + post.author : "No author to check"));
+    who.appendChild(el("div", "name", page ? post.title : post ? shortName(post.author) : "Pasted text"));
+    who.appendChild(el("div", "handle", page ? post.author : post ? "@" + post.author : "No author to check"));
     var lvl = verdictLevel(a.bot);
     if (a.bot && lvl !== "low") {
       var tag = el("div", "auto-tag " + lvl);
@@ -179,7 +180,7 @@
     if (src) {
       var open = el("a", "open");
       open.href = src; open.target = "_blank"; open.rel = "noopener noreferrer";
-      open.setAttribute("aria-label", "Open the original post");
+      open.setAttribute("aria-label", page ? "Open the original page" : "Open the original post");
       open.appendChild(icon(ICONS.link));
       head.appendChild(open);
     }
@@ -187,7 +188,7 @@
     art.appendChild(highlighted(text, a.techniques));
     art.appendChild(mediaRow(post));
     art.appendChild(quoteCard(post, a.techniques));
-    var meta = el("div", "post-meta", (post && post.ts ? fmtTime(post.ts) + " · " : "") + (post ? "Bluesky" : "Pasted text"));
+    var meta = el("div", "post-meta", (post && post.ts ? fmtTime(post.ts) + " · " : "") + (page ? "Web page, read through the Oxylabs Web API" : post ? "Bluesky" : "Pasted text"));
     art.appendChild(meta);
 
     var stats = el("div", "stats");
@@ -203,7 +204,8 @@
 
   function renderTechniques(node, a) {
     node.textContent = "";
-    node.appendChild(el("h2", "sec-title", "Techniques found in this post"));
+    node.appendChild(el("h2", "sec-title", a.post && a.post.kind === "page" ? "Techniques found on this page" : "Techniques found in this post"));
+    if ((a.errors || {}).page) node.appendChild(note("warn", a.errors.page.replace(/^not enough data: /, "Not enough data: ")));
     if ((a.errors || {}).media) node.appendChild(note("warn", a.errors.media.replace(/^not enough data: /, "Not enough data: ")));
     if (!a.techniques) {
       node.appendChild(note("warn", "Not checked: " + ((a.errors || {}).techniques || (a.errors || {}).post || "no result")));

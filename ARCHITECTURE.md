@@ -14,6 +14,7 @@ above front-end polish.
 |---|---|---|
 | Data source | Bluesky public API | Post history, account age, follower counts and search without scraping or paid keys. X and Instagram would cost the whole weekend in scraping. |
 | Fallback input | Pasted text, any platform | Techniques still work; bot and similar sections show "not enough data". |
+| Any other link | Read through the Oxylabs Web API `/v1/scrape` (feature 11) | One call returns a page as Markdown, JavaScript and bot checks handled. Techniques and live sources work; a page has no account, so bot and similar show "not enough data". |
 | Backend | Python, FastAPI, one process | `bot_score.py` is already Python. |
 | LLM | Hostinger AI Router through the OpenAI SDK | Free credits, required-ish by the sponsor. Model set by env var. |
 | Technique list | The 20 text techniques of SemEval-2021 Task 6 | Fixed, published list with a labelled corpus of short meme texts, closer to posts than the 2020 news-article corpus. Public on GitHub without registration, labelled test set of 200. |
@@ -276,6 +277,19 @@ into bsky.app: it needs no per-site page code, so the same panel also serves You
 - [x] 10.4 Tests: link parsing, chunking, paging, no captions, AI failure.
 - [ ] 10.5 Check from the VPS that YouTube answers transcript requests. It works from a home connection; cloud servers are sometimes refused. If refused, the extension must read the captions in the reader's browser and send them.
 - [ ] Done when: a real video on the live site lists flagged moments, and a clicked time opens that moment.
+
+### Feature 11: any web link
+
+A link that is not a Bluesky post or a YouTube video is read as a web page, so an article or blog post can be checked like a pasted text.
+
+- [x] 11.1 `app/webpage.py`: link -> Oxylabs `/v1/scrape` as Markdown -> headline and readable text (blocks of eight words or more after the first top heading, link and image markup removed), at most 5000 characters. Cached 10 minutes. Only public http(s) links are accepted; the page is fetched by Oxylabs, never by this server.
+- [x] 11.2 A page that comes back with under 200 characters is read once more with `run_js`, as the Oxylabs docs advise. Still empty is "not enough data", never a clean result.
+- [x] 11.3 `/api/analyze`: `post` gets `kind: "page"`, `title` and `truncated`, with the site's domain in `author`. Techniques and live sources run on the page text. `bot` and `similar` stay `null` with a reason in `errors`; a cut-off page says so in `errors.page`.
+- [x] 11.4 The page's own site is never one of its live sources (`coverage.find(text, skip_domain)`).
+- [x] 11.5 Page and extension: the box takes any link, a page shows its headline and site, and no thread is loaded for it.
+- [x] 11.6 Tests with Oxylabs stubbed: link checks, text extraction, the browser retry, unreadable page, the analyze response, own site skipped, no key.
+- [ ] 11.7 Check on the VPS with the real key: a news article, a blog post and a JavaScript-heavy page. The text extraction rule was only tested on made-up Markdown.
+- [ ] Done when: an article link on the live site shows its text with quotes highlighted and sources from other sites.
 
 ### Feature 9: the whole thread
 

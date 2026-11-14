@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 103 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 129 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -19,6 +19,7 @@ As of 2026-11-14. Tests: 103 pass. The skeleton is live at https://davincicommit
 | Media | A post's images and quoted post are sent to the AI with the text; techniques found there are marked as from the image or the quoted post. |
 | 10.1-10.4 | YouTube: a video link is read through its captions, a minute at a time, and each flagged stretch is listed with its time. Checked against real YouTube from a laptop (transcript in 1.5 s) and in the page with faked AI answers. Not checked from the VPS. |
 | 6.1-6.7 | Extension (`extension/`): a Chrome side panel that takes the tab's link and calls the API. Bluesky posts, YouTube videos, and right-click on selected text anywhere. Checked as a page with the browser APIs stubbed; not yet loaded in a real Chrome. |
+| 11.1-11.6 | Any web link: a link that is not a Bluesky post or a YouTube video is read through the Oxylabs Web API (`/v1/scrape`, retried once with `run_js` when empty) and checked like a pasted text, with its own site kept out of the live sources. Tested with Oxylabs faked and looked at in the page with faked data. **Not yet run against the real Oxylabs API** (11.7): the rule that picks the article text out of the page is untested on real sites. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 

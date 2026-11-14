@@ -5,6 +5,8 @@ import time
 from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 
+from urllib.parse import urlsplit
+
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +14,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import bluesky, bot_score, coverage, llm, similar, techniques, youtube
+from app import bluesky, bot_score, coverage, llm, similar, techniques, webpage, youtube
 
 app = FastAPI()
 # The browser extension calls the API from its own origin. The API is public and holds no cookies.
@@ -79,10 +81,10 @@ def find_techniques(text, errors, media=(), quoted=None):
     return None
 
 
-def find_coverage(text):
+def find_coverage(text, skip_domain=None):
     """-> (coverage, error). Runs beside the other checks: it waits on live web pages."""
     try:
-        return coverage.find(text), None
+        return coverage.find(text, skip_domain), None
     except coverage.NotEnoughData as e:
         return None, f"not enough data: {e}"
     except (coverage.NotConfigured, llm.NotConfigured):
@@ -95,6 +97,13 @@ def find_coverage(text):
 _coverage_pool = ThreadPoolExecutor(max_workers=4)
 
 
+def read_link(url):
+    """A Bluesky link is read as a post, with its author and thread. Any other link is read as a web page."""
+    if (urlsplit(url.strip()).hostname or "") == "bsky.app":
+        return bluesky.get_post(url)
+    return webpage.get_page(url)
+
+
 @app.post("/api/analyze")
 def analyze(body: AnalyzeIn, request: Request):
     check_rate(client_ip(request))
@@ -103,12 +112,26 @@ def analyze(body: AnalyzeIn, request: Request):
     post = {"text": body.text}
     if body.url:
         try:
-            post = out["post"] = bluesky.get_post(body.url)
-        except bluesky.BlueskyError as e:
+            post = out["post"] = read_link(body.url)
+        except (bluesky.BlueskyError, webpage.PageError, ValueError) as e:
             out["errors"]["post"] = str(e)
             return out
-    live = _coverage_pool.submit(find_coverage, post["text"])
+        except coverage.NotConfigured:
+            out["errors"]["post"] = "Reading web links is not configured on this server"
+            return out
+    page = post.get("kind") == "page"
+    # a page's own site is left out of its sources: a page agreeing with itself is not evidence
+    live = _coverage_pool.submit(find_coverage, post["text"], post["author"] if page else None)
     out["techniques"] = find_techniques(post["text"], out["errors"], post.get("media", ()), post.get("quoted"))
+    if page:
+        if post["truncated"]:
+            out["errors"]["page"] = f"not enough data: only the first {len(post['text'])} characters of the page were checked"
+        out["errors"]["similar"] = "not enough data: copies are only searched for Bluesky posts"
+        out["errors"]["bot"] = "a web page has no account to check"
+        out["coverage"], err = live.result()
+        if err:
+            out["errors"]["coverage"] = err
+        return out
     try:
         out["similar"] = similar.find(post)
     except similar.NotEnoughData as e:
