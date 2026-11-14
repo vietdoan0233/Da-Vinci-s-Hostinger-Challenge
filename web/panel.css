@@ -79,6 +79,17 @@ mark.hl.on { background: rgba(255, 212, 0, .42); }
 .pill.strong { background: #eff3f4; border-color: #eff3f4; color: #0f1419; }
 a.pill:hover { opacity: .88; }
 
+/* ---- live sources ---- */
+.cov-claim { margin: 0; padding: 0 16px 10px; font-size: 15px; line-height: 20px; font-weight: 700; }
+.cov { padding: 10px 16px; border-top: 1px solid var(--line); }
+.cov-stance { font-size: 13px; font-weight: 700; color: var(--dim); }
+.cov-stance.supports { color: var(--green); } .cov-stance.challenges { color: var(--red); }
+.cov-text { margin: 4px 0; font-size: 15px; line-height: 20px; }
+.cov-quote { margin: 6px 0; padding: 2px 0 2px 12px; border-left: 3px solid var(--line); color: var(--dim); font-size: 14px; line-height: 19px; overflow-wrap: anywhere; }
+.cov a, .cov-sources a { color: var(--blue); text-decoration: none; font-size: 14px; }
+.cov a:hover, .cov-sources a:hover { text-decoration: underline; }
+.cov-sources { margin: 0; padding: 10px 16px 10px 34px; border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; line-height: 20px; }
+
 .panel-sec.card { margin: 12px 16px; }
 
 /* ---- thread replies ---- */
