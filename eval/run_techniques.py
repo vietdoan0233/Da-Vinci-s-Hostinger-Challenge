@@ -5,6 +5,8 @@
 
 Spends AI credits: one call per text (232 texts). Answers are saved in eval/predictions.json as they
 arrive, so an interrupted run resumes where it stopped and a finished run can be audited line by line.
+After a prompt change, move predictions.json aside first (its answers are the old prompt's) and pass
+--keep-as techniques_before so the earlier numbers stay in results.json.
 
 Data:
   eval/data/semeval2021_task6_test.json  200 meme texts labelled by annotators with the same 20 techniques
@@ -20,7 +22,7 @@ import time
 import httpx
 
 from app import techniques
-from eval.common import HERE, rate, save_section
+from eval.common import HERE, RESULTS, rate, save_section
 
 PRED = HERE / "predictions.json"
 MIN_SUPPORT = 10  # per-technique numbers are only reported with at least this many labelled examples
@@ -49,12 +51,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", help="base URL of a running server; omit to call the detector in this process")
     ap.add_argument("--limit", type=int, help="only the first N texts of each set (for a smoke test)")
+    ap.add_argument("--keep-as", help="first keep the section already in results.json under this name (before a prompt change)")
     ap.add_argument("--pause", type=float, default=6.5, help="seconds between calls (the server allows 10 a minute)")
     args = ap.parse_args()
 
-    memes = json.load(open(HERE / "data" / "semeval2021_task6_test.json"))[:args.limit]
-    neutral = json.load(open(HERE / "data" / "neutral_posts.json"))[:args.limit]
-    saved = json.loads(PRED.read_text()) if PRED.exists() else {}
+    memes = json.load(open(HERE / "data" / "semeval2021_task6_test.json", encoding="utf-8"))[:args.limit]
+    neutral = json.load(open(HERE / "data" / "neutral_posts.json", encoding="utf-8"))[:args.limit]
+    saved = json.loads(PRED.read_text(encoding="utf-8")) if PRED.exists() else {}
     failed = 0
     for n, item in enumerate(memes + neutral):
         key = hashlib.sha256(item["text"].encode()).hexdigest()[:16]
@@ -63,7 +66,7 @@ def main():
         try:
             names, quotes = ask_api(args.api, item["text"]) if args.api else ask_local(item["text"])
             saved[key] = {"id": item["id"], "gold": item["labels"], "predicted": names, "quotes": quotes}
-            PRED.write_text(json.dumps(saved, indent=1, ensure_ascii=False) + "\n")
+            PRED.write_text(json.dumps(saved, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         except Exception as e:  # keep going; unanswered items are counted, never scored as "clean"
             failed += 1
             print("failed", item["id"], str(e)[:80])
@@ -92,6 +95,12 @@ def main():
             version = httpx.get(args.api.rstrip("/") + "/api/health", timeout=10).json().get("version", "")
         except Exception:
             pass
+    if args.keep_as and RESULTS.exists():  # the earlier run's numbers stay on the page beside the new ones
+        earlier = json.loads(RESULTS.read_text(encoding="utf-8"))
+        if "techniques" in earlier:
+            earlier[args.keep_as] = earlier["techniques"]
+            RESULTS.write_text(json.dumps(earlier, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    missing = sorted({t for i in memes for t in i["labels"]} - set(techniques.TECHNIQUES))
     save_section("techniques", {
         "what": "Technique detection compared with human labels, one text at a time.",
         "detector": {"where": args.api or "local process", "server_version": version, "prompt_version": techniques.PROMPT_VERSION,
@@ -106,6 +115,8 @@ def main():
               "reportable": c[0] + c[2] >= MIN_SUPPORT} for t, c in per.items()],
             key=lambda r: -r["labelled"]),
         "caveats": [
+            *([f"The detector looks for {len(techniques.TECHNIQUES)} of the 20 labelled techniques. The others "
+               f"({', '.join(missing)}) always count as missed, which lowers recall."] if missing else []),
             "The labelled texts are political memes from 2020-2021, not Bluesky posts or video transcripts.",
             "The labels are for the meme's text alone (Subtask 1 of the task). This tool does not read images, so the task's image-and-text labels are not used.",
             "Annotators disagree with each other on technique labels too; a miss or an extra flag is not always the detector being wrong.",

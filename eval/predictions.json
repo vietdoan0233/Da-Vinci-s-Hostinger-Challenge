@@ -17,28 +17,12 @@
   ],
   "predicted": [
    "Appeal to fear/prejudice",
-   "Loaded Language",
-   "Exaggeration/Minimisation",
-   "Name calling/Labeling"
+   "Loaded Language"
   ],
   "quotes": [
    "WE ARE AT WAR!",
-   "TERRORISM",
-   "all the multifaceted tentacles of a terrorist organization and operation",
    "TERRORISM"
   ]
- },
- "30d3f179ba2a3198": {
-  "id": "aurora.nws-bot.us/3mzwy4veork2v",
-  "gold": [],
-  "predicted": [],
-  "quotes": []
- },
- "08badfbe45c79ed0": {
-  "id": "aurora.nws-bot.us/3mzvpvgrqny2n",
-  "gold": [],
-  "predicted": [],
-  "quotes": []
  },
  "ccc4c6ad545cebcb": {
   "id": "710_batch_2",
@@ -56,9 +40,11 @@
    "Loaded Language"
   ],
   "predicted": [
+   "Doubt",
    "Loaded Language"
   ],
   "quotes": [
+   "NO WAY IN HELL BIDEN WON!",
    "NO WAY IN HELL"
   ]
  },
@@ -68,12 +54,10 @@
    "Doubt"
   ],
   "predicted": [
-   "Doubt",
-   "Presenting Irrelevant Data (Red Herring)"
+   "Doubt"
   ],
   "quotes": [
-   "SUPPOSEDLY",
-   "16.7% OF ALL U.S. COUNTIES"
+   "YET SUPPOSEDLY WON THE ELECTION WITH THE MOST VOTES IN HISTORY"
   ]
  },
  "389d6929e9a11cc5": {
@@ -84,11 +68,13 @@
    "Whataboutism"
   ],
   "predicted": [
+   "Smears",
    "Loaded Language",
    "Exaggeration/Minimisation"
   ],
   "quotes": [
    "HYPOCRISY MUCH?!",
+   "People Are Losing Everything!",
    "People Are Losing Everything!"
   ]
  },
@@ -103,7 +89,7 @@
    "Loaded Language"
   ],
   "quotes": [
-   "there will be blood!",
+   "WHEN TRUMP IS REELECTED THERE WILL BE BLOOD!",
    "BLOOD!"
   ]
  },
@@ -114,14 +100,10 @@
    "Reductio ad hitlerum"
   ],
   "predicted": [
-   "Appeal to fear/prejudice",
-   "Loaded Language",
    "Reductio ad hitlerum"
   ],
   "quotes": [
-   "Wedding bands that were removed from Holocaust victims prior to being executed, 1945.",
-   "Each ring represents a destroyed family.",
-   "Sound Familiar?"
+   "Never forget, Nazis tore down statues.\nBanned free speech.\nBlamed economic hardships on one group of people. Instituted gun control.\nSound Familiar?"
   ]
  },
  "a2d30ed80bbf851d": {
@@ -130,9 +112,13 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
+   "FAKE WINNER",
+   "FAKE WINNER",
    "FAKE WINNER"
   ]
  },
@@ -154,9 +140,11 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
+   "The Fraudfather",
    "The Fraudfather"
   ]
  },
@@ -175,12 +163,8 @@
  "13e5214b565dd877": {
   "id": "732_batch_2",
   "gold": [],
-  "predicted": [
-   "Exaggeration/Minimisation"
-  ],
-  "quotes": [
-   "I NEVER SAY ANYTHING I CAN'T PROVE."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "fc87cde29889c08e": {
   "id": "733_batch_2",
@@ -216,18 +200,14 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Flag-waving",
-   "Loaded Language",
-   "Repetition",
    "Slogans",
-   "Appeal to fear/prejudice"
+   "Flag-waving",
+   "Loaded Language"
   ],
   "quotes": [
+   "WE THE PEOPLE ARE COMING",
    "America was founded by pissed off people.",
-   "pissed off",
-   "pissed",
-   "WE'RE TAKING IT BACK",
-   "WE THE PEOPLE ARE COMING"
+   "pissed off"
   ]
  },
  "a67d0ed57c7f9d21": {
@@ -239,13 +219,13 @@
   ],
   "predicted": [
    "Appeal to fear/prejudice",
-   "Black-and-white Fallacy/Dictatorship",
-   "Slogans"
+   "Slogans",
+   "Loaded Language"
   ],
   "quotes": [
-   "YOU HAVE TO SHOOT YOUR WAY OUT.",
-   "YOU CAN VOTE YOUR WAY INTO SOCIALISM.\nBUT YOU HAVE TO SHOOT YOUR WAY OUT.",
-   "YOU CAN VOTE YOUR WAY INTO SOCIALISM.\nBUT YOU HAVE TO SHOOT YOUR WAY OUT."
+   "BUT YOU HAVE TO SHOOT YOUR WAY OUT.",
+   "YOU CAN VOTE YOUR WAY INTO SOCIALISM. BUT YOU HAVE TO SHOOT YOUR WAY OUT.",
+   "SHOOT YOUR WAY OUT"
   ]
  },
  "6b738620499fa056": {
@@ -256,11 +236,13 @@
   ],
   "predicted": [
    "Loaded Language",
+   "Smears",
    "Doubt"
   ],
   "quotes": [
    "THROW A TEMPER TANTRUM",
-   "IF VOTER FRAUD IS SO LOW"
+   "WHY DO LIBERALS THROW A TEMPER TANTRUM WHENEVER ANYBODY BOTHERS TO CHECK?",
+   "IF VOTER FRAUD IS SO LOW, WHY DO LIBERALS THROW A TEMPER TANTRUM WHENEVER ANYBODY BOTHERS TO CHECK?"
   ]
  },
  "31e0413fc9de7bdf": {
@@ -270,14 +252,16 @@
    "Loaded Language"
   ],
   "predicted": [
+   "Loaded Language",
    "Exaggeration/Minimisation",
-   "Doubt",
-   "Loaded Language"
+   "Smears",
+   "Doubt"
   ],
   "quotes": [
-   "corrupt on every level",
-   "THE GOVERNMENT WILL INVESTIGATE ITSELF AND TELL YOU WHAT REALLY HAPPENED.",
-   "corrupt"
+   "CORRUPT",
+   "CORRUPT ON EVERY LEVEL",
+   "THE GOVERNMENT IS CORRUPT ON EVERY LEVEL",
+   "THE GOVERNMENT WILL INVESTIGATE ITSELF AND TELL YOU WHAT REALLY HAPPENED."
   ]
  },
  "e712ef4cbebe95e3": {
@@ -290,26 +274,24 @@
   ],
   "predicted": [
    "Name calling/Labeling",
+   "Name calling/Labeling",
    "Loaded Language",
-   "Exaggeration/Minimisation",
-   "Appeal to fear/prejudice"
+   "Smears"
   ],
   "quotes": [
    "FALSE PROPHET",
    "LYING MEDIA",
    "THE MOST ANOINTED FALSE PROPHET IN THE EARTH TODAY",
-   "IT HAS MILLIONS OF\nCHRISTIANS UNDERNEATH ITS INFLUENCE AND THEY\nDON'T EVEN KNOW IT!"
+   "THE LYING MEDIA"
   ]
  },
  "51a385e67dfcbdbb": {
   "id": "748_batch_2",
   "gold": [],
   "predicted": [
-   "Slogans",
-   "Black-and-white Fallacy/Dictatorship"
+   "Slogans"
   ],
   "quotes": [
-   "IF YOU AIN'T DONALD TRUMP\nTHEN YOU AIN'T MY PRESIDENT",
    "IF YOU AIN'T DONALD TRUMP\nTHEN YOU AIN'T MY PRESIDENT"
   ]
  },
@@ -330,12 +312,8 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Slogans"
-  ],
-  "quotes": [
-   "HAIL JUSTICE AMY CONEY-BARRETT"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "14def9748e9aa7d5": {
   "id": "754_batch_2",
@@ -365,23 +343,17 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Appeal to authority",
-   "Appeal to fear/prejudice"
+   "Appeal to authority"
   ],
   "quotes": [
-   "ACCORDING TO U.S. LAW",
-   "DOMINION VOTING AND SCYTL ARE FOREIGN COMPANIES..."
+   "ACCORDING TO U.S. LAW"
   ]
  },
  "ee65a7a671ac029d": {
   "id": "763_batch_2",
   "gold": [],
-  "predicted": [
-   "Slogans"
-  ],
-  "quotes": [
-   "THIS AIN'T OVER"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "95da0171653e1cdb": {
   "id": "765_batch_2",
@@ -393,7 +365,7 @@
    "Doubt"
   ],
   "quotes": [
-   "WHY HASNT KAMALA RESIGNED HER SENATE SEAT?"
+   "IF THEY ARE SO SURE THEY WON WHY HASNT KAMALA RESIGNED HER SENATE SEAT?"
   ]
  },
  "67476f82ed35c077": {
@@ -413,11 +385,13 @@
   ],
   "predicted": [
    "Loaded Language",
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
+   "YOU PIECE OF SHIT",
    "PIECE OF SHIT",
-   "YOU PIECE OF SHIT"
+   "CAN YOU REPEAT THAT YOU PIECE OF SHIT"
   ]
  },
  "b2eb4dd004a354ee": {
@@ -429,10 +403,12 @@
    "Smears"
   ],
   "predicted": [
+   "Name calling/Labeling",
    "Loaded Language",
    "Doubt"
   ],
   "quotes": [
+   "Liberal media",
    "BULLSHIT",
    "I'm picking up BULLSHIT on all frequencies"
   ]
@@ -444,7 +420,7 @@
    "Appeal to fear/prejudice"
   ],
   "quotes": [
-   "Ve vill have to restrikt your akkount"
+   "Ve vill have to restrikt your akkount because you vont konform to kommunity standards."
   ]
  },
  "58331910000a5966": {
@@ -458,13 +434,15 @@
   "predicted": [
    "Name calling/Labeling",
    "Name calling/Labeling",
+   "Loaded Language",
    "Smears",
    "Exaggeration/Minimisation"
   ],
   "quotes": [
-   "Has-been",
+   "\"Has-been\"",
    "Nasty Nancy",
-   "the most\ncorrupt, lying and despised member of congress",
+   "most\ncorrupt, lying and despised",
+   "her own legacy will be to go down in history as being the most\ncorrupt, lying and despised member of congress",
    "the WORST speaker of the house that has ever been\nknown to man"
   ]
  },
@@ -485,12 +463,8 @@
   "gold": [
    "Doubt"
   ],
-  "predicted": [
-   "Doubt"
-  ],
-  "quotes": [
-   "I WONDER HOW MANY DEMOCRATS ARE THINKING\n\"WE FILLED OUT TOO MANY\""
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "7dba589e5c2f33cb": {
   "id": "782_batch_2",
@@ -501,12 +475,8 @@
  "192c5d545c499b47": {
   "id": "783_batch_2",
   "gold": [],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "WHAT YOU DID WITH THOSE BALLOTS."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "6f01a4b7f74edc99": {
   "id": "785_batch_2",
@@ -514,12 +484,12 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Loaded Language",
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Loaded Language"
   ],
   "quotes": [
-   "INSANE\nSOCIALIST\nTERRORISM",
-   "SOCIALIST\nTERRORISM"
+   "COMMUNIST\nINSANE\nSOCIALIST\nTERRORISM",
+   "INSANE\nSOCIALIST\nTERRORISM"
   ]
  },
  "cde90bc02e262833": {
@@ -535,10 +505,12 @@
    "Smears"
   ],
   "predicted": [
-   "Exaggeration/Minimisation"
+   "Exaggeration/Minimisation",
+   "Smears"
   ],
   "quotes": [
-   "raised millions from the dead"
+   "raised millions from the dead on election day",
+   "Case for Biden sainthood opened at Vatican after he raised millions from the dead on election day"
   ]
  },
  "5a33c1d0a9396eaa": {
@@ -550,12 +522,14 @@
    "Smears"
   ],
   "predicted": [
+   "Name calling/Labeling",
    "Loaded Language",
-   "Name calling/Labeling"
+   "Smears"
   ],
   "quotes": [
+   "spoiled, ignorant, and entitled \"teenagers\"",
    "spoiled, ignorant, and entitled",
-   "\"teenagers\""
+   "a group of spoiled, ignorant, and entitled \"teenagers\""
   ]
  },
  "9e40e5b0f7a50655": {
@@ -578,12 +552,12 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Loaded Language",
-   "Exaggeration/Minimisation"
+   "Exaggeration/Minimisation",
+   "Smears"
   ],
   "quotes": [
-   "GREATEST VOTER FRAUD ORGANIZATION",
-   "GREATEST VOTER FRAUD ORGANIZATION IN HISTORY"
+   "THE GREATEST VOTER FRAUD ORGANIZATION IN HISTORY",
+   "THE GREATEST VOTER FRAUD ORGANIZATION IN HISTORY"
   ]
  },
  "ea0394badb52f3bc": {
@@ -598,11 +572,13 @@
   ],
   "predicted": [
    "Exaggeration/Minimisation",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
    "The greatest words ever spoken by a sitting president.",
-   "ridiculous bullshit!"
+   "defraud the public with ridiculous bullshit!",
+   "Democrats continue to defraud the public"
   ]
  },
  "4bebed33d9ec2265": {
@@ -638,24 +614,16 @@
    "Loaded Language",
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Slogans"
-  ],
-  "quotes": [
-   "it's finger lickin'good"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "dc5100011cd07190": {
   "id": "805_batch_2",
   "gold": [
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Name calling/Labeling"
-  ],
-  "quotes": [
-   "OLD Smeller"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "caffd2bb8f77a036": {
   "id": "806_batch_2",
@@ -676,12 +644,8 @@
    "Name calling/Labeling",
    "Smears"
   ],
-  "predicted": [
-   "Smears"
-  ],
-  "quotes": [
-   "TO TEACH THEM HOW TO COUNT"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "6d0eb864f14e8400": {
   "id": "813_batch_2",
@@ -700,10 +664,12 @@
   ],
   "predicted": [
    "Name calling/Labeling",
+   "Loaded Language",
    "Doubt"
   ],
   "quotes": [
    "Sleepy Joe",
+   "BULLSHIT",
    "I call BULLSHIT!!!"
   ]
  },
@@ -714,10 +680,12 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
-   "MY HATERS"
+   "MY HATERS",
+   "CHEERS TO MY HATERS"
   ]
  },
  "871f1b56787eda55": {
@@ -729,10 +697,12 @@
   ],
   "predicted": [
    "Name calling/Labeling",
+   "Smears",
    "Slogans"
   ],
   "quotes": [
    "FAUX NEWS",
+   "WE DISTORT YOU COMPLY",
    "WE DISTORT YOU COMPLY"
   ]
  },
@@ -742,12 +712,8 @@
    "Loaded Language",
    "Whataboutism"
   ],
-  "predicted": [
-   "Doubt"
-  ],
-  "quotes": [
-   "Those who spent the last 4 years convinced there was election interference are now saying there's no way the election could be rigged."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "f652f6997af85135": {
   "id": "819_batch_2",
@@ -756,11 +722,9 @@
    "Slogans"
   ],
   "predicted": [
-   "Repetition",
    "Slogans"
   ],
   "quotes": [
-   "NEVER FORGET",
    "NEVER FORGET"
   ]
  },
@@ -780,13 +744,15 @@
   ],
   "predicted": [
    "Appeal to authority",
+   "Loaded Language",
    "Name calling/Labeling",
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
    "-HARRY S. TRUMAN",
    "CROOK",
-   "CROOK"
+   "a crook",
+   "SHOW ME A MAN THAT GETS RICH BY BEING A POLITICIAN, AND I'LL SHOW YOU A CROOK."
   ]
  },
  "af6f6f443fa0c521": {
@@ -799,7 +765,7 @@
    "Repetition"
   ],
   "quotes": [
-   "Never"
+   "Never burned one building\nNever robbed one store\nNever destroyed one town"
   ]
  },
  "fd455bb7f0bd8157": {
@@ -818,10 +784,12 @@
    "Smears"
   ],
   "predicted": [
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "STOLEN BALLOTS"
+   "STOLEN BALLOTS TO DUMP",
+   "PELOSI: STOLEN BALLOTS TO DUMP"
   ]
  },
  "52f155af211a7347": {
@@ -845,10 +813,14 @@
    "Slogans"
   ],
   "predicted": [
+   "Appeal to fear/prejudice",
    "Flag-waving",
-   "Appeal to fear/prejudice"
+   "Slogans",
+   "Loaded Language"
   ],
   "quotes": [
+   "save this land from those who seek to destroy it.",
+   "PRAY FOR AMERICA",
    "PRAY FOR AMERICA",
    "those who seek to destroy it"
   ]
@@ -859,12 +831,8 @@
    "Doubt",
    "Loaded Language"
   ],
-  "predicted": [
-   "Doubt"
-  ],
-  "quotes": [
-   "SO YOU'RE TELLING ME THE DEMS RIGGED THE ELECTION BUT LET MITCH MCCONNELL WIN?"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "ba130f1c5f77901b": {
   "id": "839_batch_2",
@@ -873,10 +841,14 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Smears"
+   "Loaded Language",
+   "Smears",
+   "Doubt"
   ],
   "quotes": [
-   "IS IT ALZHEIMER'S?"
+   "IS IT ALZHEIMER'S?",
+   "IS IT ALZHEIMER'S?",
+   "THE INTERNET NEVER FORGETS, BUT THEY SEEM TO..."
   ]
  },
  "58604d4f96f4bd92": {
@@ -897,16 +869,8 @@
    "Doubt",
    "Smears"
   ],
-  "predicted": [
-   "Loaded Language",
-   "Exaggeration/Minimisation",
-   "Smears"
-  ],
-  "quotes": [
-   "refusing to do my job",
-   "preventing the entire Us senate from doing theirs",
-   "I spent the last 11 years refusing to do my job"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "e5310eece1ba248f": {
   "id": "843_batch_2",
@@ -917,14 +881,16 @@
    "Smears"
   ],
   "predicted": [
-   "Appeal to authority",
+   "Repetition",
+   "Name calling/Labeling",
    "Loaded Language",
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
-   "-From the Cult Education Network",
+   "The Leader",
    "CULT",
-   "REPUBLICAN DIRTY TRICKS"
+   "DIRTY TRICKS",
+   "ANOTHER DAY, MORE REPUBLICAN DIRTY TRICKS"
   ]
  },
  "a94fcdfae5a8d94a": {
@@ -948,14 +914,16 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Exaggeration/Minimisation",
    "Loaded Language",
-   "Name calling/Labeling"
+   "Exaggeration/Minimisation",
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
    "THE MOST CRIMIMAL PRESIDENCY EVER ASSEMBLED.",
-   "CRIMIMAL",
-   "THE INDICTABLES"
+   "THE MOST CRIMIMAL PRESIDENCY EVER ASSEMBLED.",
+   "THE INDICTABLES",
+   "THE MOST CRIMIMAL PRESIDENCY EVER ASSEMBLED."
   ]
  },
  "9b0ef587a5d0ca2a": {
@@ -963,12 +931,8 @@
   "gold": [
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Thought-terminating cliché"
-  ],
-  "quotes": [
-   "Make no mistake."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "3d718ec4570c42bd": {
   "id": "847_batch_2",
@@ -995,14 +959,14 @@
   "predicted": [
    "Slogans",
    "Flag-waving",
-   "Appeal to fear/prejudice",
-   "Loaded Language"
+   "Loaded Language",
+   "Appeal to fear/prejudice"
   ],
   "quotes": [
    "MAKE AMERICA GREAT AGAIN",
    "MAKE AMERICA GREAT AGAIN",
-   "CAN'T GET VENTILATORS TO KEEP THEM ALIVE",
-   "IT'S A DAMN DISGRACE."
+   "IT'S A DAMN DISGRACE.",
+   "PATIENTS WHO CAN'T GET VENTILATORS TO KEEP THEM ALIVE"
   ]
  },
  "641c3202b89fadf9": {
@@ -1022,12 +986,8 @@
    "Smears",
    "Thought-terminating cliché"
   ],
-  "predicted": [
-   "Black-and-white Fallacy/Dictatorship"
-  ],
-  "quotes": [
-   "Evidence that would exonerate him if innocent."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "3ccb73d903e98706": {
   "id": "865_batch_2",
@@ -1079,10 +1039,12 @@
    "Appeal to authority"
   ],
   "predicted": [
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "alibi"
+   "alibi",
+   "Trump cannot come up with an alibi for the month of February."
   ]
  },
  "3d90117a4c470bc2": {
@@ -1098,8 +1060,8 @@
    "Slogans"
   ],
   "predicted": [
-   "Flag-waving",
-   "Causal Oversimplification"
+   "Slogans",
+   "Flag-waving"
   ],
   "quotes": [
    "Thank a Democrat",
@@ -1112,8 +1074,12 @@
    "Smears",
    "Whataboutism"
   ],
-  "predicted": [],
-  "quotes": []
+  "predicted": [
+   "Smears"
+  ],
+  "quotes": [
+   "\"I don't take responsibility at all\""
+  ]
  },
  "f5d412f41be6faf0": {
   "id": "881_batch_2",
@@ -1125,18 +1091,14 @@
    "Loaded Language"
   ],
   "quotes": [
-   "FORCED REPUBLICAN GOVERNORS TO BEG"
+   "FORCED REPUBLICAN GOVERNORS TO BEG FOR FEDERAL DISASTER RELIEF"
   ]
  },
  "a43b25b4193818a3": {
   "id": "886_batch_2",
   "gold": [],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "FREED ISIS"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "b688032c2a0b2371": {
   "id": "887_batch_2",
@@ -1146,11 +1108,9 @@
    "Smears"
   ],
   "predicted": [
-   "Name calling/Labeling",
    "Loaded Language"
   ],
   "quotes": [
-   "TINFOIL HAT",
    "TINFOIL HAT"
   ]
  },
@@ -1162,14 +1122,12 @@
    "Smears"
   ],
   "predicted": [
-   "Appeal to fear/prejudice",
    "Name calling/Labeling",
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
-   "The Biden/Harris/CCP Administration Will Never Rule Over The United States of America",
    "CCP Administration",
-   "Rule Over"
+   "The Biden/Harris/CCP Administration"
   ]
  },
  "030cb16ae87706f4": {
@@ -1179,13 +1137,11 @@
   ],
   "predicted": [
    "Slogans",
-   "Black-and-white Fallacy/Dictatorship",
-   "Exaggeration/Minimisation"
+   "Black-and-white Fallacy/Dictatorship"
   ],
   "quotes": [
    "JUST GIVE US THE VACCINE",
-   "JUST GIVE US THE VACCINE",
-   "WE DONT CARE WHATS IN IT"
+   "JUST GIVE US THE VACCINE"
   ]
  },
  "ba28c401d72fc0f3": {
@@ -1196,12 +1152,12 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Black-and-white Fallacy/Dictatorship",
-   "Appeal to fear/prejudice"
+   "Appeal to fear/prejudice",
+   "Black-and-white Fallacy/Dictatorship"
   ],
   "quotes": [
-   "REMOVE HIM OR LOSE YOUR FREEDOM",
-   "LOSE YOUR FREEDOM"
+   "LOSE YOUR FREEDOM",
+   "REMOVE HIM OR LOSE YOUR FREEDOM"
   ]
  },
  "4d909b80ea68f700": {
@@ -1212,15 +1168,15 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Slogans",
    "Loaded Language",
    "Name calling/Labeling",
+   "Smears",
    "Appeal to authority"
   ],
   "quotes": [
    "THE PEOPLE WHO SELL THE PANIC SELL THE CURE",
    "PERPETRATORS",
-   "PERPETRATORS",
+   "OWNERSHIP OF THE MEDIA IS IN THE HANDS OF THE\nPERPETRATORS",
    "- SOLZHENITSYN"
   ]
  },
@@ -1234,11 +1190,13 @@
   "predicted": [
    "Exaggeration/Minimisation",
    "Loaded Language",
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
-   "gets on every one of mine!",
-   "fucker",
+   "gets on every one of mine",
+   "this fucker",
+   "Justin Trudeau is an Idiot",
    "Justin Trudeau is an Idiot"
   ]
  },
@@ -1261,11 +1219,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
    "Fake News",
-   "malignant propaganda"
+   "malignant propaganda",
+   "Fake News TM New York Times'"
   ]
  },
  "00fae1cad2fdac5f": {
@@ -1276,11 +1236,9 @@
    "Presenting Irrelevant Data (Red Herring)"
   ],
   "predicted": [
-   "Appeal to fear/prejudice",
    "Appeal to fear/prejudice"
   ],
   "quotes": [
-   "A child in America is 66,667 times more likely to be sold\nto human traffickers than die of Covid-19.",
    "your masks assist in them being transported undetected and unidentified to anyone."
   ]
  },
@@ -1312,12 +1270,8 @@
    "Loaded Language",
    "Whataboutism"
   ],
-  "predicted": [
-   "Whataboutism"
-  ],
-  "quotes": [
-   "WHY ARE MASS PROTESTS FINE BUT REMEMBRANCE DAY CEREMONIES ARE DANGEROUS?"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "c1c9176ab8df8ae0": {
   "id": "914_batch_2",
@@ -1343,11 +1297,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
    "CHINESE COMMUNIST DEMOCRAT PARTY",
-   "ELECTION THEFT"
+   "ELECTION THEFT",
+   "CHINESE COMMUNIST DEMOCRAT PARTY\n\nELECTION THEFT"
   ]
  },
  "b86503f11b769590": {
@@ -1360,13 +1316,11 @@
   ],
   "predicted": [
    "Loaded Language",
-   "Smears",
-   "Thought-terminating cliché"
+   "Smears"
   ],
   "quotes": [
-   "the person who committed that crime",
-   "the person who committed that crime",
-   "LET THAT SINK IN."
+   "THE PERSON WHO COMMITTED THAT CRIME",
+   "THE PERSON WHO COMMITTED THAT CRIME"
   ]
  },
  "dc3b57f0f9482277": {
@@ -1374,14 +1328,8 @@
   "gold": [
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Appeal to fear/prejudice",
-   "Slogans"
-  ],
-  "quotes": [
-   "EVENTUALLY YOU WILL FIND OUT",
-   "THE CHEESE IS NEVER FREE"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "20ab56e3bf616e67": {
   "id": "918_batch_2",
@@ -1410,12 +1358,10 @@
    "Doubt"
   ],
   "predicted": [
-   "Misrepresentation of Someone's Position (Straw Man)",
-   "Repetition"
+   "Loaded Language"
   ],
   "quotes": [
-   "I'LL PRETEND YOUR MASK WORKS",
-   "PRETEND"
+   "I'LL PRETEND YOUR MASK WORKS"
   ]
  },
  "5c0715b7ebebc944": {
@@ -1426,11 +1372,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
    "Commiebook",
-   "llegal Censorship"
+   "llegal Censorship",
+   "Commiebook, llegal Censorship"
   ]
  },
  "9f12c6f4493c9a4a": {
@@ -1438,24 +1386,16 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Appeal to fear/prejudice"
-  ],
-  "quotes": [
-   "•pedophiles in positions of power"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "303088679e1d2722": {
   "id": "928_batch_2",
   "gold": [
    "Doubt"
   ],
-  "predicted": [
-   "Black-and-white Fallacy/Dictatorship"
-  ],
-  "quotes": [
-   "IF YOU ACTUALLY CARE ABOUT THE ENVIRONMENT YOU'LL WANT"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "f21f614eb5a6f4ab": {
   "id": "929_batch_2",
@@ -1494,12 +1434,8 @@
    "Loaded Language",
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "OBAMAGATE"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "0b77f2e945c444b9": {
   "id": "936_batch_2",
@@ -1509,12 +1445,10 @@
    "Whataboutism"
   ],
   "predicted": [
-   "Appeal to fear/prejudice",
-   "Loaded Language"
+   "Whataboutism"
   ],
   "quotes": [
-   "PEDOPHILES and RAPISTS",
-   "PEDOPHILES and RAPISTS"
+   "Where are the apps tracking PEDOPHILES and RAPISTS?!"
   ]
  },
  "8a530d4045d4545e": {
@@ -1524,12 +1458,12 @@
    "Smears"
   ],
   "predicted": [
-   "Exaggeration/Minimisation",
-   "Exaggeration/Minimisation"
+   "Loaded Language",
+   "Flag-waving"
   ],
   "quotes": [
    "Almost Certain Death",
-   "99.7% Survival Rate"
+   "Our Forefathers"
   ]
  },
  "0acc59f2932964bb": {
@@ -1542,18 +1476,14 @@
    "Smears"
   ],
   "quotes": [
-   "they could fly better than me because they watched a video on YouTube"
+   "They are the ones who peek into the cockpit prior to the flight and tell me they could fly better than me because they watched a video on YouTube."
   ]
  },
  "37803b9b445ddc18": {
   "id": "939_batch_2",
   "gold": [],
-  "predicted": [
-   "Appeal to fear/prejudice"
-  ],
-  "quotes": [
-   "makes you vulnerable to lightning"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "1a845d91062a69a4": {
   "id": "940_batch_2",
@@ -1561,9 +1491,11 @@
    "Doubt"
   ],
   "predicted": [
+   "Doubt",
    "Name calling/Labeling"
   ],
   "quotes": [
+   "Yet when I search for your name in PubMed, I find no publications at all.",
    "Anti-Vaxxer"
   ]
  },
@@ -1573,12 +1505,10 @@
    "Glittering generalities (Virtue)"
   ],
   "predicted": [
-   "Appeal to authority",
-   "Repetition"
+   "Appeal to authority"
   ],
   "quotes": [
-   "Doctors and scientists who study vaccines put their money where their mouth is.",
-   "They vaccinate"
+   "Doctors and scientists who study vaccines put their money where their mouth is."
   ]
  },
  "58d4663c73eaa025": {
@@ -1586,14 +1516,8 @@
   "gold": [
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Appeal to authority",
-   "Doubt"
-  ],
-  "quotes": [
-   "I've published over 160 papers on vaccines.",
-   "I'm a real Doctor."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "09aae2cdb382d530": {
   "id": "945_batch_2",
@@ -1603,13 +1527,13 @@
   ],
   "predicted": [
    "Appeal to fear/prejudice",
-   "Presenting Irrelevant Data (Red Herring)",
+   "Loaded Language",
    "Smears"
   ],
   "quotes": [
    "Would you do anything to avoid giving your baby arsenic, cadmium, lead, and aluminum...",
-   "scary-sounding substances can be found anywhere-including breast milk.",
-   "people try to mislead you"
+   "mislead you",
+   "people try to mislead you about the safety of the ingredients in vaccines"
   ]
  },
  "1827c3b51990930d": {
@@ -1618,10 +1542,10 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
-   "spreads fear & doubt"
+   "He spreads fear & doubt about the COVID vaccine."
   ]
  },
  "5db07ccecf534a51": {
@@ -1646,15 +1570,13 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Loaded Language",
    "Appeal to fear/prejudice",
-   "Exaggeration/Minimisation",
+   "Loaded Language",
    "Causal Oversimplification"
   ],
   "quotes": [
-   "poisons",
-   "if they don't kill us outright",
-   "every government wants the most\ninjured, harmless soldiers",
+   "if they don't kill us outright.",
+   "poisons in vaccines make us weak and docile",
    "That is why soldiers get more vaccines than anyone else."
   ]
  },
@@ -1688,10 +1610,12 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "CONDESCENDING MEMES"
+   "CONDESCENDING MEMES",
+   "YOUR CONDESCENDING MEMES"
   ]
  },
  "2b02461191f29aa7": {
@@ -1699,12 +1623,8 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Exaggeration/Minimisation"
-  ],
-  "quotes": [
-   "Your parades are cute!"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "fd481aa3efae5e67": {
   "id": "971_batch_2",
@@ -1712,12 +1632,8 @@
    "Loaded Language",
    "Name calling/Labeling"
   ],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "made Brett Kavanaugh cry"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "89c13fa479421ea7": {
   "id": "973_batch_2",
@@ -1746,12 +1662,14 @@
    "Smears"
   ],
   "predicted": [
-   "Glittering generalities (Virtue)",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears",
+   "Glittering generalities (Virtue)"
   ],
   "quotes": [
-   "basic human decency",
-   "mercilessly MOCKED and ATTACKED"
+   "mercilessly MOCKED and ATTACKED",
+   "Trump mercilessly MOCKED and ATTACKED her for it",
+   "basic human decency"
   ]
  },
  "65e2013aac37b05b": {
@@ -1762,10 +1680,12 @@
    "Whataboutism"
   ],
   "predicted": [
-   "Loaded Language"
+   "Whataboutism",
+   "Smears"
   ],
   "quotes": [
-   "scamming the system"
+   "Republicans who say people on welfare are scamming the system, are the same people who say Trump is a genius for scamming the system?",
+   "Republicans who say people on welfare are scamming the system, are the same people who say Trump is a genius for scamming the system?"
   ]
  },
  "14c2ce45269523d3": {
@@ -1777,14 +1697,16 @@
    "Smears"
   ],
   "predicted": [
-   "Causal Oversimplification",
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears",
+   "Causal Oversimplification"
   ],
   "quotes": [
-   "They are high because of rich assholes like Trump who game the system so they don't have to pay their fair share.",
    "rich assholes like Trump",
-   "game the system"
+   "game the system so they don't have to pay their fair share",
+   "rich assholes like Trump who game the system so they don't have to pay their fair share",
+   "They are high because of rich assholes like Trump"
   ]
  },
  "4250a552552580d3": {
@@ -1809,23 +1731,19 @@
    "Whataboutism"
   ],
   "predicted": [
-   "Loaded Language",
-   "Exaggeration/Minimisation"
+   "Appeal to fear/prejudice",
+   "Loaded Language"
   ],
   "quotes": [
    "Terrifying Tales Of Antifa Burning And Looting Cities While Dark, Shadowy Forces Rape And Murder Their Way Across The Suburbs",
-   "Dark, Shadowy Forces Rape And Murder Their Way Across The Suburbs"
+   "Dark, Shadowy Forces"
   ]
  },
  "1cc92a117709a201": {
   "id": "986_batch_2",
   "gold": [],
-  "predicted": [
-   "Repetition"
-  ],
-  "quotes": [
-   "I see"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "7698858f94a239e4": {
   "id": "474_batch_2",
@@ -1850,12 +1768,8 @@
  "af99d7c3b4183794": {
   "id": "478_batch_2",
   "gold": [],
-  "predicted": [
-   "Obfuscation, Intentional vagueness, Confusion"
-  ],
-  "quotes": [
-   "Do you see the pattern yet?\nTick tock..."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "cc51fcb2503f92fc": {
   "id": "479_batch_2",
@@ -1872,21 +1786,19 @@
    "Smears"
   ],
   "predicted": [
-   "Doubt"
+   "Doubt",
+   "Smears"
   ],
   "quotes": [
+   "CDC, \"HOLD MY BEER.\"",
    "CDC, \"HOLD MY BEER.\""
   ]
  },
  "55d4b609a7009161": {
   "id": "481_batch_2",
   "gold": [],
-  "predicted": [
-   "Repetition"
-  ],
-  "quotes": [
-   "YOU CAN DO THIS SIX FEET APART"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "8d27ce5835019cc5": {
   "id": "482_batch_2",
@@ -1898,7 +1810,7 @@
    "Misrepresentation of Someone's Position (Straw Man)"
   ],
   "quotes": [
-   "NO! THEY WORK...I MEAN NOT ENOUGH TO VOTE...BUT ENOUGH TO NOT POSTPONE THE ELECTION.!!"
+   "THEY WORK...I MEAN NOT ENOUGH TO VOTE...BUT ENOUGH TO NOT POSTPONE THE ELECTION."
   ]
  },
  "6f97f83d15791a74": {
@@ -1909,11 +1821,29 @@
   ],
   "predicted": [
    "Loaded Language",
-   "Appeal to fear/prejudice"
+   "Smears"
   ],
   "quotes": [
    "BRAINWASHING",
    "WHITE PEOPLE PROTEST AGAINST WHITE PEOPLE FOR BEING WHITE"
+  ]
+ },
+ "f9f828392ada273c": {
+  "id": "484_batch_2",
+  "gold": [
+   "Loaded Language",
+   "Smears",
+   "Thought-terminating cliché"
+  ],
+  "predicted": [
+   "Exaggeration/Minimisation",
+   "Loaded Language",
+   "Thought-terminating cliché"
+  ],
+  "quotes": [
+   "IT IS IMPOSSIBLE TO CONTRACT OR SPREAD COVID-19",
+   "RIOTING AND LOOTING",
+   "IT'S THAT SIMPLE"
   ]
  },
  "a95e665cc67810dd": {
@@ -1924,14 +1854,16 @@
    "Thought-terminating cliché"
   ],
   "predicted": [
-   "Misrepresentation of Someone's Position (Straw Man)",
+   "Name calling/Labeling",
    "Exaggeration/Minimisation",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
+   "LIBERALS",
    "LIBERALS WOULD RATHER DIE THAN TRY HYDROXYCHLOROQUINE?",
-   "RATHER DIE THAN TRY HYDROXYCHLOROQUINE",
-   "IT'S CALLED NATURAL SELECTION"
+   "LET THEM.",
+   "LIBERALS WOULD RATHER DIE THAN TRY HYDROXYCHLOROQUINE?"
   ]
  },
  "e82985d4a643b108": {
@@ -1941,16 +1873,16 @@
    "Smears"
   ],
   "predicted": [
-   "Loaded Language",
    "Causal Oversimplification",
-   "Doubt",
-   "Exaggeration/Minimisation"
+   "Smears",
+   "Exaggeration/Minimisation",
+   "Loaded Language"
   ],
   "quotes": [
-   "they're lying about a cure for covid",
    "they removed the videos because Pfizer, Gillead,\nand Bill Gates cant make trillions of dollars off of\na $3 cure that they cant patent.",
-   "because Pfizer, Gillead,\nand Bill Gates cant make trillions of dollars off of\na $3 cure that they cant patent.",
-   "make trillions of dollars"
+   "Pfizer, Gillead,\nand Bill Gates cant make trillions of dollars off of\na $3 cure that they cant patent.",
+   "make trillions of dollars",
+   "they're lying about a cure for covid"
   ]
  },
  "312e8318c1db22f8": {
@@ -1959,12 +1891,8 @@
    "Loaded Language",
    "Slogans"
   ],
-  "predicted": [
-   "Exaggeration/Minimisation"
-  ],
-  "quotes": [
-   "PEACEFULNESS INTENSIFIES!"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "c5b9ce4efd14c0e6": {
   "id": "490_batch_2",
@@ -1973,10 +1901,12 @@
    "Slogans"
   ],
   "predicted": [
-   "Name calling/Labeling"
+   "Name calling/Labeling",
+   "Smears"
   ],
   "quotes": [
-   "ANTIFA & BLACK LIVES MARXISTS"
+   "BLACK LIVES MARXISTS",
+   "BROUGHT TO YOU BY:\nGOVERNOR KATE BROWN\nMAYOR TED WHEELER\nPORTLAND CHAMBER OF COMMERCE\nPORTLAND CITY COMMISSIONERS\nANTIFA & BLACK LIVES MARXISTS"
   ]
  },
  "4a5c2c16b637de71": {
@@ -1986,11 +1916,9 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Loaded Language",
-   "Exaggeration/Minimisation"
+   "Loaded Language"
   ],
   "quotes": [
-   "CREEPIEST",
    "THE CREEPIEST CIRCUS CLOWNS EVER"
   ]
  },
@@ -1999,12 +1927,8 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Repetition"
-  ],
-  "quotes": [
-   "Arresting people for"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "f7172da0b714953b": {
   "id": "493_batch_2",
@@ -2014,14 +1938,12 @@
    "Whataboutism"
   ],
   "predicted": [
-   "Whataboutism",
-   "Exaggeration/Minimisation",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "THE SAME PEOPLE WHO SAID TRUMP WOULD DESTROY AMERICA... ARE DESTROYING AMERICA",
-   "ARE DESTROYING AMERICA",
-   "DESTROYING AMERICA"
+   "DESTROY AMERICA",
+   "THE SAME PEOPLE WHO SAID TRUMP WOULD DESTROY AMERICA... ARE DESTROYING AMERICA"
   ]
  },
  "a3039b524f7d7448": {
@@ -2032,14 +1954,14 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Black-and-white Fallacy/Dictatorship",
+   "Name calling/Labeling",
    "Loaded Language",
-   "Name calling/Labeling"
+   "Smears"
   ],
   "quotes": [
-   "YOU NEED TO TRUST SCIENCE",
    "ASSHOLE",
-   "ASSHOLE"
+   "ASSHOLE",
+   "YOU NEED TO TRUST SCIENCE ASSHOLE!"
   ]
  },
  "446c240b389a6d95": {
@@ -2050,11 +1972,11 @@
   ],
   "predicted": [
    "Appeal to fear/prejudice",
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
-   "AN INTRUDER WOULDN'T TRY TO DISARM THIS WOMAN",
-   "INTRUDER"
+   "AN INTRUDER WOULDN'T TRY TO DISARM THIS WOMAN\nYOUR ELECTED REPRESENTATIVES PROMISED TO DO IT FOR HIM.",
+   "YOUR ELECTED REPRESENTATIVES PROMISED TO DO IT FOR HIM."
   ]
  },
  "d2d3e39740580611": {
@@ -2064,12 +1986,10 @@
    "Smears"
   ],
   "predicted": [
-   "Appeal to authority",
-   "Causal Oversimplification"
+   "Appeal to authority"
   ],
   "quotes": [
-   "Margaret Thatcher",
-   "The problem with Socialism is that eventually you run out of other people's money."
+   "Margaret Thatcher"
   ]
  },
  "596a2a87214b7866": {
@@ -2080,13 +2000,13 @@
   ],
   "predicted": [
    "Exaggeration/Minimisation",
-   "Slogans",
-   "Smears"
+   "Smears",
+   "Glittering generalities (Virtue)"
   ],
   "quotes": [
    "PROMISE EVERYTHING\nDELIVER NOTHING",
-   "CHANGE THAT MATTERS",
-   "BLAME SOMEONE ELSE"
+   "BLAME SOMEONE ELSE",
+   "CHANGE THAT MATTERS"
   ]
  },
  "3f1b6cd3589efab0": {
@@ -2095,12 +2015,10 @@
    "Slogans"
   ],
   "predicted": [
-   "Exaggeration/Minimisation",
-   "Loaded Language"
+   "Exaggeration/Minimisation"
   ],
   "quotes": [
-   "SAVE COUNTLESS LIVES",
-   "SAVE COUNTLESS LIVES"
+   "will save countless lives"
   ]
  },
  "562c09f03af510cd": {
@@ -2111,13 +2029,11 @@
   ],
   "predicted": [
    "Repetition",
-   "Exaggeration/Minimisation",
-   "Appeal to fear/prejudice"
+   "Exaggeration/Minimisation"
   ],
   "quotes": [
    "Mask for",
-   "Deadliest Virus in History",
-   "Deadliest Virus in History"
+   "the Deadliest Virus in History"
   ]
  },
  "51ce3a896df0fc38": {
@@ -2128,7 +2044,7 @@
   ],
   "predicted": [
    "Loaded Language",
-   "Black-and-white Fallacy/Dictatorship"
+   "Smears"
   ],
   "quotes": [
    "STRIP THEM OF THEIR RIGHT TO SELF DEFENSE",
@@ -2140,12 +2056,8 @@
   "gold": [
    "Causal Oversimplification"
   ],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "OFFENSIVE"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "14979218bee81cc1": {
   "id": "505_batch_2",
@@ -2155,11 +2067,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "THE PEDOPHILES",
-   "PEDOPHILES"
+   "PEDOPHILES",
+   "PEDOPHILES",
+   "THE PEDOPHILES SAID SO"
   ]
  },
  "e5ab8c08adaae74e": {
@@ -2179,12 +2093,12 @@
    "Smears"
   ],
   "predicted": [
-   "Appeal to authority",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "MY CAMPAIGN MANAGER TOLD ME",
-   "RAPE"
+   "IT'S NOT RAPE",
+   "IT'S NOT RAPE IF YOU'RE A DEMOCRAT!"
   ]
  },
  "95b85d49b731b0f3": {
@@ -2194,11 +2108,15 @@
   ],
   "predicted": [
    "Exaggeration/Minimisation",
-   "Name calling/Labeling"
+   "Exaggeration/Minimisation",
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
-   "Boosting sales 1000%\nWhile using 0% brain cells",
-   "0% brain cells"
+   "Boosting sales 1000%",
+   "0% brain cells",
+   "0% brain cells",
+   "While using 0% brain cells"
   ]
  },
  "8eda4aba9e7cfd7c": {
@@ -2225,12 +2143,8 @@
   "gold": [
    "Appeal to fear/prejudice"
   ],
-  "predicted": [
-   "Exaggeration/Minimisation"
-  ],
-  "quotes": [
-   "has replaced all sirens with the National Anthem"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "bd6d251f855e4c21": {
   "id": "517_batch_2",
@@ -2245,11 +2159,9 @@
    "Smears"
   ],
   "predicted": [
-   "Appeal to fear/prejudice",
-   "Loaded Language"
+   "Smears"
   ],
   "quotes": [
-   "TRUMP SUPPORTERS ARE COMBAT VETS",
    "WHAT YOU LEARNED ON X-BOX DOESN'T WORK"
   ]
  },
@@ -2273,11 +2185,11 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Repetition"
+   "Smears"
   ],
   "quotes": [
    "fraudster Ruby Freeman criminal",
-   "Ruby Freeman criminal"
+   "TCF Center fraudster Ruby Freeman criminal"
   ]
  },
  "68dcf40bbf12a6a1": {
@@ -2287,12 +2199,10 @@
   ],
   "predicted": [
    "Flag-waving",
-   "Appeal to fear/prejudice",
    "Loaded Language"
   ],
   "quotes": [
-   "PATRIOTS",
-   "CIVIL WAR OPPONENTS",
+   "ATTENTION PATRIOTS",
    "CIVIL WAR OPPONENTS"
   ]
  },
@@ -2305,11 +2215,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
+   "Smears",
    "Appeal to fear/prejudice",
-   "Exaggeration/Minimisation"
+   "Loaded Language"
   ],
   "quotes": [
    "CRACKHEAD",
+   "RELEASE THE CRACKHEAD",
    "IF THEY DO WE'RE ALL FUCKED",
    "WE'RE ALL FUCKED"
   ]
@@ -2337,8 +2249,8 @@
    "Loaded Language"
   ],
   "quotes": [
-   "EVERYONE FORGOTABOUT HIGH RANKING PEDOPHILES",
-   "PEDOPHILES"
+   "EVERYONE FORGOTABOUT",
+   "HIGH RANKING PEDOPHILES"
   ]
  },
  "84ef12ebb15af842": {
@@ -2350,11 +2262,13 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
    "SPOILED WHITE DEMOCRATS",
-   "SCREAM RACIAL SLURS AT BLACK COPS"
+   "SCREAM RACIAL SLURS AT BLACK COPS",
+   "WHERE SPOILED WHITE DEMOCRATS SCREAM RACIAL SLURS AT BLACK COPS IN THE NAME OF EQUALITY"
   ]
  },
  "29d25ac1206530d0": {
@@ -2373,11 +2287,15 @@
   ],
   "predicted": [
    "Name calling/Labeling",
-   "Loaded Language"
+   "Name calling/Labeling",
+   "Loaded Language",
+   "Smears"
   ],
   "quotes": [
+   "The Sheep",
    "scared little bitches",
-   "scared little bitches"
+   "scared little bitches",
+   "you scared little bitches"
   ]
  },
  "8d76f4ea1f36068c": {
@@ -2386,12 +2304,10 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Loaded Language",
    "Loaded Language"
   ],
   "quotes": [
-   "CHEATED",
-   "FUCKIN FAR FROM OK"
+   "THEY WERE CHEATED"
   ]
  },
  "f87eacb3c068ec28": {
@@ -2423,12 +2339,8 @@
  "06fc03861422d1d0": {
   "id": "747_batch_2",
   "gold": [],
-  "predicted": [
-   "Name calling/Labeling"
-  ],
-  "quotes": [
-   "So Don King and BeetleJuice had a baby..."
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "98b390791d86bc8f": {
   "id": "749_batch_2",
@@ -2447,14 +2359,8 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Repetition",
-   "Loaded Language"
-  ],
-  "quotes": [
-   "SHE'S TAKING",
-   "A DUMP"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "0f92c0ad0b57bfa4": {
   "id": "755_batch_2",
@@ -2470,10 +2376,10 @@
    "Name calling/Labeling"
   ],
   "predicted": [
-   "Exaggeration/Minimisation"
+   "Loaded Language"
   ],
   "quotes": [
-   "It's a Dem panic!"
+   "Dem panic"
   ]
  },
  "a2a1ad76c5d89d7f": {
@@ -2482,12 +2388,10 @@
    "Loaded Language"
   ],
   "predicted": [
-   "Name calling/Labeling",
    "Loaded Language"
   ],
   "quotes": [
-   "remain stupid",
-   "stupid"
+   "STUPID"
   ]
  },
  "6cbf7b0d5e2ab4cf": {
@@ -2497,7 +2401,7 @@
    "Loaded Language"
   ],
   "quotes": [
-   "stepped into a trap"
+   "they've stepped into a trap"
   ]
  },
  "a8d9c9a49fe83176": {
@@ -2511,12 +2415,8 @@
   "gold": [
    "Loaded Language"
   ],
-  "predicted": [
-   "Repetition"
-  ],
-  "quotes": [
-   "HE'S"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "5d9dfff12f3479f5": {
   "id": "764_batch_2",
@@ -2525,9 +2425,13 @@
    "Smears"
   ],
   "predicted": [
+   "Whataboutism",
+   "Smears",
    "Loaded Language"
   ],
   "quotes": [
+   "IRONY IS WHEN THE LIBERALS INVESTIGATE TRUMP AND DEMOCRATS KEEP GETTING IMPLICATED IN CRIMES.",
+   "DEMOCRATS KEEP GETTING IMPLICATED IN CRIMES.",
    "IMPLICATED IN CRIMES"
   ]
  },
@@ -2536,12 +2440,8 @@
   "gold": [
    "Smears"
   ],
-  "predicted": [
-   "Doubt"
-  ],
-  "quotes": [
-   "Despite No Official Word From Boyfriend"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "d1d325743060386b": {
   "id": "769_batch_2",
@@ -2552,6 +2452,18 @@
   "quotes": [
    "\"LEGAL VOTES\""
   ]
+ },
+ "30d3f179ba2a3198": {
+  "id": "aurora.nws-bot.us/3mzwy4veork2v",
+  "gold": [],
+  "predicted": [],
+  "quotes": []
+ },
+ "08badfbe45c79ed0": {
+  "id": "aurora.nws-bot.us/3mzvpvgrqny2n",
+  "gold": [],
+  "predicted": [],
+  "quotes": []
  },
  "26298e2a03783f9c": {
   "id": "aurora.nws-bot.us/3mzuhnwujhp2n",
@@ -2676,12 +2588,8 @@
  "f2a9d9797f59d560": {
   "id": "adoptbot.bsky.social/3m6wqnmz7gn2y",
   "gold": [],
-  "predicted": [
-   "Loaded Language"
-  ],
-  "quotes": [
-   "love and gentle purrs"
-  ]
+  "predicted": [],
+  "quotes": []
  },
  "211848212c39396d": {
   "id": "adoptbot.bsky.social/3m6woxxvm2y2p",
@@ -2736,21 +2644,5 @@
   "gold": [],
   "predicted": [],
   "quotes": []
- },
- "f9f828392ada273c": {
-  "id": "484_batch_2",
-  "gold": [
-   "Loaded Language",
-   "Smears",
-   "Thought-terminating cliché"
-  ],
-  "predicted": [
-   "Exaggeration/Minimisation",
-   "Thought-terminating cliché"
-  ],
-  "quotes": [
-   "it is impossible to contract or spread COVID-19",
-   "IT'S THAT SIMPLE"
-  ]
  }
 }
