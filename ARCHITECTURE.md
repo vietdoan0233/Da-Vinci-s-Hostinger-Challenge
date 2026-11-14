@@ -149,7 +149,7 @@ with two people. Hour figures are guesses.
 - [x] 0.4 `web/index.html`: text box, Analyze button, raw JSON printed below. Served by FastAPI.
 - [x] 0.5 `tests/test_api.py`: health returns ok; analyze rejects empty and oversized input.
 - [x] 0.6 `Dockerfile`, `compose.yml` (app, Traefik labels), `.env.example`.
-- [ ] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
+- [x] 0.7 Point the free domain at the VPS, `docker compose up -d` on the VPS.
 - [ ] Done when: `https://<domain>/api/health` returns ok from a phone on mobile data.
 
 ### Feature 1: name the technique (about 2 h)
