@@ -14,7 +14,7 @@
     if (!url) return "Open a Bluesky post or a YouTube video.";
     if (POST.test(url)) return "This tab: a Bluesky post.";
     if (VIDEO.test(url)) return "This tab: a YouTube video.";
-    try { return "This tab (" + new URL(url).hostname + ") is not a post or video. Select text and right-click to decode it."; }
+    try { return "This tab (" + new URL(url).hostname + ") is not a post or video. Select text and right-click to unmask it."; }
     catch (e) { return "This tab cannot be analysed."; }
   }
 

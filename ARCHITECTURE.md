@@ -1,6 +1,6 @@
 # Architecture and build plan
 
-Challenge: Hostinger "Decode the Noise" at Junction. A panel that opens next to a
+Challenge: Hostinger "Decode the Noise" at Junction. The product is called Unmasked: a panel that opens next to a
 social media post and shows which manipulation techniques it uses, how bot-like
 the author is, and who else posted the same thing.
 
@@ -340,7 +340,7 @@ into bsky.app: it needs no per-site page code, so the same panel also serves You
 - [x] 6.2 Toolbar button opens the panel beside the page. Opening it analyses the tab once; after that the reader presses "Analyse this tab". Nothing is sent while just browsing.
 - [x] 6.3 `sidepanel.js` reads the active tab's URL and hands it to the shared `app.js`, which calls `/api/analyze`, `/api/replies` or `/api/video`.
 - [x] 6.4 Renders with the same `panel.js`, `panel.css` and `app.js` as the website (copies; a test keeps them identical).
-- [x] 6.5 CORS on the API for extension origins. Any site: select text, right-click, "Decode this text".
+- [x] 6.5 CORS on the API for extension origins. Any site: select text, right-click, "Unmask this text".
 - [x] 6.6 Error and rate-limit states shown in the panel, not the console.
 - [x] 6.7 `extension/README.md`: three lines on loading it unpacked.
 - [ ] Done when: with the extension loaded in Chrome, a post at bsky.app shows the same result as the live web page. (Not yet loaded in a real Chrome: checked as a page with the browser APIs stubbed.)
