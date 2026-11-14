@@ -8,6 +8,7 @@ read through the Oxylabs Web API instead, when its key is set.
 import os
 import re
 import time
+from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlsplit
 
 import httpx
@@ -67,6 +68,8 @@ def _fetch_segments(video_id):
     try:
         from youtube_transcript_api import YouTubeTranscriptApi, _errors as err
     except ImportError as e:  # a server started without reinstalling requirements.txt
+        if os.environ.get("OXYLABS_WEB_API_KEY"):
+            return _oxylabs_segments(video_id)
         raise YouTubeError("Video analysis is not installed on this server") from e
     api = YouTubeTranscriptApi()
     try:
@@ -129,14 +132,50 @@ def get_chunks(video_id):
 
 
 def get_info(video_id):
-    """Title and channel from YouTube's public oEmbed. Missing info is not an error."""
+    """Title, channel and the channel's link from YouTube's public oEmbed. Missing info is not an error."""
     def make():
         try:
             r = httpx.get("https://www.youtube.com/oembed", timeout=5,
                           params={"url": f"https://www.youtube.com/watch?v={video_id}", "format": "json"})
             r.raise_for_status()
             d = r.json()
-            return {"title": str(d.get("title", "")), "channel": str(d.get("author_name", ""))}
+            return {"title": str(d.get("title", "")), "channel": str(d.get("author_name", "")),
+                    "channel_url": str(d.get("author_url", ""))}
         except (httpx.HTTPError, ValueError):
-            return {"title": "", "channel": ""}
+            return {"title": "", "channel": "", "channel_url": ""}
     return _cached(("info", video_id), make)
+
+
+def _count(v):
+    """'4.56M', '2,600,576,030' or 442 -> int, or None when it is not a number (a hidden subscriber count)."""
+    m = re.fullmatch(r"([\d.]+)([KMB]?)", str(v).replace(",", "").strip(), re.I)
+    return round(float(m.group(1)) * {"": 1, "K": 1e3, "M": 1e6, "B": 1e9}[m.group(2).upper()]) if m else None
+
+
+def get_channel(channel_url):
+    """-> the account fields bot_score.youtube_profile_score reads, through the Oxylabs Web API
+    (response checked 2026-11-14). A field the channel does not show stays absent, so the score
+    reports less confidence instead of a clean result. Cached, so a video's pages cost one call."""
+    handle = urlsplit(channel_url).path.strip("/")
+    if not handle or not os.environ.get("OXYLABS_WEB_API_KEY"):
+        raise YouTubeError("the channel's details could not be read")
+
+    def make():
+        try:
+            rows = coverage._oxy("scrape/media/youtube/channel", {"query": handle, "output": ["json"]}, 60).get("results") or [{}]
+            d = rows[0].get("json") or {}
+        except (httpx.HTTPError, ValueError, AttributeError, IndexError) as e:
+            raise YouTubeError("the channel's details could not be read") from e
+        if not isinstance(d, dict) or not d.get("id"):
+            raise YouTubeError("the channel's details could not be read")
+        out = {"handle": handle, "bio": str(d.get("description") or "")}
+        for key, field in (("video_count", "video_count"), ("views", "view_count"), ("subscribers", "subscriber_count")):
+            n = _count(d.get(field))
+            if n is not None:
+                out[key] = n
+        try:  # "Feb 1 2015"
+            out["created_at"] = datetime.strptime(str(d.get("joined_date")), "%b %d %Y").replace(tzinfo=timezone.utc).timestamp()
+        except ValueError:
+            pass
+        return out
+    return _cached(("channel", handle), make)
