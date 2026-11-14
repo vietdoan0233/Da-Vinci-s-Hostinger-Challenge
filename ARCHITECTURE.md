@@ -21,28 +21,30 @@ above front-end polish.
 | Similar posts | Bluesky search + word-shingle overlap (`bot_score.similarity`) | No embeddings, no vector database. |
 | Storage | One SQLite file as a cache | Saves LLM credits on repeat views. Nothing else needs persisting. |
 | Front end | One static page + one shared `panel.js`, no framework, no build step | The same panel renders on the web page and inside the extension. |
-| Extension | Chrome MV3 content script on `bsky.app` | The "window next to the post". Loaded unpacked for the demo. |
+| Extension | Chrome MV3 side panel that takes the tab's link | The "window next to the post". No per-site page code, so it also serves YouTube and selected text. Loaded unpacked for the demo. |
 | Deploy | Docker Compose on the Hostinger VPS, Traefik (already on the VPS) for HTTPS | The extension runs on an https page, so the API must be https. |
 
-Not verified yet, check in the step that needs it:
-- The AI Router base URL and model names (step 1.1).
-- Whether Bluesky `app.bsky.feed.searchPosts` works without login from the VPS (step 4.1). It works on `api.bsky.app` from a home connection (checked 2026-11-14); `public.api.bsky.app` returns 403 for search. Recheck from the VPS; if refused, log in with an app password.
+Checked on the live site (2026-11-14):
+- The AI Router answers: the full technique run of step 5.8 went through it.
+- Bluesky `app.bsky.feed.searchPosts` works without login from the VPS on `api.bsky.app`. `public.api.bsky.app` returns 403 for search, so do not switch to it.
+- YouTube refuses the VPS's transcript requests; the captions come through the Oxylabs Web API instead (step 10.5).
 - ~~Whether the SemEval corpus can be downloaded without registration (step 5.1).~~ Yes: the 2021 Task 6 corpus is public at github.com/di-dimitrov/SEMEVAL-2021-task6-corpus.
 
 ## Components
 
 ```
- bsky.app page                     Hostinger VPS (Docker Compose)
-┌──────────────────┐              ┌──────────────────────────────────────────┐
-│ extension/       │   HTTPS      │ Traefik ─► FastAPI (app/main.py)          │
-│  content.js      ├─────────────►│            ├─ techniques.py ─► AI Router │
-│  panel.js        │              │            ├─ bluesky.py   ─► Bluesky API│
-└──────────────────┘              │            ├─ bot_score.py               │
- Judge's browser                  │            ├─ similar.py                 │
-┌──────────────────┐              │            └─ cache.py     ─► SQLite     │
-│ web/index.html   ├─────────────►│  also serves web/ and eval/results.json  │
-│  panel.js        │              └──────────────────────────────────────────┘
-└──────────────────┘
+ Any tab in Chrome                 Hostinger VPS (Docker)
+┌──────────────────┐              ┌─────────────────────────────────────────────────┐
+│ extension/       │   HTTPS      │ Traefik ─► FastAPI (app/main.py)                 │
+│  sidepanel.js    ├─────────────►│            ├─ techniques.py ─► AI Router        │
+│  app.js, panel.js│              │            ├─ bluesky.py    ─► Bluesky API      │
+└──────────────────┘              │            ├─ bot_score.py, similar.py          │
+ Judge's browser                  │            ├─ coverage.py   ─► Oxylabs Web API  │
+┌──────────────────┐              │            ├─ webpage.py    ─► Oxylabs Web API  │
+│ web/index.html   ├─────────────►│            ├─ youtube.py    ─► YouTube, Oxylabs │
+│  app.js, panel.js│              │            └─ cache.py      ─► SQLite           │
+└──────────────────┘              │  also serves web/ and eval/results.json         │
+                                  └─────────────────────────────────────────────────┘
 ```
 
 ## Folder layout
@@ -51,8 +53,10 @@ Not verified yet, check in the step that needs it:
 app/main.py         routes, rate limit, static files
 app/llm.py          AI Router client
 app/techniques.py   prompt, technique list, output validation
+app/anthropic_detect.py  backup detector (six techniques), used only when the AI Router is unset or fails
 app/bluesky.py      URL -> post, author, author's recent posts, search
 app/youtube.py      video link -> timed transcript chunks
+app/webpage.py      any other link -> the page's readable text, through Oxylabs
 app/bot_score.py    moved from the repo root in step 0.1
 app/similar.py      candidate search + overlap ranking
 app/coverage.py     claim -> Oxylabs search + scrape -> quoted points from live pages
@@ -61,8 +65,8 @@ web/index.html      paste box + panel
 web/panel.js        renders an analysis into a DOM node (shared with extension)
 web/panel.css       styles for the panel (shared with extension)
 web/app.js          page logic: input, API calls, thread and video loading (shared with extension)
-web/metrics.html    precision and false-positive numbers
-extension/          manifest.json, content.js, copy of panel.js
+web/metrics.html    precision and false-positive numbers, drawn by metrics.js from eval/results.json
+extension/          manifest.json, side panel, copies of panel.js, panel.css and app.js
 eval/               labelled data, run scripts, results.json
 tests/
 Dockerfile, compose.yml, .env.example
@@ -70,8 +74,8 @@ Dockerfile, compose.yml, .env.example
 
 ## API contract
 
-One endpoint. Every feature fills in one section of the same response, so the
-front end never changes shape and unfinished sections are simply `null`.
+One main endpoint, plus one each for a thread's replies and a video's transcript. Every feature fills in
+one section of the same response, so the front end never changes shape and unfinished sections are simply `null`.
 
 `POST /api/analyze` with `{"url": "..."}` or `{"text": "..."}`
 
@@ -93,6 +97,9 @@ front end never changes shape and unfinished sections are simply `null`.
 ```
 
 A section that fails goes into `errors` and the rest still returns.
+
+For a web link that is not a Bluesky post, `post` also has `kind: "page"`, `title` and `truncated`, with the
+site's domain in `author` and `ts: null`. `bot` and `similar` stay `null` with a reason in `errors`.
 
 `media` lists the post's images and videos (`type` is `image` or `video`; a video's `url` is its cover
 frame). `quoted` is the post this one quotes, written by someone else, or `null`. Both are sent to the LLM
@@ -179,6 +186,60 @@ Honesty notes for the pitch and the metrics page:
 - Not validated on labelled data. The upgrade path is fitting these weights on TwiBot-20/22.
 - Skipped on purpose: BotometerLite's handle-likelihood (needs a bigram table of real handles) and likes growth rate (most platforms hide it).
 
+### Draft: Reddit and YouTube (not built, not measured)
+
+A draft for scoring accounts on two more sites with the same model. Nothing here is in `bot_score.py`.
+The weights are hand-set guesses, like the Bluesky ones, and need a labelled set before any number is quoted.
+Cadence, rate and the declared-bot rule stay as they are; only the profile formula changes, because each
+site exposes different fields. A field that is missing contributes 0 and lowers the confidence, as now.
+
+Reddit (`/user/<name>/about` and the user's posts and comments; Reddit answers 403 without a free app key,
+checked 2026-11-14). No follower, following or total-post counts, so `s_freq`, `s_friend` and `s_ratio` do not exist.
+
+```
+s_new        = 1 - age/90
+s_autoname   = 1 if the name is Reddit's suggested form (Word-Word1234), else (digits in name - 2) / 4
+s_linkonly   = link_karma / (link_karma + comment_karma)      only if total karma >= 100: posts links, never talks
+s_karma      = 1 - log10(1 + total_karma) / 3                 0 at 1000 karma or more, 1 at none
+s_unverified = 1 if no verified email
+s_nobio, s_noavatar = 0 or 1     low weight: most people on Reddit leave both empty
+trusted      = 1 if moderator or Reddit employee
+
+z = -3.0 + 1.2*s_new + 1.0*s_autoname + 1.0*s_linkonly + 0.8*s_karma
+         + 0.6*s_unverified + 0.3*s_nobio + 0.3*s_noavatar - 2.0*trusted
+confidence = (weights of features that had data) / 5.2
+```
+
+A clean account gives about 0.05, any single feature at maximum stays under 0.15, all at maximum gives about 0.90.
+- Declared: a name ending in "bot" or a bio saying so (Reddit's own convention), floor 0.9.
+- Post times: the newest 100 posts and comments together, into the existing cadence and rate tests.
+- Text reuse: not checked (no copy search on Reddit), so the panel reports it as "not enough data".
+
+YouTube (the channel that uploaded the video; Oxylabs `/v1/scrape/media/youtube/channel` returns join date,
+subscribers, video count, total views, description and the 20 newest videos, checked 2026-11-14).
+It scores the channel only, never the people commenting.
+
+```
+s_new      = 1 - age/90
+s_freq     = log10((video_count/age) / 3) / log10(10)        0 at 3 uploads/day, 1 at 30
+s_views    = 1 - log10(1 + views/video_count) / 2            only if video_count >= 20: 0 at 100 views per video
+s_subs     = 1 - log10(1 + subscribers) / 2                  only if video_count >= 20 and the count is public
+s_handle   = 1 if the handle is YouTube's generated form (@user-ab12cd34), else (digits in handle - 2) / 4
+s_nobio    = 0 or 1
+verified   = 0 or 1, when the channel data says so
+
+z = -3.0 + 2.0*s_freq + 1.2*s_new + 1.0*s_views + 0.8*s_subs + 1.0*s_handle + 0.6*s_nobio - 2.0*verified
+confidence = (weights of features that had data) / 6.6
+```
+
+A clean channel gives about 0.05, any single feature at maximum stays under 0.3, all at maximum gives about 0.97.
+- The posting-schedule floor must not apply when the usual gap is a day or more. Creators upload weekly at a
+  fixed hour on purpose; only several scheduled uploads a day look automated.
+- Upload times: the channel data gives relative dates only ("4mo ago"), too coarse for the cadence tests. Exact
+  times need the channel's public feed (the 15 newest uploads), not checked from the VPS. Until then cadence is
+  "not enough data".
+- No avatar feature: YouTube's default avatar cannot be told from a chosen one.
+
 ## Build order
 
 Each feature is its own branch and its own deploy. "Shipped" means it is live on
@@ -198,7 +259,7 @@ with two people. Hour figures are guesses.
 
 ### Feature 1: name the technique (about 2 h)
 
-- [ ] 1.1 `app/llm.py`: one function `ask_json(system, user) -> dict` using the OpenAI SDK against `AI_ROUTER_BASE_URL`. 30 s timeout, one retry. Code done and checked against a local fake server; **still to do: confirm the base URL and a working model name with a one-line call using the team key.**
+- [x] 1.1 `app/llm.py`: one function `ask_json(system, user) -> dict` using the OpenAI SDK against `AI_ROUTER_BASE_URL`. 30 s timeout, one retry. Confirmed on the live site: the full technique run of step 5.8 went through the router.
 - [x] 1.2 `app/techniques.py`: the 20 SemEval-2021 Task 6 text technique names, verbatim from the corpus, with a one-sentence definition each.
 - [x] 1.3 Prompt: definitions, then the post inside a delimited block marked as data. Ask for JSON `[{name, quote, why}]`, where `quote` is copied exactly from the post and `why` is one plain sentence. Allow an empty list and say so explicitly. Few-shot: three labelled training memes plus two ordinary posts with no technique.
 - [x] 1.4 Validation: drop any item whose `name` is not in the list or whose `quote` is not a substring of the post. This is the false-positive guard and the prompt-injection guard. The substring check ignores case, curly quotes and spacing.
@@ -219,7 +280,7 @@ with two people. Hour figures are guesses.
 - [x] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
 - [x] 2.7 Web page: accept a URL as well as text. Panel shows author and time above the techniques.
 - [x] 2.8 Tests on saved API responses in `tests/fixtures/`: URL parsing, field mapping, deleted post.
-- [ ] Done when: pasting a real Bluesky post URL on the live site shows its text and techniques.
+- [x] Done when: pasting a real Bluesky post URL on the live site shows its text and techniques. (Checked 2026-11-14.)
 
 ### Feature 3: bot-likeness score (about 1 h)
 
@@ -232,7 +293,7 @@ with two people. Hour figures are guesses.
 
 ### Feature 4: similar posts and coordination (about 1.5 h)
 
-- [x] 4.1 `bluesky.search(query) -> [{author, text, url, ts}]` on `api.bsky.app`, limited to 3 days either side of the post. Works without login locally; recheck from the VPS, otherwise add app-password login from `.env`.
+- [x] 4.1 `bluesky.search(query) -> [{author, text, url, ts}]` on `api.bsky.app`, limited to 3 days either side of the post. Works without login, locally and from the VPS (checked 2026-11-14).
 - [x] 4.2 `app/similar.py`: up to 3 queries of 3 rare words each, 50 results per query, merged. Bluesky search requires every word, so one 5 to 8 word query missed copies that changed a single word. Drop the post itself and the post's own author.
 - [x] 4.3 Rank by `bot_score.similarity`, keep overlap of 0.3 or more, one item per account, top 10.
 - [x] 4.4 Fill `similar`. Pass `similar.as_others(items)` (not the raw list: the contract says `author`, `bot_score` reads `account`) as `others` into `bot_score.score` so the text-reuse category goes live.
@@ -288,7 +349,7 @@ A link that is not a Bluesky post or a YouTube video is read as a web page, so a
 - [x] 11.4 The page's own site is never one of its live sources (`coverage.find(text, skip_domain)`).
 - [x] 11.5 Page and extension: the box takes any link, a page shows its headline and site, and no thread is loaded for it.
 - [x] 11.6 Tests with Oxylabs stubbed: link checks, text extraction, the browser retry, unreadable page, the analyze response, own site skipped, no key.
-- [ ] 11.7 Check on the VPS with the real key: a news article, a blog post and a JavaScript-heavy page. The text extraction rule was only tested on made-up Markdown.
+- [ ] 11.7 Check on the VPS with the real key: a news article, a blog post and a JavaScript-heavy page. So far one page is checked there (a Wikipedia article, 2026-11-14: text read, cut off at the cap, sources found); the blog post and the JavaScript-heavy page are not.
 - [ ] Done when: an article link on the live site shows its text with quotes highlighted and sources from other sites.
 
 ### Feature 9: the whole thread
@@ -315,7 +376,7 @@ Changed from the first plan (GDELT plus outlet leanings): the Oxylabs challenge 
 - [x] 7.6 Panel card "What live sources say": the claim, each point with its quote and link, every source with read or unread, and the time it was checked.
 - [x] 7.7 Tests with Oxylabs and the LLM stubbed (`tests/test_coverage.py`). `OXYLABS.md` is the note for the challenge submission.
 - [x] 7.9 Same claim, three countries: the search runs with `location` US, FI and DE in parallel and fills `coverage.by_country`. The panel lists each country's results and marks sites only one country sees. A failed country search shows as "not enough data" (`sources: null`), not as no results. Pages are read from the first country with results.
-- [ ] 7.8 One real call with the team key to confirm the response fields (`results[].url`, `results[0].markdown`), then set the key on the VPS.
+- [x] 7.8 Key set on the VPS and checked there (2026-11-14): an analysed page returned three quoted points from four pages read in full.
 - [ ] Done when: a post about a current news story on the live site shows quoted points with working source links.
 
 ### Feature 8, later: sides of the argument
