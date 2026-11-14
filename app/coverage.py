@@ -69,10 +69,10 @@ def _domain(url):
     return (urlsplit(url).hostname or "").removeprefix("www.")
 
 
-def search(query, location):
-    """-> up to MAX_SOURCES results as seen from that country, one per site, https only.
+def search(query, location, skip_domain=None):
+    """-> up to MAX_SOURCES results as seen from that country, one per site, https only, never skip_domain.
     None when the search itself failed, so a failed country is never shown as "no results"."""
-    out, seen = [], set()
+    out, seen = [], {skip_domain}
     try:
         rows = _oxy("search", {"query": query, "max_results": SEARCH_RESULTS, "location": location}, 30).get("results") or []
     except (httpx.HTTPError, ValueError, AttributeError):
@@ -120,11 +120,12 @@ def validate(raw, pages):
     return out
 
 
-def find(post_text):
+def find(post_text, skip_domain=None):
     """-> {claim: {quote, statement, query}, points: [{source, stance, quote, text}],
            sources: [{id, title, url, domain, read}],
            by_country: [{country, name, sources: [{title, url, domain}] or None if that search failed}],
-           checked_at}. Cached for an hour."""
+           checked_at}. Cached for an hour.
+    skip_domain is the site the text itself came from (a pasted web link): it is never used as a source."""
     if not os.environ.get("OXYLABS_WEB_API_KEY"):
         raise NotConfigured("OXYLABS_WEB_API_KEY is not set")
     k = cache.key("coverage", PROMPT_VERSION, post_text)
@@ -139,7 +140,7 @@ def find(post_text):
         raise NotEnoughData("this post makes no factual claim that can be checked against sources")
 
     with ThreadPoolExecutor(max_workers=MAX_SOURCES) as pool:
-        found = list(pool.map(lambda loc: search(query[:200], loc), COUNTRIES))
+        found = list(pool.map(lambda loc: search(query[:200], loc, skip_domain), COUNTRIES))
         if all(f is None for f in found):
             raise RuntimeError("live search failed in every country")
         sources = next((f for f in found if f), None)

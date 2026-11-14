@@ -97,18 +97,19 @@
   </nav>
 
   <main>
-    <div class="top">Post analysis</div>
+    <div class="top">Analysis</div>
 
     <form class="compose" id="form">
       <div class="avatar" aria-hidden="true">
         <svg class="ic" viewBox="0 0 24 24"><path d="M10 3a7 7 0 0 1 5.600 11.200l5.100 5.100-1.400 1.400-5.100-5.100A7 7 0 1 1 10 3zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
       </div>
       <div class="compose-body">
-        <label for="in" hidden>Post link or text</label>
-        <textarea id="in" rows="2" placeholder="Paste a Bluesky post link, a YouTube video link, or the text of a post"></textarea>
+        <label for="in" hidden>Link or text</label>
+        <textarea id="in" rows="2" placeholder="Paste any link or text: an article, a Bluesky post, a YouTube video"></textarea>
         <div class="compose-row">
           <button class="chip" type="button" data-ex="Wake up people, the mainstream media is hiding the truth about the water supply from you. Real patriots already know who is behind it!">Loaded example</button>
           <button class="chip" type="button" data-ex="Light rain in Helsinki this afternoon, clearing by evening. Highs around 4C.">Neutral example</button>
+          <button class="chip" type="button" data-ex="The internet was built to connect people, but it has also become the world's most powerful manipulation machine. Propaganda spreads faster than facts, bot networks shape public opinion at scale, and bad actors exploit the open web with growing sophistication.">This challenge's brief</button>
           <span class="count" id="count" aria-live="off"></span>
           <button class="go" id="go" type="submit" disabled>Analyze</button>
         </div>
@@ -116,8 +117,8 @@
     </form>
 
     <div class="status" id="status" role="status" aria-live="polite">
-      <h2>See what a post is doing to you</h2>
-      Paste a post to see which persuasion techniques it uses, how bot-like its author looks, and who else posted the same words. We show the evidence we found, never a verdict on truth.
+      <h2>See what a text is doing to you</h2>
+      Paste a link or any text to see which persuasion techniques it uses and what live sources say about its main claim. For a Bluesky post we also check how bot-like its author looks and who else posted the same words. We show the evidence we found, never a verdict on truth.
     </div>
 
     <div id="result" hidden>
@@ -141,6 +142,7 @@
         <li><b>Techniques.</b> <span>An AI model checks the post against 20 published persuasion techniques. A result is kept only if it quotes words that are really in the post.</span></li>
         <li><b>Bot-likeness.</b> <span>Posting rhythm, profile and text reuse give a suspicion score with reasons. It is not a probability.</span></li>
         <li><b>Copies.</b> <span>We search Bluesky for other accounts posting the same words. Matching text shows coordination, not automation.</span></li>
+        <li><b>Any link.</b> <span>A web link is read in full through the Oxylabs Web API and checked like a pasted text, up to 5,000 characters. A page has no account, so there is no bot-likeness score.</span></li>
         <li><b>Live sources.</b> <span>We search the web for the post's main claim and read the pages in full. Each point quotes its source. It is a sample of the web, not a verdict.</span></li>
         <li><b>Videos.</b> <span>For a YouTube link we read the captions and check them a minute at a time. Each finding links to its moment in the video.</span></li>
         <li><b>Thread.</b> <span>Every reply gets its own bot-likeness score. Replies scoring above 0.4 are also checked for techniques. Click a reply to analyse it in full.</span></li>
