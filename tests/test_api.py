@@ -91,3 +91,15 @@ def test_analyze_url_runs_techniques_on_fetched_text(monkeypatch):
         {"name": "Loaded Language", "quote": "hiding the truth", "why": "Emotional wording."}]})
     r = c.post("/api/analyze", json={"url": "https://bsky.app/profile/a.bsky.social/post/x"}).json()
     assert r["post"]["text"] == COPY and r["techniques"][0]["quote"] == "hiding the truth"
+
+
+def test_page_and_panel_files_are_served():
+    page = c.get("/")
+    assert page.status_code == 200 and "panel.js" in page.text and "panel.css" in page.text
+    assert c.get("/panel.js").status_code == 200 and c.get("/panel.css").status_code == 200
+
+
+def test_panel_never_uses_innerhtml():
+    import pathlib
+    web = pathlib.Path(__file__).parent.parent / "web"
+    assert "innerHTML" not in (web / "panel.js").read_text() and "innerHTML" not in (web / "index.html").read_text()

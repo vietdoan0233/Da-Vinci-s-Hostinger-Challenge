@@ -1,14 +1,209 @@
 <!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Decode the Noise</title>
-<textarea id="in" rows="6" cols="60" placeholder="Paste a Bluesky post URL or text"></textarea><br>
-<button id="go">Analyze</button>
-<pre id="out"></pre>
+<link rel="stylesheet" href="panel.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+  a { color: var(--blue); }
+  button { font: inherit; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .shell { display: flex; justify-content: center; min-height: 100vh; }
+
+  /* left rail */
+  .rail { width: 260px; padding: 4px 12px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 12px; font-weight: 800; font-size: 19px; }
+  .brand svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  .nav { display: flex; align-items: center; gap: 18px; padding: 12px; border-radius: 999px; font-size: 20px; color: var(--text); text-decoration: none; background: none; border: 0; width: fit-content; }
+  .nav:hover { background: rgba(231, 233, 234, .1); }
+  .nav.active { font-weight: 700; }
+  .nav .ic { width: 26px; height: 26px; }
+  .cta { margin-top: 14px; width: 90%; padding: 15px; border: 0; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 700; font-size: 17px; }
+  .cta:hover { background: var(--blue-hover); }
+
+  /* centre column */
+  main { width: 600px; max-width: 100%; border-left: 1px solid var(--line); border-right: 1px solid var(--line); min-height: 100vh; }
+  .top { position: sticky; top: 0; z-index: 2; padding: 14px 16px; font-size: 20px; font-weight: 800; background: rgba(0, 0, 0, .65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+  .compose { display: flex; gap: 12px; padding: 6px 16px 12px; border-bottom: 1px solid var(--line); }
+  .compose .avatar { background: var(--blue); }
+  .compose-body { flex: 1; min-width: 0; }
+  textarea { width: 100%; min-height: 56px; max-height: 240px; resize: none; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-size: 20px; line-height: 26px; padding: 8px 0; }
+  textarea::placeholder { color: var(--dim); }
+  .compose-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
+  .chip { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--blue); font-size: 14px; font-weight: 700; }
+  .chip:hover { background: rgba(29, 155, 240, .1); }
+  .count { margin-left: auto; color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .count.over { color: var(--red); }
+  .go { padding: 8px 18px; border: 0; border-radius: 999px; background: #eff3f4; color: #0f1419; font-weight: 700; font-size: 15px; }
+  .go:hover { background: #d7dbdc; }
+  .go:disabled { opacity: .5; cursor: default; }
+
+  .status { padding: 28px 24px; color: var(--dim); font-size: 15px; line-height: 20px; text-align: center; }
+  .status.error { color: var(--red); }
+  .status h2 { color: var(--text); font-size: 28px; font-weight: 800; margin: 0 0 8px; line-height: 34px; }
+  .spinner { width: 26px; height: 26px; margin: 0 auto 12px; border-radius: 50%; border: 3px solid rgba(29, 155, 240, .25); border-top-color: var(--blue); animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+
+  /* right column */
+  aside { width: 350px; padding: 12px 0 40px 28px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 0; align-self: flex-start; max-height: 100vh; overflow-y: auto; }
+  .how ol { margin: 0; padding: 0 16px 8px 36px; font-size: 14px; line-height: 20px; color: var(--text); }
+  .how li { margin: 6px 0; }
+  .how li span { color: var(--dim); }
+  .foot { color: var(--dim); font-size: 13px; line-height: 18px; padding: 0 16px; margin: 0; }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 1220px) { .rail { width: 76px; } .brand span, .nav span { display: none; } .cta { display: none; } }
+  @media (max-width: 1020px) {
+    .shell { flex-wrap: wrap; }
+    aside { position: static; width: 600px; max-width: 100%; max-height: none; padding: 16px; border-left: 1px solid var(--line); border-right: 1px solid var(--line); margin-left: 76px; }
+    main { min-height: 0; }
+  }
+  @media (max-width: 690px) {
+    .rail { display: none; }
+    aside { margin-left: 0; border: 0; }
+    main { border: 0; }
+    textarea { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" aria-label="Main">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h3M10 9v14M16 4v24M22 11v10M28 16h-3"/></svg>
+      <span>Decode the Noise</span>
+    </div>
+    <a class="nav active" href="./">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6 2 11h2.500v9.500h6V15h3v5.500h6V11H22L12 2.600z"/></svg>
+      <span>Analyze</span>
+    </a>
+    <a class="nav" href="#how">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm-1 6h2v7h-2v-7zm0-3h2v2h-2V7z"/></svg>
+      <span>How it works</span>
+    </a>
+    <button class="cta" id="new" type="button">New analysis</button>
+  </nav>
+
+  <main>
+    <div class="top">Post analysis</div>
+
+    <form class="compose" id="form">
+      <div class="avatar" aria-hidden="true">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M10 3a7 7 0 0 1 5.600 11.200l5.100 5.100-1.400 1.400-5.100-5.100A7 7 0 1 1 10 3zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+      </div>
+      <div class="compose-body">
+        <label for="in" hidden>Post link or text</label>
+        <textarea id="in" rows="2" placeholder="Paste a Bluesky post link or the text of a post"></textarea>
+        <div class="compose-row">
+          <button class="chip" type="button" data-ex="Wake up people, the mainstream media is hiding the truth about the water supply from you. Real patriots already know who is behind it!">Loaded example</button>
+          <button class="chip" type="button" data-ex="Light rain in Helsinki this afternoon, clearing by evening. Highs around 4C.">Neutral example</button>
+          <span class="count" id="count" aria-live="off"></span>
+          <button class="go" id="go" type="submit" disabled>Analyze</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="status" id="status" role="status" aria-live="polite">
+      <h2>See what a post is doing to you</h2>
+      Paste a post to see which persuasion techniques it uses, how bot-like its author looks, and who else posted the same words. We show the evidence we found, never a verdict on truth.
+    </div>
+
+    <div id="result" hidden>
+      <section id="post"></section>
+      <section id="tech"></section>
+    </div>
+  </main>
+
+  <aside>
+    <section class="card" id="bot" hidden></section>
+    <section class="card" id="sim" hidden></section>
+    <section class="card how" id="how">
+      <h2 class="card-title">How it works</h2>
+      <ol>
+        <li><b>Techniques.</b> <span>An AI model checks the post against 20 published persuasion techniques. A result is kept only if it quotes words that are really in the post.</span></li>
+        <li><b>Bot-likeness.</b> <span>Posting rhythm, profile and text reuse give a suspicion score with reasons. It is not a probability.</span></li>
+        <li><b>Copies.</b> <span>We search Bluesky for other accounts posting the same words. Matching text shows coordination, not automation.</span></li>
+      </ol>
+    </section>
+    <p class="foot">Missing evidence is shown as "not enough data", never as a clean result. Built at Junction 2026 by The Da Vinci Commit.</p>
+  </aside>
+</div>
+
+<script src="panel.js"></script>
 <script>
-document.getElementById("go").onclick = async () => {
-  const v = document.getElementById("in").value.trim();
-  const body = /^https?:\/\//.test(v) ? {url: v} : {text: v};
-  const r = await fetch("/api/analyze", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
-  document.getElementById("out").textContent = JSON.stringify(await r.json(), null, 2);
-};
+(function () {
+  "use strict";
+  var MAX = 5000;
+  var $ = function (id) { return document.getElementById(id); };
+  var input = $("in"), go = $("go"), status = $("status"), count = $("count");
+  var isUrl = function (v) { return /^https?:\/\/\S+$/.test(v); };
+
+  function refresh() {
+    var v = input.value.trim();
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 240) + "px";
+    var over = !isUrl(v) && v.length > MAX;
+    go.disabled = !v || over;
+    count.textContent = v.length > MAX * 0.8 && !isUrl(v) ? v.length + " / " + MAX : "";
+    count.classList.toggle("over", over);
+  }
+
+  function say(text, cls, spin) {
+    status.textContent = "";
+    status.className = "status" + (cls ? " " + cls : "");
+    if (spin) { var s = document.createElement("div"); s.className = "spinner"; status.appendChild(s); }
+    status.appendChild(document.createTextNode(text));
+    status.hidden = false;
+  }
+
+  async function run() {
+    var v = input.value.trim();
+    if (!v || go.disabled) return;
+    var url = isUrl(v);
+    go.disabled = true;
+    $("result").hidden = $("bot").hidden = $("sim").hidden = true;
+    say(url ? "Reading the post and checking it…" : "Checking the text…", "", true);
+    try {
+      var r = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" },
+                                             body: JSON.stringify(url ? { url: v } : { text: v }) });
+      var data = await r.json().catch(function () { return null; });
+      if (r.status === 429) return say((data && data.detail) || "Too many requests. Try again in a minute.", "error");
+      if (!r.ok || !data) return say("That input could not be analysed. Paste a Bluesky post link or up to " + MAX + " characters of text.", "error");
+      if (url && !data.post) return say((data.errors && data.errors.post) || "The post could not be read.", "error");
+      DecodePanel.renderPost($("post"), data, v);
+      DecodePanel.renderTechniques($("tech"), data);
+      DecodePanel.renderBot($("bot"), data);
+      DecodePanel.renderSimilar($("sim"), data);
+      DecodePanel.linkHighlights($("post"), $("tech"));
+      status.hidden = true;
+      $("result").hidden = $("bot").hidden = $("sim").hidden = false;
+      // a link is shareable; pasted text stays out of the address bar
+      history.replaceState(null, "", url ? "?q=" + encodeURIComponent(v) : location.pathname);
+    } catch (e) {
+      say("The server could not be reached. Check your connection and try again.", "error");
+    } finally {
+      refresh();
+    }
+  }
+
+  input.addEventListener("input", refresh);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) run(); });
+  $("form").addEventListener("submit", function (e) { e.preventDefault(); run(); });
+  $("new").addEventListener("click", function () { input.value = ""; refresh(); input.focus(); window.scrollTo({ top: 0 }); });
+  document.querySelectorAll(".chip").forEach(function (c) {
+    c.addEventListener("click", function () { input.value = c.dataset.ex; refresh(); run(); });
+  });
+
+  var q = new URLSearchParams(location.search).get("q");
+  if (q) { input.value = q; refresh(); run(); } else refresh();
+})();
 </script>
+</body>
+</html>

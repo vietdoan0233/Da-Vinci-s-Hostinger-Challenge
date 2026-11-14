@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import bluesky, llm, similar, techniques
+from app import bluesky, bot_score, llm, similar, techniques
 
 app = FastAPI()
 log = logging.getLogger("app")
@@ -79,6 +79,16 @@ def analyze(body: AnalyzeIn, request: Request):
         out["errors"]["similar"] = f"not enough data: {e}"
     except httpx.HTTPError:
         out["errors"]["similar"] = "Bluesky search is unavailable right now"
+    if body.url:  # pasted text has no author to score
+        try:
+            handle = post["author"]
+            result = bot_score.score(
+                bluesky.get_author(handle), bluesky.get_author_timestamps(handle),
+                {"account": handle, "text": post["text"], "ts": post["ts"]},
+                similar.as_others(out["similar"] or []))
+            out["bot"] = {k: result[k] for k in ("score", "verdict", "checked", "reasons")}
+        except bluesky.BlueskyError:
+            out["errors"]["bot"] = "author history unavailable"
     return out
 
 

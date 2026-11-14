@@ -56,6 +56,7 @@ app/similar.py      candidate search + overlap ranking
 app/cache.py        SQLite get/set
 web/index.html      paste box + panel
 web/panel.js        renders an analysis into a DOM node (shared with extension)
+web/panel.css       styles for the panel (shared with extension)
 web/metrics.html    precision and false-positive numbers
 extension/          manifest.json, content.js, copy of panel.js
 eval/               labelled data, run scripts, results.json
@@ -159,9 +160,9 @@ with two people. Hour figures are guesses.
 - [x] 1.3 Prompt: definitions, then the post inside a delimited block marked as data. Ask for JSON `[{name, quote, why}]`, where `quote` is copied exactly from the post and `why` is one plain sentence. Allow an empty list and say so explicitly. Few-shot: three labelled training memes plus two ordinary posts with no technique.
 - [x] 1.4 Validation: drop any item whose `name` is not in the list or whose `quote` is not a substring of the post. This is the false-positive guard and the prompt-injection guard. The substring check ignores case, curly quotes and spacing.
 - [x] 1.5 `app/cache.py`: SQLite table `(key, json, created)`. Key is a hash of the text plus the prompt version.
-- [x] 1.6 Rate limit `POST /api/analyze` per IP (10 per minute, in memory). The endpoint is public and spends credits. IP is the last `X-Forwarded-For` entry, which Caddy sets.
+- [x] 1.6 Rate limit `POST /api/analyze` per IP (10 per minute, in memory). The endpoint is public and spends credits. IP is the last `X-Forwarded-For` entry, which Traefik sets.
 - [x] 1.7 Wire into `/api/analyze` so `techniques` is filled for both `text` and `url` input.
-- [ ] 1.8 `web/panel.js`: `renderPanel(node, analysis)`. Techniques section: name, the quote highlighted, the reason. Empty list shows "No manipulation techniques found".
+- [x] 1.8 `web/panel.js`: `renderPanel(node, analysis)`. Techniques section: name, the quote highlighted, the reason. Empty list shows "No manipulation techniques found".
 - [x] 1.9 Tests with the LLM stubbed: invalid name dropped, invented quote dropped, empty list passes through, cache hit skips the LLM.
 - [ ] Done when: a loaded post on the live site shows techniques with quotes, and a weather report shows none.
 
@@ -173,17 +174,17 @@ with two people. Hour figures are guesses.
 - [x] 2.4 `get_author_timestamps(handle) -> [epoch seconds]` for the last 100 posts.
 - [x] 2.5 Cache each call for 10 minutes. 10 s timeout. A failure becomes an entry in `errors`.
 - [x] 2.6 Wire in: `url` input fills `post`, and techniques run on the fetched text.
-- [ ] 2.7 Web page: accept a URL as well as text. Panel shows author and time above the techniques.
+- [x] 2.7 Web page: accept a URL as well as text. Panel shows author and time above the techniques.
 - [x] 2.8 Tests on saved API responses in `tests/fixtures/`: URL parsing, field mapping, deleted post.
 - [ ] Done when: pasting a real Bluesky post URL on the live site shows its text and techniques.
 
 ### Feature 3: bot-likeness score (about 1 h)
 
-- [ ] 3.1 Call `bot_score.score(account, timestamps)` with the data from feature 2. No similar posts yet.
-- [ ] 3.2 Fill `bot` with `score`, `verdict`, `checked`, `reasons`.
-- [ ] 3.3 Panel: a labelled bar, the verdict, the list of reasons, and a line listing what could be checked. Text input shows "Paste a post link to check the author".
-- [ ] 3.4 Wording on the panel: "bot-likeness score", with a tooltip that it is not a probability.
-- [ ] 3.5 Test: fixture author and timestamps map into the response; author fetch failure gives `bot: null` plus an error.
+- [x] 3.1 Call `bot_score.score(account, timestamps)` with the data from feature 2. No similar posts yet.
+- [x] 3.2 Fill `bot` with `score`, `verdict`, `checked`, `reasons`.
+- [x] 3.3 Panel: a labelled bar, the verdict, the list of reasons, and a line listing what could be checked. Text input shows "Paste a post link to check the author".
+- [x] 3.4 Wording on the panel: "bot-likeness score", with a tooltip that it is not a probability.
+- [x] 3.5 Test: fixture author and timestamps map into the response; author fetch failure gives `bot: null` plus an error.
 - [ ] Done when: a known feed bot scores high and a teammate's own account scores low on the live site.
 
 ### Feature 4: similar posts and coordination (about 1.5 h)
@@ -191,8 +192,8 @@ with two people. Hour figures are guesses.
 - [x] 4.1 `bluesky.search(query) -> [{author, text, url, ts}]` on `api.bsky.app`, limited to 3 days either side of the post. Works without login locally; recheck from the VPS, otherwise add app-password login from `.env`.
 - [x] 4.2 `app/similar.py`: up to 3 queries of 3 rare words each, 50 results per query, merged. Bluesky search requires every word, so one 5 to 8 word query missed copies that changed a single word. Drop the post itself and the post's own author.
 - [x] 4.3 Rank by `bot_score.similarity`, keep overlap of 0.3 or more, one item per account, top 10.
-- [ ] 4.4 Fill `similar`. Pass `similar.as_others(items)` (not the raw list: the contract says `author`, `bot_score` reads `account`) as `others` into `bot_score.score` so the text-reuse category goes live. `similar` is filled for pasted text; link input and the `bot_score` hand-off wait for features 2 and 3.
-- [ ] 4.5 Panel: list with author, overlap percent, time, link. Header line from `similar.summary()`, such as "7 accounts posted near-identical text, 5 within 10 minutes". Label it coordination, not automation: people share copypasta too.
+- [x] 4.4 Fill `similar`. Pass `similar.as_others(items)` (not the raw list: the contract says `author`, `bot_score` reads `account`) as `others` into `bot_score.score` so the text-reuse category goes live.
+- [x] 4.5 Panel: list with author, overlap percent, time, link. Header line built in `panel.js` with the same rule as `similar.summary()` (the contract has no field for it), such as "7 accounts posted near-identical text, 5 within 10 minutes". Label it coordination, not automation: people share copypasta too.
 - [x] 4.6 Tests: query builder on a fixture, ranking order, self-match removed (`tests/test_similar.py`). Known weaknesses for the metrics page are in the `app/similar.py` header.
 - [ ] Done when: a known copypasta post shows its copies on the live site and an original post shows none.
 

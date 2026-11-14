@@ -1,6 +1,6 @@
 # Progress report
 
-As of 2026-11-14. Tests: 39 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
+As of 2026-11-14. Tests: 44 pass. The skeleton is live at https://davincicommit.tech; the other features are merged but not yet checked there.
 
 ## Done
 
@@ -9,17 +9,19 @@ As of 2026-11-14. Tests: 39 pass. The skeleton is live at https://davincicommit.
 | 0.1-0.7 | FastAPI skeleton, paste page, tests, deploy files, live on the VPS behind Traefik. `/api/health`, the page and `/api/analyze` answer over HTTPS. |
 | 2.1-2.6, 2.8 | `app/bluesky.py` reads a post, an author and the author's post times from a bsky.app URL. 10 min cache, 10 s timeout, failures go into `errors`. A `url` input fills `post`. Tests run on saved responses in `tests/fixtures/`. |
 | 4.1-4.3, 4.6 | Similar posts (teammate): Bluesky search, word-shingle ranking, `similar` filled for pasted text and, now that the two are merged, for post URLs too (the post's own author and URL are excluded). |
+| 1.2-1.9 | Techniques: 20 SemEval-2021 Task 6 techniques, one AI Router call per post, quotes validated against the post, cache, rate limit. Tested with the AI faked. |
+| 3.1-3.5, 4.4 | Bot-likeness: a post link fills `bot` from the author's profile, post times and the copies found. |
+| 1.8, 2.7, 3.3, 3.4, 4.5 | Panel: `web/panel.js` + `web/panel.css` render the post with quotes highlighted, techniques, bot-likeness and copies. `?q=<post link>` opens a result directly. Checked locally with faked data, desktop and narrow widths. |
 
 Checked against the live Bluesky API: post text, author profile, 38 post times, "Post not found" for a deleted post.
 
 ## Not done
 
-- **Phone check for 0.7.** The plan says "returns ok from a phone on mobile data"; I only checked from this machine. The box stays unticked until someone tries it.
-- **2.7** Author and time in the panel waits for `panel.js` (step 1.8).
-- **4.4** `similar` is filled, but the copies are not yet passed into `bot_score.score` (`similar.as_others`). That comes with Feature 3.
-- **4.5** The similar-posts panel waits for `panel.js`.
-- **Feature 1** (techniques): 1.2-1.7 and 1.9 merged; the code paths are tested with the AI faked. **1.1 still needs a real call**: set `AI_ROUTER_BASE_URL`, `AI_ROUTER_API_KEY` and `AI_ROUTER_MODEL` on the VPS and check that one post returns techniques. 1.8 waits for `panel.js`. Technique list is now SemEval-2021 Task 6 (20 techniques), not the 2020 list.
-- **Feature 3** (bot-likeness wiring), Features 5-8: not started. Feature 3 is unblocked: `get_author`, `get_author_timestamps` and `similar.as_others` all exist.
+- **Nothing after Feature 0 is checked on the live URL.** Features 1-4 and the panel are merged or in review but the VPS still serves old code; see the deploy notes.
+- **Phone check for 0.7.** The plan says "returns ok from a phone on mobile data"; only checked from a laptop.
+- **1.1 needs a real AI Router call**: set `AI_ROUTER_BASE_URL`, `AI_ROUTER_API_KEY` and `AI_ROUTER_MODEL` on the VPS and check that one post returns techniques. Until then the panel says technique detection is not configured.
+- **Features 5-8**: not started. Feature 5 uses the SemEval-2021 Task 6 test set (20 techniques), not the 2020 list.
+- **`codex/oxylabs-live-context` is unmerged** and branched before Features 1 and 4. It rewrites `web/index.html` and `app/main.py`, fills `coverage` in a different shape from the plan's Feature 7, and adds an Oxylabs key. It needs rebasing onto the panel (`web/panel.js`) before it can merge.
 
 ## Deploy notes
 

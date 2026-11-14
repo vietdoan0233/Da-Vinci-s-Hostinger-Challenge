@@ -60,3 +60,22 @@ def test_analyze_fills_post_and_reports_failure(monkeypatch):
     assert c.post("/api/analyze", json={"url": URL}).json()["post"]["author"] == "bsky.app"
     r = c.post("/api/analyze", json={"url": "https://example.com/x"}).json()
     assert r["post"] is None and "bsky.app" in r["errors"]["post"]
+
+
+def test_analyze_url_fills_bot(monkeypatch):
+    r = TestClient(main.app).post("/api/analyze", json={"url": URL}).json()
+    assert set(r["bot"]) == {"score", "verdict", "checked", "reasons"}
+    assert 0 <= r["bot"]["score"] <= 1 and "profile" in r["bot"]["checked"] and "bot" not in r["errors"]
+
+
+def test_analyze_author_failure_gives_bot_error(monkeypatch):
+    def down(handle):
+        raise bluesky.BlueskyError("down")
+    monkeypatch.setattr(bluesky, "get_author", down)
+    r = TestClient(main.app).post("/api/analyze", json={"url": URL}).json()
+    assert r["bot"] is None and r["errors"]["bot"] == "author history unavailable" and r["post"]
+
+
+def test_analyze_text_has_no_bot():
+    r = TestClient(main.app).post("/api/analyze", json={"text": "hello there"}).json()
+    assert r["bot"] is None and "bot" not in r["errors"]
