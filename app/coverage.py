@@ -18,13 +18,15 @@ import httpx
 from app import cache, llm
 from app.techniques import _norm
 
-PROMPT_VERSION = 1  # bump on any prompt change, so cached answers are not reused
+PROMPT_VERSION = 2  # bump on any prompt change, so cached answers are not reused
 BASE = "https://webapi.oxylabs.io/v1"
 MAX_AGE = 3600      # the point is what the web says now, so answers are reused for an hour only
 SEARCH_RESULTS = 8
 MAX_SOURCES = 4     # pages read per post: each is one paid scrape
 PAGE_CHARS = 4000
 STANCES = ("supports", "challenges", "adds context")
+# The same query is searched from each country. Pages are read from the first one that returns results.
+COUNTRIES = {"US": "United States", "FI": "Finland", "DE": "Germany"}
 
 CLAIM_SYSTEM = """You pick the one factual claim in a social media post that a reader could check against news or official sources.
 
@@ -67,10 +69,15 @@ def _domain(url):
     return (urlsplit(url).hostname or "").removeprefix("www.")
 
 
-def search(query):
-    """-> up to MAX_SOURCES results, one per site, https only."""
+def search(query, location):
+    """-> up to MAX_SOURCES results as seen from that country, one per site, https only.
+    None when the search itself failed, so a failed country is never shown as "no results"."""
     out, seen = [], set()
-    for row in _oxy("search", {"query": query, "max_results": SEARCH_RESULTS}, 30).get("results") or []:
+    try:
+        rows = _oxy("search", {"query": query, "max_results": SEARCH_RESULTS, "location": location}, 30).get("results") or []
+    except (httpx.HTTPError, ValueError, AttributeError):
+        return None
+    for row in rows:
         url = str(row.get("url") or "")
         domain = _domain(url)
         if not url.startswith("https://") or not domain or domain in seen:
@@ -115,7 +122,9 @@ def validate(raw, pages):
 
 def find(post_text):
     """-> {claim: {quote, statement, query}, points: [{source, stance, quote, text}],
-           sources: [{id, title, url, domain, read}], checked_at}. Cached for an hour."""
+           sources: [{id, title, url, domain, read}],
+           by_country: [{country, name, sources: [{title, url, domain}] or None if that search failed}],
+           checked_at}. Cached for an hour."""
     if not os.environ.get("OXYLABS_WEB_API_KEY"):
         raise NotConfigured("OXYLABS_WEB_API_KEY is not set")
     k = cache.key("coverage", PROMPT_VERSION, post_text)
@@ -129,10 +138,16 @@ def find(post_text):
     if not quote or not claim or not query or _norm(quote) not in _norm(post_text):
         raise NotEnoughData("this post makes no factual claim that can be checked against sources")
 
-    sources = search(query[:200])
-    if not sources:
-        raise NotEnoughData("live search found no pages about this claim")
     with ThreadPoolExecutor(max_workers=MAX_SOURCES) as pool:
+        found = list(pool.map(lambda loc: search(query[:200], loc), COUNTRIES))
+        if all(f is None for f in found):
+            raise RuntimeError("live search failed in every country")
+        sources = next((f for f in found if f), None)
+        if not sources:
+            raise NotEnoughData("live search found no pages about this claim")
+        by_country = [{"country": code, "name": name,
+                       "sources": f and [{k: s[k] for k in ("title", "url", "domain")} for s in f]}
+                      for (code, name), f in zip(COUNTRIES.items(), found)]
         texts = list(pool.map(read, [s["url"] for s in sources]))
     pages = {s["id"]: t for s, t in zip(sources, texts) if len(t) >= 80}
     if not pages:
@@ -143,6 +158,6 @@ def find(post_text):
     blocks = "\n\n".join(f'<page id="{sid}">\n{t}\n</page>' for sid, t in pages.items())
     points = validate(llm.ask_json(POINTS_SYSTEM, f"Claim: {claim[:300]}\n\n{blocks}"), pages)
     result = {"claim": {"quote": quote, "statement": claim[:300], "query": query[:200]},
-              "points": points, "sources": sources, "checked_at": int(time.time())}
+              "points": points, "sources": sources, "by_country": by_country, "checked_at": int(time.time())}
     cache.set(k, result)
     return result

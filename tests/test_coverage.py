@@ -19,6 +19,11 @@ def live(monkeypatch):
     def oxy(endpoint, payload, timeout):
         calls.append((endpoint, payload))
         if endpoint == "search":
+            if payload["location"] == "DE":
+                raise coverage.httpx.ConnectError("down")
+            if payload["location"] == "FI":
+                return {"results": [{"title": "Yle", "url": "https://yle.example/uutiset"},
+                                    {"title": "Minutes", "url": "https://one.example/minutes"}]}
             return {"results": [{"title": "Minutes", "url": "https://one.example/minutes"},
                                 {"title": "Same site", "url": "https://www.one.example/other"},
                                 {"title": "Not https", "url": "http://plain.example/"},
@@ -43,7 +48,15 @@ def test_points_are_kept_only_with_a_read_source_and_a_real_quote(live):
     r = coverage.find(POST)
     assert [(p["source"], p["stance"]) for p in r["points"]] == [("S1", "challenges")]
     assert [(s["domain"], s["read"]) for s in r["sources"]] == [("one.example", True), ("two.example", False)]
-    assert [c[0] for c in live] == ["search", "scrape", "scrape"]  # one site once, http dropped
+    assert sorted(c[0] for c in live) == ["scrape", "scrape", "search", "search", "search"]  # one site once, http dropped
+    assert sorted(c[1]["location"] for c in live if c[0] == "search") == ["DE", "FI", "US"]
+
+
+def test_each_country_lists_its_own_results_and_a_failed_search_is_not_empty(live):
+    by = {c["country"]: c["sources"] for c in coverage.find(POST)["by_country"]}
+    assert [s["domain"] for s in by["US"]] == ["one.example", "two.example"]
+    assert [s["domain"] for s in by["FI"]] == ["yle.example", "one.example"]
+    assert by["DE"] is None
 
 
 def test_invented_quote_is_dropped():

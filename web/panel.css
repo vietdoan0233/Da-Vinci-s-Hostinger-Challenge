@@ -90,6 +90,13 @@ a.pill:hover { opacity: .88; }
 .cov a:hover, .cov-sources a:hover { text-decoration: underline; }
 .cov-sources { margin: 0; padding: 10px 16px 10px 34px; border-top: 1px solid var(--line); color: var(--dim); font-size: 13px; line-height: 20px; }
 
+.cov-sub { margin: 0; padding: 10px 16px 4px; border-top: 1px solid var(--line); font-size: 15px; font-weight: 700; }
+.cov-country { display: flex; flex-wrap: wrap; gap: 2px 10px; padding: 4px 16px; font-size: 14px; line-height: 20px; }
+.cov-country b { flex: 0 0 100%; font-size: 13px; color: var(--dim); }
+.cov-country a { color: var(--blue); text-decoration: none; }
+.cov-country .only { text-decoration: underline; text-decoration-color: var(--yellow); text-underline-offset: 3px; }
+.cov-country .warn { color: var(--amber); }
+
 .panel-sec.card { margin: 12px 16px; }
 
 /* ---- thread replies ---- */

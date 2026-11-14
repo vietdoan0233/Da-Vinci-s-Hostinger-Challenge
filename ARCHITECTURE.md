@@ -81,6 +81,7 @@ front end never changes shape and unfinished sections are simply `null`.
   "coverage":   {"claim": {"quote": "", "statement": "", "query": ""},
                  "points": [{"source": "S1", "stance": "supports | challenges | adds context", "quote": "", "text": ""}],
                  "sources": [{"id": "S1", "title": "", "url": "", "domain": "", "read": true}],
+                 "by_country": [{"country": "FI", "name": "Finland", "sources": [{"title": "", "url": "", "domain": ""}]}],
                  "checked_at": 0},
   "sides":      null,
   "errors":     {"bot": "author history unavailable"}
@@ -260,6 +261,7 @@ Changed from the first plan (GDELT plus outlet leanings): the Oxylabs challenge 
 - [x] 7.5 Fill `coverage`; runs beside the other checks so it does not add to the wait. Cached for one hour. Key in `OXYLABS_WEB_API_KEY`, server side only.
 - [x] 7.6 Panel card "What live sources say": the claim, each point with its quote and link, every source with read or unread, and the time it was checked.
 - [x] 7.7 Tests with Oxylabs and the LLM stubbed (`tests/test_coverage.py`). `OXYLABS.md` is the note for the challenge submission.
+- [x] 7.9 Same claim, three countries: the search runs with `location` US, FI and DE in parallel and fills `coverage.by_country`. The panel lists each country's results and marks sites only one country sees. A failed country search shows as "not enough data" (`sources: null`), not as no results. Pages are read from the first country with results.
 - [ ] 7.8 One real call with the team key to confirm the response fields (`results[].url`, `results[0].markdown`), then set the key on the VPS.
 - [ ] Done when: a post about a current news story on the live site shows quoted points with working source links.
 

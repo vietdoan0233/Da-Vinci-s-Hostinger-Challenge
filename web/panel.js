@@ -305,7 +305,29 @@
       list.appendChild(li);
     });
     node.appendChild(list);
+    if (c.by_country) renderCountries(node, c.by_country);
     node.appendChild(note("dim", "Searched and read live at " + fmtTime(c.checked_at) + " through the Oxylabs Web API. A sample of the web, not a verdict on the post."));
+  }
+
+  // The same search run from each country. A site only one country sees is marked.
+  function renderCountries(node, countries) {
+    var seenIn = {};
+    countries.forEach(function (c) { (c.sources || []).forEach(function (s) { seenIn[s.domain] = (seenIn[s.domain] || 0) + 1; }); });
+    node.appendChild(el("h3", "cov-sub", "Same search, three countries"));
+    countries.forEach(function (c) {
+      var row = el("div", "cov-country");
+      row.appendChild(el("b", null, c.name));
+      if (!c.sources) row.appendChild(el("span", "warn", "Not enough data: this search failed."));
+      else if (!c.sources.length) row.appendChild(el("span", null, "No results."));
+      else c.sources.forEach(function (s) {
+        var only = seenIn[s.domain] === 1;
+        var a = sourceLink(s, only ? "only" : "");
+        if (only) a.title = "Only in the results from " + c.name + (s.title ? ": " + s.title : "");
+        row.appendChild(a);
+      });
+      node.appendChild(row);
+    });
+    node.appendChild(note("dim", "Underlined sites appear in one country's results only. The points above use the pages from the first country with results."));
   }
 
   function sourceLink(s, cls) {
