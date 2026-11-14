@@ -1,0 +1,256 @@
+{
+  "source": "semeval2021",
+  "split_sizes": {
+    "train": 550,
+    "val": 138,
+    "test": 63
+  },
+  "techniques": [
+    "Loaded Language",
+    "Name calling/Labeling",
+    "Smears",
+    "Exaggeration/Minimisation",
+    "Doubt",
+    "Slogans"
+  ],
+  "positives_train_plus_val": {
+    "Loaded Language": 358,
+    "Name calling/Labeling": 218,
+    "Smears": 200,
+    "Exaggeration/Minimisation": 52,
+    "Doubt": 48,
+    "Slogans": 44
+  },
+  "target_precision": 0.7,
+  "thresholds": {
+    "Loaded Language": 0.58,
+    "Name calling/Labeling": null,
+    "Smears": 0.61,
+    "Exaggeration/Minimisation": null,
+    "Doubt": null,
+    "Slogans": null
+  },
+  "validation_default_0.5": {
+    "Loaded Language": {
+      "precision": {
+        "k": 50,
+        "n": 82,
+        "value": 0.6097560975609756,
+        "ci_low": 0.5015357010815031,
+        "ci_high": 0.7081531864011577
+      },
+      "recall": {
+        "k": 50,
+        "n": 74,
+        "value": 0.6756756756756757,
+        "ci_low": 0.5626529887491833,
+        "ci_high": 0.7713592509223566
+      },
+      "fpr": {
+        "k": 32,
+        "n": 64,
+        "value": 0.5,
+        "ci_low": 0.38102094743947007,
+        "ci_high": 0.6189790525605299
+      },
+      "f1": 0.6410256410256411,
+      "n_true_pos": 74,
+      "n_pred_pos": 82,
+      "too_few": false
+    },
+    "Name calling/Labeling": {
+      "precision": {
+        "k": 18,
+        "n": 55,
+        "value": 0.32727272727272727,
+        "ci_low": 0.21813065595168935,
+        "ci_high": 0.45896776443421317
+      },
+      "recall": {
+        "k": 18,
+        "n": 36,
+        "value": 0.5,
+        "ci_low": 0.34474325409626827,
+        "ci_high": 0.6552567459037317
+      },
+      "fpr": {
+        "k": 37,
+        "n": 102,
+        "value": 0.3627450980392157,
+        "ci_low": 0.2759951054473271,
+        "ci_high": 0.45945827631836855
+      },
+      "f1": 0.3956043956043956,
+      "n_true_pos": 36,
+      "n_pred_pos": 55,
+      "too_few": false
+    },
+    "Smears": {
+      "precision": {
+        "k": 19,
+        "n": 42,
+        "value": 0.4523809523809524,
+        "ci_low": 0.3122339323345447,
+        "ci_high": 0.6005088096526652
+      },
+      "recall": {
+        "k": 19,
+        "n": 47,
+        "value": 0.40425531914893614,
+        "ci_low": 0.27640034519208756,
+        "ci_high": 0.5465787704988904
+      },
+      "fpr": {
+        "k": 23,
+        "n": 91,
+        "value": 0.25274725274725274,
+        "ci_low": 0.1747271725435677,
+        "ci_high": 0.3507967854432411
+      },
+      "f1": 0.42696629213483145,
+      "n_true_pos": 47,
+      "n_pred_pos": 42,
+      "too_few": false
+    },
+    "Exaggeration/Minimisation": {
+      "precision": {
+        "k": 3,
+        "n": 5,
+        "value": 0.6,
+        "ci_low": 0.2307242812760129,
+        "ci_high": 0.8823792257673522
+      },
+      "recall": {
+        "k": 3,
+        "n": 10,
+        "value": 0.3,
+        "ci_low": 0.10779126740630104,
+        "ci_high": 0.6032218525388546
+      },
+      "fpr": {
+        "k": 2,
+        "n": 128,
+        "value": 0.015625,
+        "ci_low": 0.004295449710144079,
+        "ci_high": 0.05518097667981721
+      },
+      "f1": 0.4,
+      "n_true_pos": 10,
+      "n_pred_pos": 5,
+      "too_few": true
+    },
+    "Doubt": {
+      "precision": {
+        "k": 0,
+        "n": 7,
+        "value": 0.0,
+        "ci_low": 2.7755575615628914e-17,
+        "ci_high": 0.3543304350666875
+      },
+      "recall": {
+        "k": 0,
+        "n": 8,
+        "value": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.32440756488388034
+      },
+      "fpr": {
+        "k": 7,
+        "n": 130,
+        "value": 0.05384615384615385,
+        "ci_low": 0.026324958988181497,
+        "ci_high": 0.10697797253915736
+      },
+      "f1": 0.0,
+      "n_true_pos": 8,
+      "n_pred_pos": 7,
+      "too_few": true
+    },
+    "Slogans": {
+      "precision": {
+        "k": 1,
+        "n": 3,
+        "value": 0.3333333333333333,
+        "ci_low": 0.06149194472039626,
+        "ci_high": 0.7923403991979523
+      },
+      "recall": {
+        "k": 1,
+        "n": 8,
+        "value": 0.125,
+        "ci_low": 0.022417491450056642,
+        "ci_high": 0.47088818221285356
+      },
+      "fpr": {
+        "k": 2,
+        "n": 130,
+        "value": 0.015384615384615385,
+        "ci_low": 0.004229205844055266,
+        "ci_high": 0.05435846115977827
+      },
+      "f1": 0.18181818181818182,
+      "n_true_pos": 8,
+      "n_pred_pos": 3,
+      "too_few": true
+    }
+  },
+  "validation_at_threshold": {
+    "Loaded Language": {
+      "precision": {
+        "k": 31,
+        "n": 44,
+        "value": 0.7045454545454546,
+        "ci_low": 0.5577979987383977,
+        "ci_high": 0.8184447088149512
+      },
+      "recall": {
+        "k": 31,
+        "n": 74,
+        "value": 0.4189189189189189,
+        "ci_low": 0.3132433492747786,
+        "ci_high": 0.532597155492203
+      },
+      "fpr": {
+        "k": 13,
+        "n": 64,
+        "value": 0.203125,
+        "ci_low": 0.12273417819183653,
+        "ci_high": 0.31713635731014167
+      },
+      "f1": 0.5254237288135594,
+      "n_true_pos": 74,
+      "n_pred_pos": 44,
+      "too_few": false
+    },
+    "Smears": {
+      "precision": {
+        "k": 4,
+        "n": 5,
+        "value": 0.8,
+        "ci_low": 0.3755346297625252,
+        "ci_high": 0.9637758913675698
+      },
+      "recall": {
+        "k": 4,
+        "n": 47,
+        "value": 0.0851063829787234,
+        "ci_low": 0.033594123457925534,
+        "ci_high": 0.1993153778696459
+      },
+      "fpr": {
+        "k": 1,
+        "n": 91,
+        "value": 0.01098901098901099,
+        "ci_low": 0.001942471331849216,
+        "ci_high": 0.059649356686506165
+      },
+      "f1": 0.15384615384615385,
+      "n_true_pos": 47,
+      "n_pred_pos": 5,
+      "too_few": true
+    }
+  },
+  "validation_macro_f1_default": 0.34090241843050834,
+  "test": "not scored yet (T11 scores once)",
+  "note": "validation numbers are tuning-grade (thresholds were chosen on them)"
+}
