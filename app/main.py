@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
@@ -132,6 +133,15 @@ def replies(request: Request, url: str = Query(min_length=1, max_length=300), of
         items = list(pool.map(analyze_reply, page))
     more = offset + REPLY_PAGE < len(found)
     return {"replies": items, "total": len(found), "next": offset + REPLY_PAGE if more else None, "errors": {}}
+
+
+@app.get("/eval/results.json")
+def eval_results():
+    """The measured numbers behind the accuracy page, exactly as the eval scripts wrote them."""
+    path = os.path.join(os.path.dirname(__file__), "..", "eval", "results.json")
+    if not os.path.exists(path):
+        raise HTTPException(404, "No evaluation has been run yet.")
+    return FileResponse(path, media_type="application/json")
 
 
 # Last: a "/" mount would shadow routes registered after it.
