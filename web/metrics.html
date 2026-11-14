@@ -83,8 +83,6 @@
   .tag.bot { color: var(--blue); border-color: rgba(29, 155, 240, .5); }
   td.high { color: var(--red); font-weight: 700; } td.mid { color: var(--amber); font-weight: 700; }
 
-  .caveats { margin: 22px 0 0; padding: 14px 16px; border-left: 3px solid var(--amber); border-radius: 0 16px 16px 0; background: var(--card); }
-  .caveats h3 { margin: 0 0 6px; }
   ul { margin: 0; padding-left: 20px; font-size: 14px; line-height: 21px; color: var(--dim); max-width: 78ch; }
   li { margin: 5px 0; }
   .plain { margin-top: 12px; }
@@ -144,7 +142,7 @@
         <a href="#techniques">Techniques</a>
         <a href="#bots">Bot-likeness</a>
         <a href="#copies">Copies</a>
-        <a href="#gaps">Not measured</a>
+        <a href="#tested">What we tested</a>
         <a href="#run">Run it</a>
       </nav>
     </div>
@@ -162,14 +160,12 @@
 
     <div id="out"></div>
 
-    <section class="sec" id="gaps">
-      <h2>Not measured</h2>
+    <section class="sec" id="tested">
+      <h2>What we tested</h2>
       <ul class="plain">
-        <li>Whether Bluesky search finds the copies of a post in the first place. Only the comparison of two texts is tested.</li>
-        <li>Technique detection on video transcripts and on thread replies. Speech is looser than writing, so expect more false alarms there.</li>
-        <li>Accounts built to look human. Every bot in the sample says openly that it is one.</li>
-        <li>Bot-likeness for YouTube channels and Reddit accounts. Those formulas use different profile fields with weights set by hand, and no labelled sample has been run. Reddit is not connected: its account data could not be read.</li>
-        <li>A real coordinated campaign. The copy test uses copies made by a script.</li>
+        <li><b>Persuasion techniques.</b> 200 political memes whose techniques were marked by human annotators (the test set of SemEval-2021 Task 6), plus 32 factual posts such as forecasts, scores and filings, where any flag is a false alarm.</li>
+        <li><b>Bot-likeness.</b> 120 Bluesky accounts: 60 that openly run as bots and 60 verified people. Half were used to adjust the score; the numbers shown come from the other half.</li>
+        <li><b>Copy detection.</b> 150 real texts, each edited ten ways (hashtags, links, capitals, changed words), plus 11,175 pairs of unrelated texts.</li>
       </ul>
     </section>
 
