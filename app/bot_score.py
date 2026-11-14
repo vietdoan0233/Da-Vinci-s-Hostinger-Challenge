@@ -110,8 +110,8 @@ def _text_reuse(post, others):
         big = len(accounts) >= 10
         out.append(_det("text_reuse", 0.85 if big else 0.6, 0.85 if big else 0.7,
                         f"Near-identical text posted by {len(accounts)} other accounts"))
-    if "ts" in post:
-        sync = {o.get("account") for o in dupes if "ts" in o and abs(o["ts"] - post["ts"]) <= 600}
+    if post.get("ts") is not None:  # a post or copy can lack its time
+        sync = {o.get("account") for o in dupes if o.get("ts") is not None and abs(o["ts"] - post["ts"]) <= 600}
         if len(sync) >= 3:
             out.append(_det("text_reuse", 0.8, 0.8,
                             f"{len(sync)} of those copies were posted within 10 minutes of this one"))

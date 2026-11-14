@@ -103,3 +103,11 @@ def test_panel_never_uses_innerhtml():
     import pathlib
     web = pathlib.Path(__file__).parent.parent / "web"
     assert "innerHTML" not in (web / "panel.js").read_text() and "innerHTML" not in (web / "index.html").read_text()
+
+
+def test_bot_score_survives_missing_timestamps():
+    from app import bot_score
+    t = "Wake up people the mainstream media is hiding the truth about this from you"
+    others = [{"account": f"a{i}", "text": t, "ts": None} for i in range(4)]
+    assert bot_score.score({}, [], {"account": "me", "text": t, "ts": 100}, others)["score"] > 0
+    assert bot_score.score({}, [], {"account": "me", "text": t, "ts": None}, [dict(o, ts=5) for o in others])["score"] > 0

@@ -87,7 +87,8 @@ def analyze(body: AnalyzeIn, request: Request):
                 {"account": handle, "text": post["text"], "ts": post["ts"]},
                 similar.as_others(out["similar"] or []))
             out["bot"] = {k: result[k] for k in ("score", "verdict", "checked", "reasons")}
-        except bluesky.BlueskyError:
+        except Exception:  # odd author data must not turn the whole analysis into a 500
+            log.exception("bot score failed")
             out["errors"]["bot"] = "author history unavailable"
     return out
 
