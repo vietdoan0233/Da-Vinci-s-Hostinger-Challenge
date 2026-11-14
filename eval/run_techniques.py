@@ -53,15 +53,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--api", help="base URL of a running server; omit to call the detector in this process")
     ap.add_argument("--set", choices=("test", "dev"), default="test")
+    ap.add_argument("--server-prompt", type=int, help="with --api: the prompt version the server runs, when it differs from this checkout")
     ap.add_argument("--limit", type=int, help="only the first N texts of each set (for a smoke test)")
     ap.add_argument("--pause", type=float, default=6.5, help="seconds between calls (the server allows 10 a minute)")
     args = ap.parse_args()
 
     memes = json.load(open(HERE / "data" / f"semeval2021_task6_{args.set}.json"))[:args.limit]
     neutral = json.load(open(HERE / "data" / "neutral_posts.json"))[:args.limit] if args.set == "test" else []
-    version = techniques.PROMPT_VERSION
-    if args.api:  # the server's prompt version is not visible from outside; the caller states it by matching code
-        print(f"Assuming the server runs prompt version {version} (this checkout). Deploy first if it does not.")
+    version = (args.api and args.server_prompt) or techniques.PROMPT_VERSION
+    if args.api:  # the server's prompt version is not visible from outside; the caller states it
+        print(f"Assuming the server runs prompt version {version}. Deploy first if it does not.")
     PRED = HERE / f"predictions_{args.set}_v{version}.json"  # one file per set and prompt version: answers are never mixed
     saved = json.loads(PRED.read_text()) if PRED.exists() else {}
     failed = 0
