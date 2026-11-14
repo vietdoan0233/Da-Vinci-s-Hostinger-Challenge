@@ -45,8 +45,3 @@ def test_analyze_search_down_is_an_error_not_empty(monkeypatch):
     monkeypatch.setattr("app.bluesky.search", down)
     r = c.post("/api/analyze", json={"text": COPY}).json()
     assert r["similar"] is None and "unavailable" in r["errors"]["similar"]
-
-
-def test_analyze_url_input_reports_similar_not_ready():
-    r = c.post("/api/analyze", json={"url": "https://bsky.app/profile/a/post/b"}).json()
-    assert r["similar"] is None and "feature 2" in r["errors"]["similar"]

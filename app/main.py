@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, model_validator
 
-from app import similar
+from app import bluesky, similar
 
 app = FastAPI()
 
@@ -30,11 +30,15 @@ def health():
 def analyze(body: AnalyzeIn):
     out = {"post": None, "techniques": None, "bot": None, "similar": None,
            "coverage": None, "sides": None, "errors": {}}
-    if body.text is None:
-        out["errors"]["similar"] = "post links are not read yet (feature 2); paste the post text instead"
-        return out
+    post = {"text": body.text}
+    if body.url:
+        try:
+            post = out["post"] = bluesky.get_post(body.url)
+        except bluesky.BlueskyError as e:
+            out["errors"]["post"] = str(e)
+            return out
     try:
-        out["similar"] = similar.find({"text": body.text})
+        out["similar"] = similar.find(post)
     except similar.NotEnoughData as e:
         out["errors"]["similar"] = f"not enough data: {e}"
     except httpx.HTTPError:
