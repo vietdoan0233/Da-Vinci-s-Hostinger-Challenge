@@ -110,7 +110,7 @@
           DecodePanel.renderBot($("bot"), { post: video, bot: video.bot, errors: data.errors });
           var who = document.createElement("p");
           who.className = "note dim";
-          who.textContent = "This is about the channel that uploaded the video. Upload times are not available, so posting rhythm is not checked.";
+          who.textContent = "This is about the channel that uploaded the video, from its public numbers: age, how often it uploads, views, subscribers and titles.";
           $("bot").appendChild(who);
           $("bot").hidden = false;
           status.hidden = true;

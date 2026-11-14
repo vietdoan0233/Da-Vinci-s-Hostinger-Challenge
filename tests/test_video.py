@@ -43,12 +43,12 @@ def stub(monkeypatch, n=8, truncated=False):
 def test_video_pages_and_checks_each_chunk(monkeypatch):
     stub(monkeypatch)
     monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": [
-        {"name": "Smears", "quote": "liars", "why": "Attacks reputation."}, {"name": "Smears", "quote": "not in the text", "why": "x"}]})
+        {"name": "Name calling/Labeling", "quote": "liars", "why": "Attacks reputation."}, {"name": "Name calling/Labeling", "quote": "not in the text", "why": "x"}]})
     r = c.get("/api/video", params={"url": f"https://youtu.be/{VID}"}).json()
     assert r["video"] == {"id": VID, "url": f"https://www.youtube.com/watch?v={VID}", "truncated": False, "title": "A talk", "channel": "Someone", "bot": None}
     assert r["errors"] == {"bot": "the channel's details could not be read"}  # no channel link: not enough data, never a clean score
     assert r["total"] == 8 and r["next"] == main.VIDEO_PAGE and len(r["chunks"]) == main.VIDEO_PAGE
-    assert r["chunks"][1]["t"] == 60.0 and r["chunks"][1]["techniques"] == [{"name": "Smears", "quote": "liars", "why": "Attacks reputation."}]
+    assert r["chunks"][1]["t"] == 60.0 and r["chunks"][1]["techniques"] == [{"name": "Name calling/Labeling", "quote": "liars", "why": "Attacks reputation."}]
     last = c.get("/api/video", params={"url": f"https://youtu.be/{VID}", "offset": main.VIDEO_PAGE}).json()
     assert len(last["chunks"]) == 2 and last["next"] is None
 
@@ -117,7 +117,7 @@ def test_channel_fields_feed_the_youtube_score(monkeypatch):
     acc = youtube.get_channel("https://www.youtube.com/@RickAstleyYT")
     assert seen == [("scrape/media/youtube/channel", {"query": "@RickAstleyYT", "output": ["json"]})]
     assert acc == {"handle": "@RickAstleyYT", "bio": "Official channel", "video_count": 442, "views": 2600576030,
-                   "subscribers": 4560000, "created_at": 1422748800.0}
+                   "subscribers": 4560000, "created_at": 1422748800.0, "titles": []}
     youtube.get_channel("https://www.youtube.com/@RickAstleyYT")
     assert len(seen) == 1  # cached: a video's pages cost one call
 
@@ -125,7 +125,7 @@ def test_channel_fields_feed_the_youtube_score(monkeypatch):
     monkeypatch.setattr(youtube, "get_info", lambda vid: {"title": "A talk", "channel": "Rick", "channel_url": "https://www.youtube.com/@RickAstleyYT"})
     monkeypatch.setattr("app.llm.ask_json", lambda s, u: {"techniques": []})
     r = c.get("/api/video", params={"url": f"https://youtu.be/{VID}"}).json()
-    assert r["video"]["bot"] == {"score": 0.0, "verdict": "not enough data to judge", "checked": ["profile"], "reasons": []}
+    assert r["video"]["bot"] == {"score": 0.047, "verdict": "no bot signals found", "checked": ["upload frequency", "profile"], "reasons": []}
     assert "bot" not in r["errors"]
 
 
@@ -134,7 +134,13 @@ def test_channel_with_hidden_or_missing_fields_and_no_key(monkeypatch):
     monkeypatch.setattr(youtube, "_cache", {})
     hidden = {"id": "UC2", "subscriber_count": "", "joined_date": "unknown", "video_count": 3}
     monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: {"results": [{"json": hidden}]})
-    assert youtube.get_channel("https://www.youtube.com/@quiet") == {"handle": "@quiet", "bio": "", "video_count": 3}
+    assert youtube.get_channel("https://www.youtube.com/@quiet") == {"handle": "@quiet", "bio": "", "video_count": 3, "titles": []}
+    busy = {"id": "UC3", "videos": [{"title": f"Clip {i}", "upload_date_relative": age} for i, age in
+                                    enumerate(["1h ago", "6h ago", "1d ago", "1d ago", "2 days ago", "no date"])]}
+    monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: {"results": [{"json": busy}]})
+    acc = youtube.get_channel("https://www.youtube.com/@busy")
+    assert acc["recent_per_day"] == 2.5 and len(acc["titles"]) == 6  # five dated videos over two days
+    assert [youtube._days_ago(t) for t in ("4mo ago", "2y ago", "3w ago", "Streamed 5 minutes ago", "soon")] == [120, 730, 21, pytest.approx(5 / 1440), None]
     monkeypatch.setattr(youtube.coverage, "_oxy", lambda endpoint, payload, timeout: {"results": [{"html": "<html>404"}]})
     with pytest.raises(youtube.YouTubeError):
         youtube.get_channel("https://www.youtube.com/@gone")
@@ -153,6 +159,9 @@ def test_reddit_and_youtube_formulas():
     assert p > 0.8 and conf == pytest.approx(1) and "1 days old" in reason
     assert bot_score.reddit_profile_score({}, 0)[0] == pytest.approx(0.047, abs=0.01)
     assert bot_score.score({"handle": "RemindMeBot"}, platform="reddit")["verdict"] == "likely automated or coordinated"
-    farm = {"created_at": 0, "handle": "@user-ab12cd34ef", "video_count": 300, "views": 900, "subscribers": 2, "bio": ""}
+    farm = {"created_at": 0, "handle": "@user-ab12cd34ef", "video_count": 300, "views": 900, "subscribers": 2, "bio": "",
+            "recent_per_day": 40, "titles": [f"Daily motivation quote number {i}" for i in range(20)]}
     r = bot_score.score(farm, platform="youtube", now=5 * day)
-    assert r["checked"] == ["profile"] and r["verdict"] == "not enough data to judge" and "uploads per day" in r["reasons"][0]
+    assert r["checked"] == ["upload frequency", "profile", "video titles"] and r["score"] > 0.9
+    assert r["verdict"] == "likely automated or coordinated" and "uploads per day" in r["reasons"][0]
+    assert bot_score.score({"handle": "@quiet"}, platform="youtube")["verdict"] == "not enough data to judge"

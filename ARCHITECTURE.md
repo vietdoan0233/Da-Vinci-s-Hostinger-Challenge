@@ -192,7 +192,8 @@ Honesty notes for the pitch and the metrics page:
 
 Scoring accounts on two more sites with the same model: `reddit_profile_score` and `youtube_profile_score`
 in `bot_score.py`, chosen with `score(..., platform="reddit" | "youtube")`.
-YouTube is connected: `/api/video` fills `video.bot` for the channel that uploaded the video.
+YouTube is connected: `/api/video` fills `video.bot` for the channel that uploaded the video, and that
+formula is the channel's whole score (see below).
 Reddit is not connected: its account data could not be read (403 without an app key, and the Oxylabs
 scrape of it fails, checked 2026-11-15), so the formula has no caller yet.
 The weights are hand-set guesses, like the Bluesky ones, and need a labelled set before any number is quoted.
@@ -222,29 +223,36 @@ A clean account gives about 0.05, any single feature at maximum stays under 0.15
 - Text reuse: not checked (no copy search on Reddit), so the panel reports it as "not enough data".
 
 YouTube (the channel that uploaded the video; Oxylabs `/v1/scrape/media/youtube/channel` returns join date,
-subscribers, video count, total views, description and the 20 newest videos, checked 2026-11-14).
-It scores the channel only, never the people commenting.
+subscribers, video count, total views, description and the 20 newest videos with their titles and rough ages,
+checked 2026-11-15). It scores the channel only, never the people commenting.
+
+YouTube gives no exact upload times, so the cadence and rate tests cannot run. For a channel this formula is
+therefore the whole score, not a fifth of it: `score = max(profile_score, the usual floors)`, with the same
+0.3 and 0.6 lines. Every input is a number any public channel shows.
 
 ```
+s_freq     = log10((video_count/age) / 3)                    0 at 3 uploads/day since it was created, 1 at 30
+s_recent   = log10(recent_per_day / 3)                       same scale over the 20 newest videos
 s_new      = 1 - age/90
-s_freq     = log10((video_count/age) / 3) / log10(10)        0 at 3 uploads/day, 1 at 30
 s_views    = 1 - log10(1 + views/video_count) / 2            only if video_count >= 20: 0 at 100 views per video
-s_subs     = 1 - log10(1 + subscribers) / 2                  only if video_count >= 20 and the count is public
+s_titles   = (share of newest titles starting with the same four words - 0.3) / 0.5      needs 10 titles
 s_handle   = 1 if the handle is YouTube's generated form (@user-ab12cd34), else (digits in handle - 2) / 4
+s_subs     = 1 - log10(1 + subscribers) / 2                  only if video_count >= 20 and the count is public
 s_nobio    = 0 or 1
 verified   = 0 or 1, when the channel data says so
 
-z = -3.0 + 2.0*s_freq + 1.2*s_new + 1.0*s_views + 0.8*s_subs + 1.0*s_handle + 0.6*s_nobio - 2.0*verified
-confidence = (weights of features that had data) / 6.6
+z = -3.0 + 2.0*s_freq + 1.5*s_recent + 1.2*s_new + 1.0*s_views + 1.0*s_titles
+         + 1.0*s_handle + 0.8*s_subs + 0.6*s_nobio - 2.0*verified
+confidence = (weights of features that had data) / 9.1
 ```
 
-A clean channel gives about 0.05, any single feature at maximum stays under 0.3, all at maximum gives about 0.97.
-- Upload times are not available: the channel data gives relative dates only ("4mo ago") and YouTube's channel
-  feed answered 500 (checked 2026-11-15). So posting rhythm is never checked, the profile alone tops out near
-  0.2, and a channel reads "not enough data to judge" unless it declares itself a bot.
-- Not built, needed once upload times exist: the posting-schedule floor must not apply when the usual gap is a
-  day or more. Creators upload weekly at a fixed hour on purpose.
+- A clean channel gives about 0.05. No single feature reaches 0.3, so one odd number never flags a channel;
+  it takes two or three together. A busy newsroom (20 uploads a day, old, watched) stays near 0.2.
+- `recent_per_day` is the number of dated videos among the newest 20, divided by the age of the oldest of them
+  (at least a day). YouTube rounds these ages ("1d ago", "4mo ago"), so it is coarse.
+- With under half the weights backed by data (confidence below 0.5) the verdict is "not enough data to judge".
 - No avatar feature: YouTube's default avatar cannot be told from a chosen one.
+- Not measured on any labelled channels. The weights are hand-set.
 
 ## Build order
 

@@ -152,6 +152,17 @@ def _count(v):
     return round(float(m.group(1)) * {"": 1, "K": 1e3, "M": 1e6, "B": 1e9}[m.group(2).upper()]) if m else None
 
 
+def _days_ago(text):
+    """'4mo ago', '1d ago', '6h ago', '2 years ago' -> days, or None. YouTube rounds these, so they are coarse."""
+    m = re.search(r"(\d+)\s*([a-z]+)", str(text).lower())
+    if not m:
+        return None
+    for unit, days in (("mo", 30), ("y", 365), ("w", 7), ("d", 1), ("h", 1 / 24), ("m", 1 / 1440), ("s", 1 / 86400)):
+        if m.group(2).startswith(unit):
+            return int(m.group(1)) * days
+    return None
+
+
 def get_channel(channel_url):
     """-> the account fields bot_score.youtube_profile_score reads, through the Oxylabs Web API
     (response checked 2026-11-14). A field the channel does not show stays absent, so the score
@@ -173,6 +184,11 @@ def get_channel(channel_url):
             n = _count(d.get(field))
             if n is not None:
                 out[key] = n
+        videos = [v for v in d.get("videos") or [] if isinstance(v, dict)]  # the 20 newest
+        out["titles"] = [str(v.get("title") or "") for v in videos]
+        ages = [a for a in (_days_ago(v.get("upload_date_relative")) for v in videos) if a is not None]
+        if len(ages) >= 5:  # uploads per day over the stretch the newest videos cover, counted as a day at least
+            out["recent_per_day"] = len(ages) / max(max(ages), 1)
         try:  # "Feb 1 2015"
             out["created_at"] = datetime.strptime(str(d.get("joined_date")), "%b %d %Y").replace(tzinfo=timezone.utc).timestamp()
         except ValueError:
